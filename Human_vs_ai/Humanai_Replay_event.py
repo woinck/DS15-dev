@@ -34,7 +34,7 @@ class REPLAYERROR(Exception):
 		
 class HumanReplay(QGraphicsView):
 	commBeg = pyqtSignal()
-	moveFinished = pyqtSignal()
+        moveFinished = pyqtSignal()
 	lastAgain = pyqtSignal()
 	oprFinished = pyqtSignal()
 	endGame = pyqtSignal()
@@ -141,7 +141,7 @@ class HumanReplay(QGraphicsView):
 		self.mouseUnit.setPos(item.corX, item.corY)
 
 	def mousePressEvent(self, event):
-		if not self.run:
+                if not self.run:
 			QGraphicsView.mousePressEvent(self, event)
 			return
 
@@ -336,6 +336,7 @@ class HumanReplay(QGraphicsView):
 		TIME_PER_GRID = 800
 		
 		route = self.gameEndInfo[self.nowRound][1].route
+                print "route: ", route#for test
 		#GetRoute(self.getMap(self.nowRound,0),self.gameBegInfo[self.nowRound].base,move_unit.idNum,move_pos)
 		
 		steps = len(route) - 1
@@ -344,11 +345,10 @@ class HumanReplay(QGraphicsView):
 		movAnim = QPropertyAnimation(move_unit, "pos")
 		movAnim.setDuration(steps * TIME_PER_GRID)
 		movAnim.setStartValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))
-		if steps:			
+		if steps:
 			for i in range(steps + 1):
 				pos = GetPos(route[i][0], route[i][1])
 				movAnim.setKeyValueAt(float(i)/steps, pos)
-		print route
 		if route:
 			movAnim.setEndValue(GetPos(route[-1][0],route[-1][1]))
 		else:
