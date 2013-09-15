@@ -1,1 +1,6 @@
-/*.pyc
+#python
+*.py[cod]
+
+#emacs
+[#]*[#]
+*~
