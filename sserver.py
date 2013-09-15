@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import cPickle,socket,threading,time,sio,basic,os
+import cPickle,socket,threading,time,sio,basic,os,subprocess
 from field_shelve import *
 
 #from sclientui import UI_Run
@@ -65,8 +65,8 @@ class Sui(threading.Thread):
 		if AIPath == None:
 			conn.send('|')
 		else:
-			os.system('cmd /c start %s' %(AIPath))
-	
+#			os.system('cmd /c start %s' %(AIPath))
+                        subprocess.call(['python', AIPath])
 	def run(self):
 		global gProcess,rProcess
 		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch
@@ -421,8 +421,8 @@ class Prog_Run(threading.Thread):
 		self.progPath=progPath
 					
 	def run(self):
-		os.system('cmd /c start %s' %(self.progPath))
-
+#		os.system('cmd /c start %s' %(self.progPath))
+                subprocess.call(['python', self.progPath])
 
 global mapInfo,heroType,aiInfo
 global rbInfo,reInfo,rCommand

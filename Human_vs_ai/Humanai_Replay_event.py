@@ -363,9 +363,9 @@ class HumanReplay(QGraphicsView):
 			return QPauseAnimation(500), []
 		print "attack kindlalala", move_unit.obj.kind
 		attackInd = AttackIndUnit(move_pos[0], move_pos[1],":attack_ind1.png")# %move_unit.obj.kind)
-		attackInd.setVisible(False)
+                attackInd.setOpacity(0)
 		targetInd = TargetIndUnit(self.UnitBase[attack_target[0]][attack_target[1]].corX,self.UnitBase[attack_target[0]][attack_target[1]].corY)
-	#	targetInd.setVisible(False) 
+                targetInd.setOpacity(0)
 		sound = QSound(":attack_sound.wav")
 
 		self.scene.addItem(attackInd)
@@ -383,7 +383,8 @@ class HumanReplay(QGraphicsView):
 
 		ani = QPropertyAnimation(attackInd, "opacity")
 		ani.setDuration(TOTAL_TIME)
-		ani.setStartValue(1)
+		ani.setStartValue(0)
+                ani.setKeyValueAt(0.1, 1)
 		ani.setKeyValueAt(0.8, 0.9)
 		ani.setKeyValueAt(0.9, 0.8)
 		ani.setEndValue(0)
@@ -391,7 +392,8 @@ class HumanReplay(QGraphicsView):
 
 		ani = QPropertyAnimation(targetInd, "opacity")
 		ani.setDuration(TOTAL_TIME)
-		ani.setStartValue(1)
+		ani.setStartValue(0)
+                ani.setKeyValueAt(0.1, 1)
 		ani.setKeyValueAt(0.99, 1)
 #		ani.setKeyValueAt(1, 1)
 		ani.setEndValue(0)
