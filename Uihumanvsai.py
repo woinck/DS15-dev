@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 import Human_vs_ai.ui_humanvsai
 from Human_vs_ai.Humanai_Replay_event import HumanReplay
 from Human_vs_ai.info_widget import *
-import os,sio,basic,socket,time,select
+import basic, sio, select, os, socket
 from Human_vs_ai.herotypedlg import GetHeroTypeDlg
 from functools import partial
 #from AI_debugger import AiThread
@@ -43,6 +43,11 @@ class AiThread(QThread):
 
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
+		
+		if not sio.DEBUG_MODE:
+			server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			server_run.start()
+		
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))

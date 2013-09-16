@@ -9,8 +9,7 @@ import AI_debugger.qrc_resource
 from AI_debugger.info_widget import *
 #from Ai_Thread import *
 from AI_debugger.AI_2DReplayWidget import *
-import socket,cPickle,time,basic,os
-import sio
+import basic, sio, os, socket
 
 DEBUG_MODE = 1
 DEFAULT_SCILENT_AI = os.getcwd() + "\\sclientai.py"#默认的ai路径,待设置
@@ -27,6 +26,11 @@ class AiThread(QThread):
 
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
+		
+		if not sio.DEBUG_MODE:
+			server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			server_run.start()
+		
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))
@@ -89,8 +93,6 @@ class AiThread(QThread):
 			sio._sends(self.conn,replay_mode)
 		
 		self.conn.close()
-
-
 
 
 #调试器主界面

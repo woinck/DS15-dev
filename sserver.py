@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import cPickle,socket,threading,time,sio,basic,os
+import sio, socket, time, threading, os
 from field_shelve import *
 
 #from sclientui import UI_Run
@@ -140,9 +140,7 @@ class Sui(threading.Thread):
 		while gProc.acquire():
 			if gProcess != sio.HERO_TYPE_SET:
 				gProc.wait()
-				print '%%%%%%%gProcess = ',gProcess
 			else:
-				print 'send???????????'#for test
 				sio._sends(connUI,(mapInfo,base,aiInfo))
 				gProcess = sio.ROUND
 				gProc.notifyAll()
@@ -243,7 +241,6 @@ class Slogic(threading.Thread):
 			else:
 				for i in range(2):
 					base[i][0].kind = heroType[i]
-				#base = sio.construct_base(mapInfo,heroType)###########################
 				sio._sends(connLogic,basic.Begin_Info(mapInfo,base,heroType))
 				gProc.release()
 				break
@@ -268,9 +265,7 @@ class Slogic(threading.Thread):
 				if rProcess != sio.START:
 					rProc.wait()
 				else:
-					print 'recv rbInfo ing'
 					rbInfo = sio._recvs(connLogic)
-					print 'rbInfo received'#for test
 					rProcess = sio.RBINFO_SET
 					rProc.notifyAll()
 					rProc.release()
@@ -330,7 +325,7 @@ class Sai(threading.Thread):
 		connAI=[connAI1,connAI2]
 		
 		#设置命令限时
-		print timeoutSwitch
+		print 'timeoutSwitch: ', timeoutSwitch
 		for i in range(2):
 			if timeoutSwitch[i]==1:
 				connAI[i].settimeout(sio.AI_CMD_TIMEOUT)
@@ -374,13 +369,12 @@ class Sai(threading.Thread):
 					rProc.wait()
 				else:
 					#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
-					print "###############side: ",rbInfo.id[0]
 					connAI[rbInfo.id[0]].settimeout(0)
 					try:
 						connAI[rbInfo.id[0]].recv(1024)
 					except:
 						pass
-								
+					
 					if timeoutSwitch[rbInfo.id[0]]==1:
 						connAI[rbInfo.id[0]].settimeout(sio.AI_CMD_TIMEOUT)
 					else:
@@ -415,14 +409,7 @@ class Sai(threading.Thread):
 			connAI[i].send('|')
 			connAI[i].close()
 
-			
-class Prog_Run(threading.Thread):
-	def __init__(self,progPath):
-		threading.Thread.__init__(self)
-		self.progPath=progPath
-					
-	def run(self):
-		os.system('cmd /c start %s' %(self.progPath))
+		
 
 
 global mapInfo,heroType,aiInfo
@@ -447,12 +434,14 @@ rProc=threading.Condition()
 #运行线程		
 ui_thread = Sui()
 ai_thread = Sai()
-ui_run = Prog_Run(os.getcwd() + sio.UI_FILE_NAME)
-logic_run = Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
+ui_run = sio.Prog_Run(os.getcwd() + sio.UI_FILE_NAME)
+logic_run = sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 logic_thread = Slogic()
 
 ui_thread.start()
+'''
 if not sio.DEBUG_MODE:
 	ui_run.start()
-
+'''
+	
 raw_input('')

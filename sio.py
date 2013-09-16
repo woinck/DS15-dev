@@ -1,10 +1,15 @@
 # -*- coding: UTF-8 -*-
 
-import cPickle,basic,time
+import cPickle, basic, threading, os
 
 #游戏运行参数
-DEBUG_MODE = 1 # 为0时,启动游戏只需运行sserver.py即可,程序将自动调用ui及logic文件;为1时先手动运行logic,再运行sserver,再运行ui
-REPLAY_MODE = 0 #此常量为1时会生成回放文件
+DEBUG_MODE = 0 
+'''
+关于DEGUB_MODE:
+为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
+为1时需先手动运行logic,再运行sserver,再运行ui
+'''
+REPLAY_MODE = 0 #此常量为1时会生成回放文件,废弃
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
 AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
 
@@ -17,7 +22,8 @@ PLAYER_VS_PLAYER = 2
 HOST = '127.0.0.1' # 主机地址
 LOGIC_PORT = 8801 # logic 连接端口
 UI_PORT = 8802 # UI 连接端口
-AI_PORT = 8803 # AI 连接端口
+AI_PORT = 8803 # AI 连接端口\
+SERV_FILE_NAME = '\\sserver.py'
 UI_FILE_NAME = 'C:\\Users\\woinck\\Documents\\GitHub\\ds15UI\\AI_debugger\\ai_debugger.py' # UI程序文件名,若有变化请修改此常量!
 LOGIC_FILE_NAME = '\\sclientlogic.py' # logic 程序文件名,若有变化请修改此常量!
 
@@ -76,10 +82,12 @@ def _ReplayFileName(aiInfo):
 	result += time.strftime('%Y%m%d-%H-%M-%S')
 	result += '.rep'
 	return result
+
 	
-def _DefaultCommand(rbInfo):
-	return basic.Command((1,2),'attack',3)
-	
-#此函数为调试用
-def construct_base(map,hero_type):
-	return [[1,2,3,4],[8,7,6,5]]
+class Prog_Run(threading.Thread):
+	def __init__(self,progPath):
+		threading.Thread.__init__(self)
+		self.progPath=progPath
+					
+	def run(self):
+		os.system('cmd /c start %s' %(self.progPath))

@@ -1,4 +1,4 @@
 @echo off
-start "" "C:\Users\woinck\Documents\GitHub\platform\sclientlogic.py"
-start "" "C:\Users\woinck\Documents\GitHub\platform\sserver.py"
-start "" "C:\Users\woinck\Documents\GitHub\platform\Uihumanvsai.py"
+start "" "C:\Users\woinck\Documents\GitHub\DS15-dev\sclientlogic.py"
+start "" "C:\Users\woinck\Documents\GitHub\DS15-dev\sserver.py"
+start "" "C:\Users\woinck\Documents\GitHub\DS15-dev\Uihumanvsai.py"
