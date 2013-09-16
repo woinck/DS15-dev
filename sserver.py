@@ -194,13 +194,14 @@ class Sui(threading.Thread):
 				gProc.wait()
 			else:
 				sio._sends(connUI,winner)
+				replay_mode = sio._recvs(connUI)
 				gProc.notifyAll()
 				gProc.release()
 				break
 			gProc.release()
 		
 		#存回放文件
-		if sio.REPLAY_MODE:	
+		if replay_mode:	
 			#检验回放文件目录
 			try:
 				os.mkdir(os.getcwd() + '\\ReplayFiles')

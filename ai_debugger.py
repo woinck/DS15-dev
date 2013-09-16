@@ -83,6 +83,11 @@ class AiThread(QThread):
 			winner = sio._recvs(self.conn)
 			self.emit(SIGNAL("gameWinner"),winner)
 			print winner
+		
+		#	是否存储回放文件
+			replay_mode = False
+			sio._sends(self.conn,replay_mode)
+		
 		self.conn.close()
 
 
