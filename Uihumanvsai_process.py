@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 import Human_vs_ai.ui_humanvsai
 from Human_vs_ai.Humanai_Replay_event import HumanReplay
 from Human_vs_ai.info_widget import *
-import basic, sio, select, os, socket
+import os,sio,basic,socket,time,select
 from Human_vs_ai.herotypedlg import GetHeroTypeDlg
 from functools import partial
 #from AI_debugger import AiThread
@@ -16,6 +16,9 @@ try:
 	_frUtf = QString.fromUtf8
 except AttributeError:
 	_frUtf = lambda s:s
+
+LOGIC_PATH = os.getcwd() + "//sclientlogic.py"
+PLATFORM_PATH = os.getcwd() + "//sserver.py"
 WAIT_TIME = 5000
 AI_DIR = "." #默认ai目录路径
 MAP_DIR = "."
@@ -25,7 +28,6 @@ WaitForCommand=QWaitCondition()
 WaitForHero=QWaitCondition()
 WaitForAni=QWaitCondition()
 WaitForIni=QWaitCondition()
-WaitForReplay=QWaitCondition()
 mutex = QMutex()
 #tmp
 #for debug
@@ -41,22 +43,11 @@ class AiThread(QThread):
 
 		self.mutex = QMutex()
 		self.closed = False#close标识以便强制关闭线程
-		self.replay_mode = False
+
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
-		
-		if not sio.DEBUG_MODE:
-			server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
-			server_run.start()
-		
-		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-		try:
-			self.conn.connect((sio.HOST,sio.UI_PORT))
-		except:
-			self.conn.close()
-			raise ConnectionError()
-		else:
-			sio._sends(self.conn,(sio.PLAYER_VS_AI, unicode(gameMapPath),(unicode(gameAIPath),None)))
+                self.gameAIPath = gameAIPath
+                self.gameMapPath = gameMapPath
 	def isStopped(self):
 		try:
 			self.mutex.lock()
@@ -70,45 +61,64 @@ class AiThread(QThread):
 		finally:
 			self.mutex.unlock()
 	def run(self):
-                temp = sio._recvs(self.conn)#add base info
-                print temp
-		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
-		print "5"
-		frInfo = sio._recvs(self.conn)
-		print "6"
-		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
+                #打开平台和逻辑程
+                logic_process = QProcess()
+                logic_process.setProcessChannelMode(QProcess.ForwardedChannels)
+                logic_process.start(LOGIC_PATH)
+                logic_process.waitForStarted(-1)
+                platf_process = QProcess()
+                platf_process.setProcessChannelMode(QProcess.ForwardedChannels)
+                platf_process.start(PLATFORM_PATH)
+                platf_process.waitForStarted(-1)
+                time.sleep(5)
+		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		try:
+			self.conn.connect((sio.HOST,sio.UI_PORT))
+		except:
+			self.conn.close()
+			raise ConnectionError()
+		else:
+			sio._sends(self.conn,(sio.PLAYER_VS_AI, unicode(self.gameMapPath),(unicode(self.gameAIPath),None)))
+                        time.sleep(5)
+                        self.emit(SIGNAL("goConnect()"))
+                        temp = sio._recvs(self.conn)#add base info
+                        print temp
 
-		rCommand, reInfo = sio._recvs(self.conn)
-		self.emit(SIGNAL("reRecv"), rCommand, reInfo)
-		while not reInfo.over and not self.isStopped():
-			rbInfo = sio._recvs(self.conn)
-			if self.isStopped():
-				break
-			self.emit(SIGNAL("rbRecv"),rbInfo)
-			readFlag = 0
-			while not readFlag:
-				ready = select.select([self.conn], [], [], WAIT_TIME)
-				if ready[0]:
-					rCommand,reInfo = sio._recvs(self.conn)
-					readFlag = 1
+                        mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
+                        print "5"
+                        frInfo = sio._recvs(self.conn)
+                        print "6"
+                        self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
 
-				if self.isStopped():
-					print "break by stop"
-					break
-			if self.isStopped():
-				break
+                        rCommand, reInfo = sio._recvs(self.conn)
+                        self.emit(SIGNAL("reRecv"), rCommand, reInfo)
+                        while not reInfo.over and not self.isStopped():
+                                rbInfo = sio._recvs(self.conn)
+                                if self.isStopped():
+                                        break
+                                self.emit(SIGNAL("rbRecv"),rbInfo)
+                                readFlag = 0
+                                while not readFlag:
+                                        ready = select.select([self.conn], [], [], WAIT_TIME)
+                                        if ready[0]:
+                                                rCommand,reInfo = sio._recvs(self.conn)
+                                                readFlag = 1
 
-			self.emit(SIGNAL("reRecv"),rCommand, reInfo)
-		if not self.isStopped():
-			winner = sio._recvs(self.conn)
-			self.emit(SIGNAL("gameWinner"),winner)
-	#	是否存储回放文件
-                if not self.isStopped():
-                        global WaitForReplay
-                        WaitForReplay.wait()
+                                        if self.isStopped():
+                                                print "break by stop"
+                                                break
+                                if self.isStopped():
+                                        break
 
-                        sio._sends(self.conn,replay_mode)
-		self.conn.close()
+                                self.emit(SIGNAL("reRecv"),rCommand, reInfo)
+                        if not self.isStopped():
+                                winner = sio._recvs(self.conn)
+                                self.emit(SIGNAL("gameWinner"),winner)
+                        self.conn.close()
+                logic_process.terminate()
+                platf_process.terminate()
+                logic_process.kill()
+                platf_process.kill()
 
 class Ui_Player(QThread):
 	def __init__(self,num, func, parent):
@@ -124,21 +134,22 @@ class Ui_Player(QThread):
 #			self.parent = parent
 			self.result = ("Player", (6,6))
 
-	def initialize(self):
-		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                num = 0 #for test
-		for i in range(5):
-                        num += 1
-			try:
-                                print "try %d" %num
-				self.conn.connect((sio.HOST,sio.AI_PORT))
-			except:
-				pass
-			else:
-				break
-		else:
-			self.conn.close()
-			raise ConnectionError("ai port")
+#	def initialize(self):
+#                        self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+ #               num = 0 #for test
+	#	for i in range(5):
+         #               num += 1
+		#	try:
+                 #               print "try %d" %num
+		#		self.conn.connect((sio.HOST,sio.AI_PORT))
+		#	except:
+		#		pass
+		#	else:
+		#		break
+	#	else:
+	#		self.conn.close()
+	#		raise ConnectionError("ai port")
+
 	def GetHeroType(self,mapInfo):
 			self.emit(SIGNAL("getHeroType()"))
 			print "emit hero"
@@ -192,11 +203,23 @@ class Ui_Player(QThread):
 			return self.command
 
 	def run(self):
-			mapInfo,base = sio._recvs(self.conn)
-			print "2"
-			self.emit(SIGNAL("mapRecv"), mapInfo)
-			print "3"
-			result = self.GetHeroType(mapInfo)
+                self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                num = 0 #for test
+                fl = True
+                print "try %d" %num
+                self.conn.connect((sio.HOST,sio.AI_PORT))
+#                print "host name:",self.conn.gethostname
+
+
+
+
+                if fl:
+                        print "wait for plt ,already lianjie!!!!!!!!!"
+                        mapInfo,base = sio._recvs(self.conn)
+                        print "2"
+                        self.emit(SIGNAL("mapRecv"), mapInfo)
+                        print "3"
+                        result = self.GetHeroType(mapInfo)
 			sio._sends(self.conn, (result[0],result[1][0]))
 			print "4"
 
@@ -340,9 +363,8 @@ class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
 			#		except:
 #			flag = 1
 #		except:
-
+                self.aiThread.start()
 #		else:
-                print "link now"
 		self.connect(self.aiThread, SIGNAL("firstRecv"), self.on_firstRecv)
 		self.connect(self.aiThread, SIGNAL("rbRecv"), self.on_rbRecv)
 		self.connect(self.aiThread, SIGNAL("reRecv"), self.on_reRecv)
@@ -352,10 +374,10 @@ class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.aiThread, SIGNAL("finished()"), self.aiThread,
 						 SLOT("deleteLater()"))
 		self.connect(self.aiThread, SIGNAL("finished()"), partial(self.on_threadF,0))
-                time.sleep(3)
+ #               time.sleep(3)
 		self.playThread = Ui_Player(0, self.getComm, self)
 #		try:
-		self.playThread.initialize()
+#		self.playThread.initialize()
                 print "link now 2"
 #		except:
 #			if not flag:
@@ -371,12 +393,12 @@ class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.playThread, SIGNAL("finished()"), self.playThread,
 						 SLOT("deleteLater()"))
 		self.connect(self.playThread, SIGNAL("finished()"), partial(self.on_threadF,1))
-
+                self.connect(self.aiThread, SIGNAL("goConnect()"), self.playThread, SLOT("start()"))
 		if flag == 0:
 			self.started = True
 			self.updateUi()
-			self.playThread.start()
-			self.aiThread.start()
+#			self.playThread.start()
+#			self.aiThread.start()
 		elif flag == 1:
 			QMessageBox.critical(self, "Connection Error",
 								 "Failed to connect to UI_PORT\n",
@@ -604,12 +626,10 @@ class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
 		QMessageBox.information(self, "Game Winner", "player %s win the game" %winner)
 		#需要其他特效再加
 		answer = QMessageBox.question(self, _frUtf("保存"), _frUtf("是否保存回放文件?"),
-                                              QMessageBox.Yes, QMessageBox.No)
-                global WaitForReplay
+									  QMessageBox.Yes, QMessageBox.No)
 		if answer == QMessageBox.Yes:
-			#把每个回合信息写入(也可以考虑在游戏一开始就设置这个选择)
-                        self.aiThread.replay_mode = True
-                WaitForReplay.wakeAll()
+			#获取回放文件名字,开始把每个回合信息写入(也可以考虑在游戏一开始就设置这个选择)
+			pass
 		#一些清理工作，方便开始下一局游戏,
 		self.started = False
 		self.updateUi()

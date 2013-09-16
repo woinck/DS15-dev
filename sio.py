@@ -23,9 +23,10 @@ PLAYER_VS_PLAYER = 2
 HOST = '127.0.0.1' # 主机地址
 LOGIC_PORT = 8801 # logic 连接端口
 UI_PORT = 8802 # UI 连接端口
-AI_PORT = 8803 # AI 连接端口\
+AI_PORT = 8803 # AI 连接端口
+
 SERV_FILE_NAME = '\\sserver.py'
-UI_FILE_NAME = 'C:\\Users\\woinck\\Documents\\GitHub\\ds15UI\\AI_debugger\\ai_debugger.py' # UI程序文件名,若有变化请修改此常量!
+UI_FILE_NAME = '\\ai_debugger.py' # UI程序文件名,若有变化请修改此常量!
 LOGIC_FILE_NAME = '\\sclientlogic.py' # logic 程序文件名,若有变化请修改此常量!
 
 #游戏/回合进程标记,对战流程用
@@ -48,7 +49,7 @@ REINFO_SET = 3
 class MapInfo:
 	def __init__(self,whole_map):
 		self.mapInfo = whole_map
-		
+
 #将对象以字符串形式通过指定连接发送
 def _sends(conn,data):
 	conn.send(cPickle.dumps(data))
@@ -84,7 +85,7 @@ def _ReplayFileName(aiInfo):
 	result += '.rep'
 	return result
 
-	
+
 class Prog_Run(threading.Thread):
 	def __init__(self,progPath):
 		threading.Thread.__init__(self)

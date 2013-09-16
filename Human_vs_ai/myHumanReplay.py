@@ -82,11 +82,11 @@ class SoldierUnit(AbstractUnit):
 		filename = ":" + FILE_UNIT[self.obj.kind] + ".png"
 		image = QImage(filename).convertToFormat(QImage.Format_ARGB32)
 		painter.setCompositionMode(QPainter.CompositionMode_Multiply)
-		if self.obj.kind == 6:
-			image = QImage("//image//hero_1.png")
-			painter.drawImage(QPoint(EDGE_WIDTH/2, EDGE_WIDTH/2), image.scaled(UNIT_WIDTH, UNIT_HEIGHT))
+#		if self.obj.kind == 6:
+#			image = QImage("//image//hero_1.png")
+#			painter.drawImage(QPoint(EDGE_WIDTH/2, EDGE_WIDTH/2), image.scaled(UNIT_WIDTH, UNIT_HEIGHT))
 		painter.drawImage(QPoint(EDGE_WIDTH/2, EDGE_WIDTH/2), image.scaled(UNIT_WIDTH, UNIT_HEIGHT,
-																		   Qt.IgnoreAspectRatio))
+				       				   Qt.IgnoreAspectRatio))
 		painter.restore()
 
 
