@@ -25,6 +25,7 @@ WaitForCommand=QWaitCondition()
 WaitForHero=QWaitCondition()
 WaitForAni=QWaitCondition()
 WaitForIni=QWaitCondition()
+WaitForReplay=QWaitCondition()
 mutex = QMutex()
 #tmp
 #for debug
@@ -40,7 +41,7 @@ class AiThread(QThread):
 
 		self.mutex = QMutex()
 		self.closed = False#close标识以便强制关闭线程
-
+		self.replay_mode = False
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
 		
@@ -104,10 +105,11 @@ class AiThread(QThread):
 			winner = sio._recvs(self.conn)
 			self.emit(SIGNAL("gameWinner"),winner)
 	#	是否存储回放文件
-		replay_mode = False
-		sio._sends(self.conn,replay_mode)
-		
-		
+                if not self.isStopped():
+                        global WaitForReplay
+                        WaitForReplay.wait()
+
+                        sio._sends(self.conn,replay_mode)
 		self.conn.close()
 
 class Ui_Player(QThread):
@@ -597,10 +599,12 @@ class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
 		QMessageBox.information(self, "Game Winner", "player %s win the game" %winner)
 		#需要其他特效再加
 		answer = QMessageBox.question(self, _frUtf("保存"), _frUtf("是否保存回放文件?"),
-									  QMessageBox.Yes, QMessageBox.No)
+                                              QMessageBox.Yes, QMessageBox.No)
+                global WaitForReplay
 		if answer == QMessageBox.Yes:
-			#获取回放文件名字,开始把每个回合信息写入(也可以考虑在游戏一开始就设置这个选择)
-			pass
+			#把每个回合信息写入(也可以考虑在游戏一开始就设置这个选择)
+                        self.aiThread.replay_mode = True
+                WaitForReplay.wakeAll()
 		#一些清理工作，方便开始下一局游戏,
 		self.started = False
 		self.updateUi()
