@@ -1,0 +1,25 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+  <file alias="saber.png">image/saber.png</file>
+  <file alias="lancer.png">image/lancer.png</file>
+  <file alias="archer.png">image/archer.png</file>
+  <file alias="dragon_rider.png">image/dragon_rider.png</file>
+  <file alias="warrior.png">image/warrior.png</file>
+  <file alias="wizard.png">image/wizard.png</file>
+  <file alias="hero_1.png">image/hero_1.png</file>
+  <file alias="hero_2.png">image/hero_2.png</file>
+  <file alias="hero_3.png">image/hero_3.png</file>
+  <file alias="plain.png">image/plain.png</file>
+  <file alias="mountain.png">image/mountain.png</file>
+  <file alias="forest.png">image/forest.png</file>
+  <file alias="barrier.png">image/barrier.png</file>
+  <file alias="turret.png">image/turret.png</file>
+  <file alias="trap.png">image/trap.png</file>
+  <file alias="temple.png">image/temple.png</file>
+  <file alias="gear.png">image/gear.png</file>
+  <file alias="attack_cursor.png">image/attack_cursor.png</file>
+  <file alias="skill_cursor.png">image/skill_cursor.png</file>
+  <file alias="normal_cursor.png">image/normal_cursor.png</file>
+  <file alias="attack_ind1.png">image/attack_ind1.png</file>
+</qresource>
+</RCC>

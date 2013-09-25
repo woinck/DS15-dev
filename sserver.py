@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 
-import sio, socket, time, threading, os
+
+import sio, socket, time, threading, os,subprocess
+
 from field_shelve import *
 
 #from sclientui import UI_Run
@@ -65,8 +67,8 @@ class Sui(threading.Thread):
 		if AIPath == None:
 			conn.send('|')
 		else:
-			os.system('cmd /c start %s' %(AIPath))
-	
+#			os.system('cmd /c start %s' %(AIPath))
+                        subprocess.call(['python', AIPath])
 	def run(self):
 		global gProcess,rProcess
 		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch
@@ -410,8 +412,16 @@ class Sai(threading.Thread):
 			connAI[i].send('|')
 			connAI[i].close()
 
-		
 
+			
+#class Prog_Run(threading.Thread):
+#	def __init__(self,progPath):
+#		threading.Thread.__init__(self)
+#		self.progPath=progPath
+#					
+#	def run(self):
+#		os.system('cmd /c start %s' %(self.progPath))
+#                subprocess.call(['python', self.progPath])
 
 global mapInfo,heroType,aiInfo
 global rbInfo,reInfo,rCommand
