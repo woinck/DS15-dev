@@ -66,7 +66,7 @@ def _recvs(conn):
 	else:
 		return cPickle.loads(result)
 
-#从文件读取地图信息
+#从文件读取回放信息
 def _ReadFile(filePath):
 	with open(filePath,'r') as read:
 		result = cPickle.load(read)

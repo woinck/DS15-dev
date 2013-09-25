@@ -89,7 +89,7 @@ class AiThread(QThread):
 			print winner
 		
 		#	是否存储回放文件
-			replay_mode = False
+			replay_mode = True
 			sio._sends(self.conn,replay_mode)
 		
 		self.conn.close()

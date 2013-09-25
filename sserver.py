@@ -142,6 +142,7 @@ class Sui(threading.Thread):
 				gProc.wait()
 			else:
 				sio._sends(connUI,(mapInfo,base,aiInfo))
+				replayInfo.append((mapInfo,base,aiInfo))
 				gProcess = sio.ROUND
 				gProc.notifyAll()
 				gProc.release()
