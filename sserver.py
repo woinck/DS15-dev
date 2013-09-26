@@ -40,7 +40,7 @@ def _SocketConnect(host,port,connName,list = 1):
 			exit(1)
 		
 		#每有一个socket连接成功（两个AI算一个socket）则进程标记+1
-		print '\n%s%d connected: %s\n' %(connName,i+1,result[-1][1]),
+		print '\n%s%d connected: %s\n' %(connName,i,result[-1][1]),
 		if gProc.acquire():
 			gProcess += 1
 			gProc.notifyAll()
@@ -60,6 +60,7 @@ class Sui(threading.Thread):
 	def run_AI(self,conn,AIPath):
 		if AIPath == None:
 			conn.send('|')
+			print 'i sent it!!!!!!!!!!!!'
 		else:
 			os.system('cmd /c start %s' %(AIPath))
 #			subprocess.call(['python', AIPath])
@@ -97,6 +98,8 @@ class Sui(threading.Thread):
 		(mapInfo,base)=read_from(gameMapPath)
 				
 		#field.get_map(gameMapPath, mapInfo, base)
+		
+		print 'gameAIPath: ',gameAIPath#for test
 		
 		#运行AI线程及文件
 		while gProc.acquire():
@@ -332,6 +335,7 @@ class Sai(threading.Thread):
 				connAI[i].settimeout(sio.AI_CMD_TIMEOUT)
 			else:
 				connAI[i].settimeout(None)
+				print "settime out:::",i#for test
 		
 		#向AI传输地图信息并接收AI的反馈
 		while gProc.acquire():
@@ -339,15 +343,19 @@ class Sai(threading.Thread):
 				gProc.wait()
 			else:
 				for i in range(2):
+					print 'i::::::::::::::::',i
 					try:
 						sio._sends(connAI[i],(mapInfo,base))
 						aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
+						print aiInfoTemp,heroTypeTemp
+						print 'ai',i,'\'s Info received'
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
 					
 					except socket.timeout:
-						print 'fail to receive AI',i+1,'\'s information，default settings will be used...'
-						aiInfo.append('Player'+str(i+1))
+						print "timeout::::",i#for test
+						print 'fail to receive AI',i,'\'s information, default settings will be used...'
+						aiInfo.append('Player'+str(i))
 						heroType.append(6)
 						
 				for i in range(2):
