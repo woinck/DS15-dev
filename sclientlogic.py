@@ -36,11 +36,14 @@ while not over and turn < basic.TURN_MAX:
                 roundBeginInfo = basic.Round_Begin_Info((j,i), move_range, base, map_temple)
                 #发送每回合的开始信息：
                 sio._sends(conn, roundBeginInfo)
+                print 'rbInfo sent to platform'
                 #接收AI的命令：
                 roundCommand = sio._recvs(conn)
+                print 'cmd received'
                 roundEndInfo = main.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
                 #发送每回合结束时的信息：
                 sio._sends(conn, roundEndInfo)
+                print 'reInfo sent'
                 over = roundEndInfo.over
                 if over:
                     break

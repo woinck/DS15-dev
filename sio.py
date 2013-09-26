@@ -4,7 +4,7 @@ import cPickle, basic, threading, os
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 0
 #游戏运行参数
-DEBUG_MODE = 0 
+DEBUG_MODE = 1
 '''
 关于DEGUB_MODE:
 为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
@@ -42,8 +42,9 @@ OVER = 8
 WINNER_SET = 9
 
 RBINFO_SET = 1
-RCOMMAND_SET = 2
-REINFO_SET = 3
+RBINFO_SENT_TO_UI = 2
+RCOMMAND_SET = 3
+REINFO_SET = 4
 
 
 class MapInfo:

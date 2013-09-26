@@ -23,6 +23,8 @@
   <file alias="normal_cursor.png">image/normal_cursor.png</file>
   <file alias="attack_ind1.png">image/attack_ind1.png</file>
   <file alias="mirror.png">image/mirror.png</file>
+  <file alias="trans0.png">image/trans0.png</file>
+  <file alias="trans1.png">image/trans1.png</file>
   <!--icon pic-->
   <file alias="gameStart.png">icons/gameStart.png</file>
   <file alias="gamePause.png">icons/gamePause.png</file>

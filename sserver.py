@@ -158,12 +158,14 @@ class Sui(threading.Thread):
 		while gProcess < sio.OVER:
 			while rProc.acquire():
 				print rProcess
-				if rProcess == sio.START:
+				if rProcess != sio.RBINFO_SET:
 					rProc.wait()
 				else:
 					#发送回合信息
 					sio._sends(connUI,rbInfo)
-					print 'rbInfo sent'
+					print 'rbInfo sent to ui'
+					rProcess = sio.RBINFO_SENT_TO_UI
+					rProc.notifyAll()
 					rProc.release()
 					break
 				rProc.release()
@@ -175,7 +177,7 @@ class Sui(threading.Thread):
 				else:
 					#发送回合信息
 					sio._sends(connUI,(rCommand,reInfo))
-					print 'reInfo sent'#for test
+					print 'reInfo sent to ui'#for test
 					#回合信息存至回放列表中
 					replayInfo.append([rbInfo,rCommand,reInfo])
 					rProcess = sio.START
@@ -269,6 +271,7 @@ class Slogic(threading.Thread):
 					rProc.wait()
 				else:
 					rbInfo = sio._recvs(connLogic)
+					print 'rbInfo received from logic'#for test
 					rProcess = sio.RBINFO_SET
 					rProc.notifyAll()
 					rProc.release()
@@ -283,6 +286,7 @@ class Slogic(threading.Thread):
 				else:
 					sio._sends(connLogic,rCommand)
 					reInfo = sio._recvs(connLogic)
+					print 'reInfo received from logic'
 					rProc.release()
 					break
 				rProc.release()
@@ -347,7 +351,7 @@ class Sai(threading.Thread):
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
 					except socket.timeout:
-						print '未收到AI',i+1,'的信息，将采用默认值'
+						print 'pigpigpigpigpigpig~~~~~~~~~~~~~~~~~~~~~~~~~~~未收到AI',i+1,'的信息，将采用默认值'
 						aiInfo.append('Player'+str(i+1))
 						heroType.append(6)
 				for i in range(2):
@@ -368,7 +372,7 @@ class Sai(threading.Thread):
 
 			#将回合开始信息发送至AI，并接收AI的命令
 			while rProc.acquire():
-				if rProcess != sio.RBINFO_SET:
+				if rProcess != sio.RBINFO_SENT_TO_UI:
 					rProc.wait()
 				else:
 					#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
@@ -385,7 +389,7 @@ class Sai(threading.Thread):
 					
 					
 					sio._sends(connAI[rbInfo.id[0]],rbInfo)
-					print 'rbInfo sent'
+					print 'rbInfo sent to ai '
 					try:
 						rCommand = sio._recvs(connAI[rbInfo.id[0]])
 					except socket.timeout:
