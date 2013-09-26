@@ -316,9 +316,9 @@ class HumanReplay(QGraphicsView):
 		self.height = len(map_)
 		for i in range(self.height):
 			for j in range(self.width):
-				new_map = MapUnit(j,i,map_[i][j])
+				new_map = MapUnit(i,j,map_[i][j])
 				self.scene.addItem(new_map)
-				new_map.setPos(j,i)
+				new_map.setPos(i,j)
 				self.MapList.append(new_map)
 
 	def setSoldier(self, units):

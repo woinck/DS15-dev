@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import cPickle, basic, threading, os
+import cPickle, basic, threading, os, time
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 0
 #游戏运行参数

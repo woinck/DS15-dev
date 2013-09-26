@@ -43,6 +43,14 @@ while not ko and turn < basic.TURN_MAX:
 				roundEndInfo = main.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
 				#发送每回合结束时的信息：
 				
+				#for test
+				print '######position######'
+				for k in roundEndInfo.base:
+					for l in k:
+						print l.position
+				print '~~~~~~position~~~~~~'
+				
+				
 				ko = roundEndInfo.over
 				
 				#下两行为平台组补充
@@ -50,7 +58,7 @@ while not ko and turn < basic.TURN_MAX:
 					roundEndInfo.over = True
 					
 				sio._sends(conn, roundEndInfo)
-				print 'reInfo sent'
+				print 'reInfo sent, reInfo.over ==', roundEndInfo.over
 				if ko:
 					break
 		if ko:
