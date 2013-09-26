@@ -330,8 +330,10 @@ class Sai(threading.Thread):
 		for i in range(2):
 			if timeoutSwitch[i]==1:
 				connAI[i].settimeout(sio.AI_CMD_TIMEOUT)
+				print '1111111111111'
 			else:
 				connAI[i].settimeout(None)
+				print '2222222222222'
 		
 		#向AI传输地图信息并接收AI的反馈
 		while gProc.acquire():
@@ -346,7 +348,7 @@ class Sai(threading.Thread):
 						heroType.append(heroTypeTemp)
 					
 					except socket.timeout:
-						print 'fail to receive AI',i+1,'\'s information，default settings will be used...'
+						print 'fail to receive AI',i+1,'\'s information,default settings will be used...'
 						aiInfo.append('Player'+str(i+1))
 						heroType.append(6)
 						

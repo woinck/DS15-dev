@@ -191,7 +191,7 @@ class HumanReplay(QGraphicsView):
 			#在这里判断mirror传递是否会成功，并根据mirror传递是否成功画出route和攻击范围
 			if item.obj.kind == basic.MIRROR:
 				#print "i am on mirror, to judge"#for test
-				self.transPoint = item.obj.out
+				self.transPoint = (item.obj.out[1], item.obj.out[0])
 				items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False))
 				for it in items:
 					if isinstance(it, SoldierUnit):
@@ -316,9 +316,9 @@ class HumanReplay(QGraphicsView):
 		self.height = len(map_)
 		for i in range(self.height):
 			for j in range(self.width):
-				new_map = MapUnit(j,i,map_[i][j])
+				new_map = MapUnit(i,j,map_[i][j])
 				self.scene.addItem(new_map)
-				new_map.setPos(j,i)
+				new_map.setPos(i,j)
 				self.MapList.append(new_map)
 
 	def setSoldier(self, units):

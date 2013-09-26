@@ -32,14 +32,31 @@ mutex = QMutex()
 DEFAULT_MAP = os.getcwd() + "//new_map.map"
 DEFAULT_AI = os.getcwd() + "//sclientai.py"
 
-#def mapReverse(maps):
-#    new_map = []
-#    for i in range(len(maps[0])):
-#        new_map.append([])
-#        for j in range(len(maps)):
-#            new_map[i].append(maps[j][i])
-#    return new_map
+def mapReverse(maps):
+    new_map = []
+    for i in range(len(maps[0])):
+        new_map.append([])
+        for j in range(len(maps)):
+            new_map[i].append(maps[j][i])
+    return new_map
 
+def baseReverse(base):
+	for i in range(2):
+		for j in range(len(base[0])):
+			base[i][j].position = (base[i][j].position[1], base[i][j].position[0])
+
+def listReverse(list):
+	for i in range(len(list)):
+		list[i] = (list[i][1], list[i][0])
+
+def begInfoReverse(begInfo):
+	baseReverse(begInfo.base)
+	listReverse(begInfo.range)
+	listReverse(begInfo.temple)
+	
+def endInfoReverse(endInfo):
+	baseReverse(endInfo.base)
+	listReverse(endInfo.route)
 class ConnectionError(Exception):
 	def __init__(self, value = ""):
 		super(ConnectionError, self).__init__()
@@ -83,7 +100,7 @@ class AiThread(QThread):
 		#print temp#for test
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
 		frInfo = sio._recvs(self.conn)
-		mapInfo = mapReverse(mapInfo)#debugging
+		#mapInfo = mapReverse(mapInfo)#debugging
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
 		print "first rbInfo"
 		rCommand, reInfo = sio._recvs(self.conn)
