@@ -67,8 +67,8 @@ class Sui(threading.Thread):
 		if AIPath == None:
 			conn.send('|')
 		else:
-#			os.system('cmd /c start %s' %(AIPath))
-                        subprocess.call(['python', AIPath])
+			os.system('cmd /c start %s' %(AIPath))
+#			subprocess.call(['python', AIPath])
 	def run(self):
 		global gProcess,rProcess
 		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch
@@ -414,13 +414,13 @@ class Sai(threading.Thread):
 
 
 			
-#class Prog_Run(threading.Thread):
-#	def __init__(self,progPath):
-#		threading.Thread.__init__(self)
-#		self.progPath=progPath
-#					
-#	def run(self):
-#		os.system('cmd /c start %s' %(self.progPath))
+class Prog_Run(threading.Thread):
+	def __init__(self,progPath):
+		threading.Thread.__init__(self)
+		self.progPath=progPath
+					
+	def run(self):
+		os.system('cmd /c start %s' %(self.progPath))
 #                subprocess.call(['python', self.progPath])
 
 global mapInfo,heroType,aiInfo

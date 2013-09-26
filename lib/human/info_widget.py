@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 
 #Three dictionaries for show types of map or unit
 NumToMapType = {0:"PLAIN",1:"MOUNTAIN",2:"FOREST",3:"BARRIER",4:"TURRET",
-                 5:"TRAP",6:"TEMPLE",7:"GEAR"}
+                 5:"TRAP",6:"TEMPLE",7:"GEAR",8:"MIRROR"}
 NumToUnitType = {0:"SABER",1:"LANCER",2:"ARCHER",3:"DRAGON RIDER",
                 4:"WARRIOR", 5:"WIZARD", 6:"HERO_1", 7:"HERO_2",
                 8:"HERO_3"}

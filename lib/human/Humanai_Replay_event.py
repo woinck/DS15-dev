@@ -4,8 +4,10 @@
 
 #改掉pos property的setter使得corX一起变
 #动画等特效部分,没完成
+DEBUGGER_USE = 0
 from myHumanReplay import *
 import sys,copy
+from functools import partial
 from myGetRoute import *
 class REPLAYERROR(Exception):
 	def __init__(self, value = ""):
@@ -34,7 +36,7 @@ class REPLAYERROR(Exception):
 		
 class HumanReplay(QGraphicsView):
 	commBeg = pyqtSignal()
-        moveFinished = pyqtSignal()
+	moveFinished = pyqtSignal()
 	lastAgain = pyqtSignal()
 	oprFinished = pyqtSignal()
 	endGame = pyqtSignal()
@@ -43,12 +45,20 @@ class HumanReplay(QGraphicsView):
 	def __init__(self, scene, parent = None):
 		super(HumanReplay, self).__init__(parent)
 
+		#设置透明
+		self.setStyleSheet("background: transparent; border:0px")
+	 #   self.setWindowFlags(Qt.FramelessWindowHint)
+	 #   self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+	 #   self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+	  #  self.setWindowOpacity(0.6)
 		self.scene = scene
 		self.setScene(self.scene)
 		self.run = False
 		self.animation = None
 		self.setMouseTracking(True)
 		#游戏记录变量
+		self.nowRound = 0
+		self.nowStatus = 0
 		self.iniMapInfo = None
 		self.latestStatus = 1
 		self.latestRound = 0
@@ -117,12 +127,8 @@ class HumanReplay(QGraphicsView):
 #		self.stateMachine.start()
 	#begin to get command
 	def GetCommand(self):
-#		QTimer.singleShot(0, self, SLOT("getCommand()"))
-#	@pyqtSlot()
-#	def getCommand(self):
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
-#		self.commBeg.emit()
-		print "emit,get command getget~~~~~~~~~~~~~~"
+		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
 
 	#event handlers
@@ -133,38 +139,38 @@ class HumanReplay(QGraphicsView):
 		pos = event.pos()
 		if not self.mouseUnit.isVisible():
 			self.mouseUnit.setVisible(True)
-		item = self.itemAt(pos)
-		if not item:
+		items = self.items(pos)
+		if not items:
 			return
+		item = items[-1]
 		if self.mouseUnit.corX == item.corX and self.mouseUnit.corY == item.corY:
 			return
 		self.mouseUnit.setPos(item.corX, item.corY)
 
 	def mousePressEvent(self, event):
-                if not self.run:
+		if not self.run:
 			QGraphicsView.mousePressEvent(self, event)
 			return
 
 			
 		pos = event.pos()
-		item = self.itemAt(pos)
 		items = self.items(pos)
-		if not item:
+		if not items:
 			return
-		#右键发出信息,不设置focus
+		#右键发出信息,但不设置focus
+		for it in items:
+			if isinstance(it, SoldierUnit):
+				self.emit(SIGNAL("unitSelected"),it.obj)
+				print "emit unit", it.obj.kind
+			elif isinstance(it, MapUnit):
+				self.emit(SIGNAL("mapSelected"), it.obj)
+				print "emit map", it.obj.kind
+				item = it
 		if event.button() == Qt.RightButton:
-			for it in items:
-				if isinstance(it, SoldierUnit):
-					self.emit(SIGNAL("unitSelected"),it.obj)
-					print "emit unit", it.obj.kind
-				elif isinstance(it, MapUnit):
-					self.emit(SIGNAL("mapSelected"), it.obj)
-					print "emit map", it.obj.kind
 			return
-		#还没有做发出展示信号的部分
+
 		if not self.focusUnit.isVisible():
 			self.focusUnit.setVisible(True)
-
 		if self.focusUnit in items:
 			return
 
@@ -177,6 +183,14 @@ class HumanReplay(QGraphicsView):
 			if (item.corX, item.corY) not in self.move_range_list:
 				return
 			self.moveToPos = (item.corX, item.corY)
+			#在这里判断mirror传递是否会成功，并根据mirror传递是否成功画出route和攻击范围
+			if item.obj.kind == basic.MIRROR:
+				self.transPoint = item.obj.out
+				items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False))
+				for it in items:
+					if isinstance(it, SoldierUnit):
+						self.transPoint = None
+						break
 			self.moveFinished.emit()
 			return
 		if self.now_state == self.State_Target:
@@ -198,11 +212,14 @@ class HumanReplay(QGraphicsView):
 			return
 		#攻击
 		if event.key() == Qt.Key_A:
+			if self.nowMoveUnit.obj.kind == basic.WIZARD:
+				return
 			self.Operation = 1
 			self.oprFinished.emit()
 		#skill
 		elif event.key() == Qt.Key_S:
-			#判断该单位是否可以使用skill
+			if self.nowMoveUnit.obj.kind < 5 or self.nowMoveUnit.obj.kind == 7:
+				return
 			self.Operation = 2
 			self.oprFinished.emit()
 		#待机
@@ -221,29 +238,36 @@ class HumanReplay(QGraphicsView):
 		self.resetToPlay()
 
 		if now_state == self.State_No_Comm:
-			self.Operation = self.moveToPoint = self.command = None
+			self.Operation = self.moveToPos = self.command = None
 		elif now_state == self.State_Move:
 			print "move state"
 			if isinstance(self.nowMoveUnit, SoldierUnit):
+				self.transPoint = None
 				self.focusUnit.setPos(self.nowMoveUnit.corX, self.nowMoveUnit.corY)
-				self.move_range_list = getMoveArrange(self.getMap(self.latestRound,0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id)
+				self.move_range_list = getMoveArrange(self.getMap(self.latestRound,0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id)#改成逻辑的函数
 				self.drawArrange(self.move_range_list,self.tmp_move_list)
 				#setCursor
 		elif now_state == self.State_Opr:
 			if isinstance(self.nowMoveUnit, SoldierUnit):
-				self.route_ind_list = GetRoute(self.getMap(self.latestRound, 0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id,self.moveToPos)
+				self.route_ind_list = GetRoute(self.getMap(self.latestRound, 0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id,self.moveToPos)#改成逻辑的函数
 				self.drawRoute(self.route_ind_list,self.tmp_route_list)
+				#镜子
+				if self.transPoint:
+					#self.moveToPos = self.transPoint
+					self.drawRoute([self.transPoint], self.tmp_route_list)
 		elif now_state == self.State_Target:
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png"),0,0))
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, self.moveToPos)
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
 			elif self.Operation == 2:
-				self.setCursor(QCursor(QPixmap(":skill_cursor.png"),0,0))
+			  #  self.setCursor(QCursor(QPixmap(":skill_cursor.png"),0,0))
+				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
+				self.attack_range_list = poses
+				self.drawArrange(poses, self.tmp_attack_list)
+
 				#not completed
-#				self.
-#			elif self.Operation == "N":
-#				self.emit("commandComplete")
+
 
 	def on_Exited(self):
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png"),0,0))
@@ -264,7 +288,7 @@ class HumanReplay(QGraphicsView):
 				ind_unit.setVisible(False)
 			list_.append(ind_unit)
 			
-	#得到指定回合的地图,通过每回合mapchange计算
+	#得到指定回合的地图,通过每回合mapchange计算,也可以采用占用内存提高速度的办法一开始就计算好每回合地图
 	def getMap(self, round_, status):
 		map_ = copy.copy(self.iniMapInfo)
 		for i in range(round_):
@@ -272,8 +296,9 @@ class HumanReplay(QGraphicsView):
 				for change in self.mapChangeInfo[i]:
 					map_[change[1][1]][change[1][0]] = basic.Map_Basic(change[0])
 		if status:
-			change = self.mapChangeInfo[round_]
-			map_[change[1][1]][change[1][0]] = basic.Map_Basic(change[0])
+			change_ = self.mapChangeInfo[round_]
+			for change in change_:
+				map_[change[1][1]][change[1][0]] = basic.Map_Basic(change[0])
 		return map_
 
 	def setMap(self, map_):
@@ -291,11 +316,21 @@ class HumanReplay(QGraphicsView):
 		self.resetUnit()
 		for i in range(2):
 			for j in range(len(units[i])):
+				#如果生命小于0
 				new_unit = SoldierUnit(units[i][j],(i,j))
+				self.UnitBase[i].append(new_unit)
+				if units[i][j].life < 0:
+					continue
 				self.scene.addItem(new_unit)
 				new_unit.setPos(new_unit.corX, new_unit.corY)
-				self.UnitBase[i].append(new_unit)
+
 		print "unitbase",len(self.UnitBase)#for test
+
+ #   def tmp_setSoldier(self, id_):
+ #	   #设置一下末尾位置，镜子传递
+ #	   unit_pos = self.gameEndInfo[self.nowRound][1].base[id_[0]][id_[1]].position
+#		self.UnitBase[id_[0]][id_[1]].setPos(unit_pos)
+
 
 	def Initialize(self, begInfo,frInfo):
 		self.setMap(begInfo.map)
@@ -325,6 +360,7 @@ class HumanReplay(QGraphicsView):
 	#从当前回合开始播放至这一回合结束
 	def TerminateAni(self):
 		if self.animation:
+
 			self.animation.stop()
 			self.animation.deleteLater()
 			self.animation = None
@@ -335,43 +371,43 @@ class HumanReplay(QGraphicsView):
 	def moveAnimation(self, move_unit, move_pos):
 		TIME_PER_GRID = 800
 		
-		route = self.gameEndInfo[self.nowRound][1].route
-                print "route: ", route#for test
-		#GetRoute(self.getMap(self.nowRound,0),self.gameBegInfo[self.nowRound].base,move_unit.idNum,move_pos)
+		route = GetRoute(self.getMap(self.nowRound,0),self.gameBegInfo[self.nowRound].base,move_unit.idNum,move_pos)
 		
-		steps = len(route) - 1
+		steps = len(route)
 #		items = []
 
 		movAnim = QPropertyAnimation(move_unit, "pos")
 		movAnim.setDuration(steps * TIME_PER_GRID)
 		movAnim.setStartValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))
-		if steps:
-			for i in range(steps + 1):
-				pos = GetPos(route[i][0], route[i][1])
-				movAnim.setKeyValueAt(float(i)/steps, pos)
+
+		for i in range(steps):
+			pos = GetPos(route[i][0], route[i][1])
+			movAnim.setKeyValueAt(float(i + 1)/steps, pos)
+		print route
 		if route:
 			movAnim.setEndValue(GetPos(route[-1][0],route[-1][1]))
 		else:
 			movAnim.setEndValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))
 		return movAnim, []
 
-	def attackAnimation(self, move_unit,move_pos, attack_target, effect):
+	def attackAnimation(self, move_unit,move_pos, attack_target, target_pos, effect):
 		ATTACK_TIME = 1500
 		TOTAL_TIME = 2000
 
 		if effect == -1:#超出范围或未攻击(已死亡)
+			#可以增加逻辑展示超出范围等信息(not nessasary)
 			return QPauseAnimation(500), []
-		print "attack kindlalala", move_unit.obj.kind
+
 		attackInd = AttackIndUnit(move_pos[0], move_pos[1],":attack_ind1.png")# %move_unit.obj.kind)
-                attackInd.setOpacity(0)
-		targetInd = TargetIndUnit(self.UnitBase[attack_target[0]][attack_target[1]].corX,self.UnitBase[attack_target[0]][attack_target[1]].corY)
-                targetInd.setOpacity(0)
+		attackInd.setOpacity(0)
+		targetInd = TargetIndUnit(0,0)
+		targetInd.setOpacity(0)
 		sound = QSound(":attack_sound.wav")
 
 		self.scene.addItem(attackInd)
 		self.scene.addItem(targetInd)
 		attackInd.setPos(attackInd.corX, attackInd.corY)
-		targetInd.setPos(targetInd.corX, targetInd.corY)
+		targetInd.setPos(target_pos[0],target_pos[1])
 
 		showAtkAnim = QParallelAnimationGroup()
 		ani = QPropertyAnimation(attackInd, "pos")
@@ -384,7 +420,7 @@ class HumanReplay(QGraphicsView):
 		ani = QPropertyAnimation(attackInd, "opacity")
 		ani.setDuration(TOTAL_TIME)
 		ani.setStartValue(0)
-                ani.setKeyValueAt(0.1, 1)
+		ani.setKeyValueAt(0.1, 1)
 		ani.setKeyValueAt(0.8, 0.9)
 		ani.setKeyValueAt(0.9, 0.8)
 		ani.setEndValue(0)
@@ -393,7 +429,8 @@ class HumanReplay(QGraphicsView):
 		ani = QPropertyAnimation(targetInd, "opacity")
 		ani.setDuration(TOTAL_TIME)
 		ani.setStartValue(0)
-                ani.setKeyValueAt(0.1, 1)
+		ani.setKeyValueAt(0.1, 1)
+		ani.setKeyValueAt(0.5, 0.7)
 		ani.setKeyValueAt(0.99, 1)
 #		ani.setKeyValueAt(1, 1)
 		ani.setEndValue(0)
@@ -406,20 +443,24 @@ class HumanReplay(QGraphicsView):
 								  )
 		else:
 			label = EffectIndUnit("Miss")
-		label.setVisible(False)
+		label.setOpacity(0)
 		self.scene.addItem(label)
-		label.setPos(GetPos(targetInd.corX, targetInd.corY)+QPointF(0,-20))
+		label.setPos(GetPos(targetInd.corX, targetInd.corY)+QPointF(0,-10))
 		ani = QPropertyAnimation(label, "opacity")
 		ani.setDuration(TOTAL_TIME)
-		ani.setStartValue(1)
+		ani.setStartValue(0)
+		ani.setKeyValueAt(0.05, 1)
 		ani.setEndValue(0)
-
 		showAtkAnim.addAnimation(ani)
+
 		ani = QPropertyAnimation(label, "pos")
 		ani.setDuration(TOTAL_TIME)
-		ani.setStartValue(label.pos())
-		ani.setEndValue(label.pos() + QPointF(0,-20))
+		pos1 = label.pos()
+		ani.setStartValue(pos1)
+		ani.setEndValue(pos1 + QPointF(0,-30))
 		ani.setEasingCurve(QEasingCurve.OutCubic)
+		showAtkAnim.addAnimation(ani)
+
 		item = [attackInd, targetInd, label]
 		return showAtkAnim, item
 
@@ -454,31 +495,165 @@ class HumanReplay(QGraphicsView):
 
 		return dieAnim, [dieInd]
 
+	def transAnimation(self, move_unit, pos1, pos2):
+		items = []
+		ani = QParallelAnimationGroup()
+		
+		item = TransIndUnit(0, pos1[0], pos1[1])
+		self.scene.addItem(item)
+		item.setPos(item.corX, item.corY)
+		item.setOpacity(0)
+		items.append(item)
+		anim = QPropertyAnimation(item, "opacity")
+		anim.setDuration(1500)
+		anim.setStartValue(0)
+		anim.setKeyValueAt(0.1, 1)
+		anim.setKeyValueAt(0.9, 0.8)
+		anim.setEndValue(0)
+		ani.addAnimation(anim)
+		
+		item = TransIndUnit(0, pos2[0], pos2[1])
+		self.scene.addItem(item)
+		item.setPos(item.corX, item.corY)
+		item.setOpacity(0)
+		items.append(item)
+		anim = QPropertyAnimation(item, "opacity")
+		anim.setDuration(1500)
+		anim.setStartValue(0)
+		anim.setKeyValueAt(0.3, 1)
+		anim.setKeyValueAt(0.95, 0.8)
+		anim.setEndValue(0)
+		ani.addAnimation(anim)
+
+		pos1 = GetPos(pos1[0], pos1[1])
+		pos2 = GetPos(pos2[0], pos2[1])
+		anim = QPropertyAnimation(move_unit, "pos")
+		anim.setDuration(1500)
+		anim.setStartValue(pos1)
+		anim.setKeyValueAt(0.4, pos1)
+		anim.setKeyValueAt(0.5,pos2)
+		anim.setEndValue(pos2)
+		ani.addAnimation(anim)
+
+		anim = QPropertyAnimation(move_unit, "opacity")
+		anim.setDuration(1500)
+		anim.setStartValue(1)
+		anim.setKeyValueAt(0.1, 0.5)
+		anim.setKeyValueAt(0.2, 1)
+		anim.setKeyValueAt(0.3, 0.5)
+		anim.setKeyValueAt(0.4, 0)
+		anim.setKeyValueAt(0.5, 0)
+		anim.setKeyValueAt(0.6, 1)
+		anim.setEndValue(1)
+		ani.addAnimation(anim)
+
+		return ani, items
+
+	def skillAnimation(self, unit_move, target_unit,target):
+		items = []
+		anim = QParallelAnimationGroup()
+
+		kind = unit_move.obj.kind
+		if kind == 8:
+			eff_ind = EffectIndUnit(QString.fromUtf8("能力提升"))
+		else:
+			print "nowRound:",self.nowRound,"len",len(self.gameEndInfo),"targ: ", target
+			healthier = self.gameEndInfo[self.nowRound][1].base[target_unit[0]][target_unit[1]].life - \
+				self.gameBegInfo[self.nowRound].base[target_unit[0]][target_unit[1]].life
+			eff_ind = EffectIndUnit("+ %d"%healthier)
+		self.scene.addItem(eff_ind)
+		eff_ind.setOpacity(0)
+		eff_ind.setPos(GetPos(target[0], target[1]) + QPointF(0, -20))
+		ani = QPropertyAnimation(eff_ind, "pos")
+		ani.setDuration(1000)
+		ani.setStartValue(GetPos(target[0],target[1]) + QPointF(0, -20))
+		ani.setEndValue(GetPos(target[0], target[1]) + QPointF(0,-50))
+		ani.setEasingCurve(QEasingCurve.OutCubic)
+		anim.addAnimation(ani)
+		items.append(eff_ind)
+
+		ani = QPropertyAnimation(eff_ind, "opacity")
+		ani.setDuration(1000)
+		ani.setStartValue(0)
+		ani.setKeyValueAt(0.1, 1)
+		ani.setKeyValueAt(0.9, 1)
+		ani.setEndValue(0)
+		anim.addAnimation(ani)
+
+		text = "回复技能" if kind == 8 else "某某光环"
+		kind_ind = EffectIndUnit(QString.fromUtf8(text))
+		self.scene.addItem(kind_ind)
+		kind_ind.setOpacity(0)
+		pos_ = self.gameEndInfo[self.nowRound][1].base[unit_move.idNum[0]][unit_move.idNum[1]].position
+		pos_ = GetPos(pos_[0], pos_[1])
+		kind_ind.setPos(pos_ + QPointF(0, -10))
+		ani = QPropertyAnimation(kind_ind, "pos")
+		ani.setDuration(1000)
+		ani.setStartValue(pos_ + QPointF(0, -20))
+		ani.setEndValue(pos_ + QPointF(0,-50))
+		ani.setEasingCurve(QEasingCurve.OutCubic)
+		anim.addAnimation(ani)
+		items.append(kind_ind)
+
+		
+		ani = QPropertyAnimation(kind_ind, "opacity")
+		ani.setDuration(1000)
+		ani.setStartValue(0)
+		ani.setKeyValueAt(0.05, 1)
+		ani.setKeyValueAt(0.9, 1)
+		ani.setEndValue(0)
+		anim.addAnimation(ani)
+
+		target_ind = TargetIndUnit(0, 0)
+		self.scene.addItem(target_ind)
+		target_ind.setPos(target[0], target[1])
+		target_ind.setOpacity(0)
+		ani = QPropertyAnimation(target_ind, "opacity")
+		ani.setDuration(1000)
+		ani.setStartValue(0)
+		ani.setKeyValueAt(0.1, 1)
+		ani.setKeyValueAt(0.5, 0.7)
+		ani.setKeyValueAt(0.9, 1)
+		ani.setEndValue(0)
+		anim.addAnimation(ani)
+		items.append(target_ind)
+
+		return anim, items
 	def Play(self):
 		#回合末没有动画,先调转再调用
+		print "play called"
 		if self.nowStatus:
 			return
 		#还没有更新完
 		if len(self.gameEndInfo) < self.nowRound + 1:
 			return
 		self.TerminateAni()
+
 		unit_id = self.gameBegInfo[self.nowRound].id
 		unit_move = self.UnitBase[unit_id[0]][unit_id[1]]
 		cmd = self.gameEndInfo[self.nowRound][0]
 		endInfo = self.gameEndInfo[self.nowRound][1]
-
+		print "begin to add animation"
 		self.animation = QSequentialAnimationGroup()
 
 		#移动动画
 		ani, item = self.moveAnimation(unit_move, cmd.move)
 		self.animation.addAnimation(ani)
 		self.animationItem.extend(item)
+		ani = QPauseAnimation(300)
+		self.animation.addAnimation(ani)
+#		self.connect(ani, SIGNAL("finished()"), partial(self.tmp_setSoldier,unit_id))
+		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
+			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
+			self.animation.addAnimation(ani)
+			self.animationItem.extend(item)
 		#attack
 		if cmd.order == 1:
-			ani, item = self.attackAnimation(unit_move, cmd.move,cmd.target, endInfo.effect[0])
+			ani, item = self.attackAnimation(unit_move, endInfo.base[unit_id[0]][unit_id[1]].position, cmd.target,
+											 self.UnitBase[cmd.target[0]][cmd.target[1]].obj.position,
+											 endInfo.effect[0])
 			self.animationItem.extend(item)
 			self.animation.addAnimation(ani)
-			print "add animation"
 			#target die
 			if endInfo.base[cmd.target[0]][cmd.target[1]].life == 0:
 				anim, item = self.dieAnimation(cmd.target)
@@ -488,31 +663,33 @@ class HumanReplay(QGraphicsView):
 			#fight back
 			anim, item = self.attackAnimation(self.UnitBase[cmd.target[0]][cmd.target[1]], (self.UnitBase[cmd.target[0]][cmd.target[1]].corX,\
 																								self.UnitBase[cmd.target[0]][cmd.target[1]].corY),
-												  unit_move.idNum, endInfo.effect[1])
+											  unit_id ,endInfo.base[unit_id[0]][unit_id[1]].position, endInfo.effect[1])
 			self.animationItem.extend(item)
+			self.animation.addAnimation(anim)
 			if endInfo.base[unit_id[0]][unit_id[1]].life == 0:
 				anim, item = self.dieAnimation(unit_id)
 				self.animation.extend(item)
 				self.animation.addAnimation(anim)
 		#skill
 		elif cmd.order == 2:
-			pass
+			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7:
+				anim, item = self.skillAnimation(unit_move, cmd.target, self.UnitBase[cmd.target[0]][cmd.target[1]].obj.position) 
+				self.animation.addAnimation(anim)
+				self.animationItem.extend(item)
+
 		#待机只暂停1秒
 		self.animation.addAnimation(QPauseAnimation(1000))
-#		self.drawRoute(route, self.animationItem)
 		self.connect(self.animation, SIGNAL("finished()"), self.moveAnimEnd)
-		self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
-		self.connect(self.animation, SIGNAL("finished()"), self.text__)
-
+		#self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
+		self.connect(self.animation, SIGNAL("finished()"), self.TerminateAni)	
 		self.animation.start()
-		#skill
-	#展示round_, status的场面
-	def text__(self):
-		self.animation = None
-	def GoToRound(self, round_, status):
 
+	#展示round_, status的场面
+	def GoToRound(self, round_, status):
+#		if self.animation:
 		self.TerminateAni()
-		if round_ * 2 + status > self.latestRound * 2 + self.latestStatus:
+
+		if round_ * 2 + status > self.latestRound * 2 + self.latestStatus or round_ < 0:
 			raise REPLAYERROR("not update to that status")
 
 		self.nowRound = round_
@@ -552,9 +729,10 @@ class HumanReplay(QGraphicsView):
 			self.scene.removeItem(item)
 		self.route_ind_list = []
 		self.tmp_route_list = []
-
+	#	self.transPoint = None
 	#供结束游戏时的完全清理,需要保存录像请在此之前提取游戏信息
 	def reset(self):
+		self.TerminateAni()
 		self.emit(SIGNAL("endGame()"))
 		self.resetToPlay()
 		self.route_ind_list = []

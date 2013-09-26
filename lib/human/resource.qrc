@@ -1,0 +1,51 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+  <!--unit pic-->
+  <file alias="saber.png">image/saber.png</file>
+  <file alias="lancer.png">image/lancer.png</file>
+  <file alias="archer.png">image/archer.png</file>
+  <file alias="dragon_rider.png">image/dragon_rider.png</file>
+  <file alias="warrior.png">image/warrior.png</file>
+  <file alias="wizard.png">image/wizard.png</file>
+  <file alias="hero_1.png">image/hero_1.png</file>
+  <file alias="hero_2.png">image/hero_2.png</file>
+  <file alias="hero_3.png">image/hero_3.png</file>
+  <file alias="plain.png">image/plain.png</file>
+  <file alias="mountain.png">image/mountain.png</file>
+  <file alias="forest.png">image/forest.png</file>
+  <file alias="barrier.png">image/barrier.png</file>
+  <file alias="turret.png">image/turret.png</file>
+  <file alias="trap.png">image/trap.png</file>
+  <file alias="temple.png">image/temple.png</file>
+  <file alias="gear.png">image/gear.png</file>
+  <file alias="attack_cursor.png">image/attack_cursor.png</file>
+  <file alias="skill_cursor.png">image/skill_cursor.png</file>
+  <file alias="normal_cursor.png">image/normal_cursor.png</file>
+  <file alias="attack_ind1.png">image/attack_ind1.png</file>
+  <file alias="mirror.png">image/mirror.png</file>
+  <!--icon pic-->
+  <file alias="gameStart.png">icons/gameStart.png</file>
+  <file alias="gamePause.png">icons/gamePause.png</file>
+  <file alias="gameEnd.png">icons/gameEnd.png</file>
+  <file alias="loadAI.png">icons/loadAI.png</file>
+  <file alias="loadMap.png">icons/loadMap.png</file>
+  <file alias="modeRun.png">icons/modeRun.png</file>
+  <file alias="modeDebug.png">icons/modeDebug.png</file>
+  <file alias="reset.png">icons/reset.png</file>
+  <file alias="icon.png">icons/icon.png</file>
+  <!--replay icon pic-->
+  <file alias="endPlay.png">image_replay/endPlay.png</file>
+  <file alias="exit.png">image_replay/exit.png</file>
+  <file alias="preStep.png">image_replay/preStep.png</file>
+  <file alias="nextStep.png">image_replay/nextStep.png</file>
+  <file alias="open.png">image_replay/open.png</file>
+  <file alias="noSound.png">image_replay/noSound.png</file>
+  <file alias="playSound.png">image_replay/playSound.png</file>
+  <file alias="playBackward.png">image_replay/playBackward0.png</file>
+  <file alias="playForward0.png">image_replay/playForward0.png</file>
+  <file alias="pause.png">image_replay/pause.png</file>
+  <!--backgroud-->
+  <file alias="replay_back.png">image_replay/replay_back.png</file>
+  <file alias="replay_mapback.png">image_replay/replay_mapback.png</file>
+</qresource>
+</RCC>

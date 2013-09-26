@@ -4,11 +4,11 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import Human_vs_ai.ui_humanvsai
-from Human_vs_ai.Humanai_Replay_event import HumanReplay
-from Human_vs_ai.info_widget import *
+import lib.human.ui_humanvsai
+from lib.human.Humanai_Replay_event import HumanReplay
+from lib.human.info_widget import *
 import basic, sio, select, os, socket
-from Human_vs_ai.herotypedlg import GetHeroTypeDlg
+from lib.human.herotypedlg import GetHeroTypeDlg
 from functools import partial
 #from AI_debugger import AiThread
 
@@ -44,11 +44,11 @@ class AiThread(QThread):
 		self.replay_mode = False
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
-		
+
 		if not sio.DEBUG_MODE:
 			server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
 			server_run.start()
-		
+
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))
@@ -242,7 +242,7 @@ class Ui_Player(QThread):
 #		#end GetCommand()
 #		pass
 
-class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
+class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	willReturn = pyqtSignal()
 	def __init__(self, parent = None):
 		super(HumanvsAi, self).__init__(parent)
@@ -352,7 +352,6 @@ class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.aiThread, SIGNAL("finished()"), self.aiThread,
 						 SLOT("deleteLater()"))
 		self.connect(self.aiThread, SIGNAL("finished()"), partial(self.on_threadF,0))
-                time.sleep(3)
 		self.playThread = Ui_Player(0, self.getComm, self)
 #		try:
 		self.playThread.initialize()
@@ -484,7 +483,6 @@ class HumanvsAi(QWidget, Human_vs_ai.ui_humanvsai.Ui_HumanvsAi):
 		self.setRoundBegInfo(frInfo)
 		self.gameBegInfo.append(frInfo)
 		#展示
-		time.sleep(1)
 		global WaitForIni
 		self.replayWindow.GoToRound(len(self.gameBegInfo)-1, 0)
 		WaitForIni.wakeAll()
