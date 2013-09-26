@@ -2,7 +2,7 @@
 # -*- coding:UTF-8 -*-
 #我自己用个人算法给队式写的搜路函数
 import copy
-
+#游戏中废弃
 def GetRoute(map_list, units_list, idNum, end_pos):
     """参量map_list为传入的二维地图数组，行列分别代表着地图上的行列;
     参量units_list为传入的二维单位数组，两行多列，行代表队伍;
@@ -61,21 +61,14 @@ def getMoveArrange(map_list, units_list, idNum):
     return arrange_list
 
 def attackDis(pos1, pos2):
-    dist = 0
-    for i in (0, 1):
-        if (pos1[i]>pos2[i]):
-            dist += pos1[i]-pos2[i]
-        else:
-            dist += pos2[i]-pos1[i]
-    return dist
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
 def getAttackRange(units_list, idNum, now_pos):
     arrange_list = []
-    row = 1 if not idNum[0] else 0
+    row = 1 - idNum[0]
     for unit in units_list[row]:
-        print attackDis(unit.position, now_pos)
-        if attackDis(unit.position, now_pos) in units_list[idNum[0]][idNum[1]].attack_range\
-                and not units_list[idNum[0]][idNum[1]].position == unit.position:
+       # print attackDis(unit.position, now_pos)
+        if unit.life > 0 and attackDis(unit.position, now_pos) in units_list[idNum[0]][idNum[1]].attack_range:
             arrange_list.append(unit.position)
     return arrange_list
 

@@ -100,6 +100,7 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 	i = unit_id[1]; j = unit_id[0]
 	attack_1 = -1; attack_2 = -1
 	route = [base[j][i].position]
+        print "move range:",move_range
 	if move_position in move_range and move_position != base[j][i].position:
 		whole_map[base[j][i].position[j]][base[j][i].position[1]].leave(base, (j, i))
 		route += available_spots(whole_map, base, unit_id, move_position)		
@@ -138,10 +139,8 @@ def end_score(score, base, over):
 					else:
 						score[i] += base[i][j].life * basic.HERO_SCORE
 		if score[1] != score[0]:
-			print 'rtr 1'
 			return int(score[1] > score[0])
 		else:
-			print 'rtr 2'
 			return -1
 	for i in [0,1]:
 		over = True
@@ -149,5 +148,4 @@ def end_score(score, base, over):
 			if j.life > 0:
 				over = False
 		if over:
-			print 'rtr 3'
 			return 1-i  

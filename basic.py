@@ -3,7 +3,7 @@ import random
 import time
 #常量采用全字母大写，变量及函数全字母小写，类名首字母大写，单词用‘—‘隔开
 random.seed(time.time())
-TURN_MAX = 10
+TURN_MAX = 3
 COORDINATE_X_MAX = 20
 COORDINATE_Y_MAX = 20
 SOLDIERS_NUMBER = 10
