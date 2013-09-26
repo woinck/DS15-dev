@@ -31,6 +31,15 @@ mutex = QMutex()
 #for debug
 DEFAULT_MAP = os.getcwd() + "//new_map.map"
 DEFAULT_AI = os.getcwd() + "//sclientai.py"
+
+#def mapReverse(maps):
+#    new_map = []
+#    for i in range(len(maps[0])):
+#        new_map.append([])
+#        for j in range(len(maps)):
+#            new_map[i].append(maps[j][i])
+#    return new_map
+
 class ConnectionError(Exception):
 	def __init__(self, value = ""):
 		super(ConnectionError, self).__init__()
@@ -74,6 +83,7 @@ class AiThread(QThread):
 		#print temp#for test
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
 		frInfo = sio._recvs(self.conn)
+		mapInfo = mapReverse(mapInfo)#debugging
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
 		print "first rbInfo"
 		rCommand, reInfo = sio._recvs(self.conn)
@@ -194,6 +204,8 @@ class Ui_Player(QThread):
 
 	def run(self):
 			mapInfo,base = sio._recvs(self.conn)
+			mapInfo = mapReverse(mapInfo)#debugging
+
 			self.emit(SIGNAL("mapRecv"), mapInfo)
 			result = self.GetHeroType(mapInfo)
 			sio._sends(self.conn, (result[0],result[1][0]))
@@ -440,6 +452,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 #		self.labelAnimation()
 
 	def on_recvC(self, cmd):
+		#tmp_move = cmd.move
+		#cmd.move = (tmp_move[1], tmp_move[0])
 		global WaitForCommand
 		try:
 			self.playThread.lock.lockForWrite()
@@ -518,6 +532,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 
 	def on_reRecv(self, rCommand, reInfo):
+		#tmp = rCommand.move
+		#rCommand.move = (tmp[1], tmp[0])
 		self.replayWindow.UpdateEndData(rCommand, reInfo)
 		self.setRoundEndInfo(rCommand, reInfo)
 		self.gameEndInfo.append((rCommand,reInfo))

@@ -167,8 +167,10 @@ class Map_Mirror(Map_Basic):
             for j in i:
                 if j.position == self.out:
                     r = False
+        print "can it be moved to out????", r#for test
         if r:
             base[unit_id[0]][unit_id[1]].move(self.out)
+            print "logic move to out!!!!", self.out#for test
         return []
 class Base_Unit:
     '''一般士兵

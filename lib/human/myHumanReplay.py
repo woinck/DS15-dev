@@ -15,6 +15,7 @@ FILE_UNIT = ["saber", "lancer", "archer", "dragon_rider", "warrior",
 FILE_MAP = ["plain", "mountain", "forest", "barrier", "turret",
                      "trap", "temple", "gear","mirror"]
 
+
 def GetPos(x, y, flag = True):
     if flag:
         return QPointF(x * (UNIT_WIDTH + EDGE_WIDTH), y * (UNIT_HEIGHT + EDGE_WIDTH))

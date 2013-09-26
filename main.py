@@ -100,10 +100,12 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 	i = unit_id[1]; j = unit_id[0]
 	attack_1 = -1; attack_2 = -1
 	route = [base[j][i].position]
+        print "move range:",move_range
 	if move_position in move_range and move_position != base[j][i].position:
 		whole_map[base[j][i].position[j]][base[j][i].position[1]].leave(base, (j, i))
 		route += available_spots(whole_map, base, unit_id, move_position)		
 		base[j][i].move(move_position)
+		print "logic move position:::::",move_position,whole_map[move_position[0]][move_position[1]].kind
 		map_change = whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
 		for i in map_temple:
 			if i[0] == move_position:

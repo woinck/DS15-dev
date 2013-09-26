@@ -190,6 +190,7 @@ class HumanReplay(QGraphicsView):
 			print "move to pos", self.moveToPos#for test
 			#在这里判断mirror传递是否会成功，并根据mirror传递是否成功画出route和攻击范围
 			if item.obj.kind == basic.MIRROR:
+				#print "i am on mirror, to judge"#for test
 				self.transPoint = item.obj.out
 				items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False))
 				for it in items:
@@ -264,7 +265,9 @@ class HumanReplay(QGraphicsView):
 		elif now_state == self.State_Target:
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png"),0,0))
-				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, self.moveToPos)
+				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
+				print "transPoint is trans Point is ::::", self.transPoint
+				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point)
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
 			elif self.Operation == 2:
 			  #  self.setCursor(QCursor(QPixmap(":skill_cursor.png"),0,0))
@@ -650,7 +653,8 @@ class HumanReplay(QGraphicsView):
 		self.animationItem.extend(item)
 		ani = QPauseAnimation(300)
 		self.animation.addAnimation(ani)
-#		self.connect(ani, SIGNAL("finished()"), partial(self.tmp_setSoldier,unit_id))
+
+		print "cmd move position:", cmd.move, " while end:", endInfo.base[unit_id[0]][unit_id[1]].position
 		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
 			print "transition??????",cmd.move," --- ", endInfo.base[unit_id[0]][unit_id[1]].position
 			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
