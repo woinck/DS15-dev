@@ -140,8 +140,10 @@ def end_score(score, base, over):
 					else:
 						score[i] += base[i][j].life * basic.HERO_SCORE
 		if score[1] != score[0]:
+			print 'rtr 1'
 			return int(score[1] > score[0])
 		else:
+			print 'rtr 2'
 			return -1
 	for i in [0,1]:
 		over = True
@@ -149,4 +151,5 @@ def end_score(score, base, over):
 			if j.life > 0:
 				over = False
 		if over:
+			print 'rtr 3'
 			return 1-i  

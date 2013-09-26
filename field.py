@@ -97,7 +97,7 @@ def print_map(route, whole_map, base):
 		map_file.write('\n')
 #应用示例：
 whole_map = []; base = [[], []]
-get_map(u'C:\\Users\\woinck\\Documents\\GitHub\\platform\\Map.txt', whole_map, base)
+get_map(u'C:\\Users\\woinck\\Documents\\GitHub\\DS15-dev\\Map8cheng8.txt', whole_map, base)
 
 write_to((whole_map,base))
 

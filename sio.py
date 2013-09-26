@@ -4,7 +4,7 @@ import cPickle, basic, threading, os
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 0
 #游戏运行参数
-DEBUG_MODE = 1
+DEBUG_MODE = 0
 '''
 关于DEGUB_MODE:
 为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
@@ -86,7 +86,11 @@ def _ReplayFileName(aiInfo):
 	result += '.rep'
 	return result
 
-
+def cmdDisplay(cmd):
+	print 'move:',cmd.move
+	print 'order:',cmd.order
+	print 'target:',cmd.target
+	
 class Prog_Run(threading.Thread):
 	def __init__(self,progPath):
 		threading.Thread.__init__(self)

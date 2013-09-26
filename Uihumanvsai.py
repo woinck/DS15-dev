@@ -195,7 +195,7 @@ class Ui_Player(QThread):
 						WaitForIni.wait(self.lock)
 				finally:
 					self.lock.unlock()
-#			time.sleep(2)
+
 			self.func()
 			print "func called"#for test
 			WaitForCommand.wait(self.lock)
@@ -577,8 +577,22 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		if len(self.gameEndInfo) < self.nowRound + 1:#==
 			global Already_Wait,WaitForAni,mutex
 			#临时的判断可以不可以开始做命令的变量
-			if self.replayWindow.gameBegInfo[self.replayWindow.nowRound].id[0] == 1:
-				flag = False
+			flag = False
+			try:
+				mutex.lock()
+				if Already_Wait:
+			#如果uiplayer线程已经等待动画结束,提示用户开始进行动作
+					Already_Wait = False
+					flag = True
+			finally:
+				mutex.unlock()
+			if flag and self.replayWindow.gameBegInfo[self.replayWindow.nowRound].id[0] == 1:
+				#wake 动画
+				WaitForAni.wakeAll()
+				self.roundLabel.setText(_frUtf("开始操作吧!"))
+				self.labelAnimation()
+			#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
+			else:
 				try:
 					mutex.lock()
 					if Already_Wait:
