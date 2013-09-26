@@ -29,13 +29,7 @@ def _SocketConnect(host,port,connName,list = 1):
 		serv.settimeout(None)
 	serv.listen(list)
 	print 'waiting for %s connection...\n' %(connName),
-	'''
-	#每有一个socket进入等待连接的状态，进程标记+1
-	if gProc.acquire():
-		gProcess += 1
-		gProc.notifyAll()
-		gProc.release()
-	'''	
+	
 	for i in range(list):
 		#进行连接
 		try:
@@ -163,7 +157,7 @@ class Sui(threading.Thread):
 				else:
 					#发送回合信息
 					sio._sends(connUI,rbInfo)
-					print 'rbInfo sent'
+					print 'rbInfo sent to ui'
 					rProc.release()
 					break
 				rProc.release()
@@ -347,7 +341,7 @@ class Sai(threading.Thread):
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
 					except socket.timeout:
-						print '未收到AI',i+1,'的信息，将采用默认值'
+						print 'fail to receive AI',i+1,'\'s information，default settings will be used...'
 						aiInfo.append('Player'+str(i+1))
 						heroType.append(6)
 				for i in range(2):
@@ -372,7 +366,11 @@ class Sai(threading.Thread):
 					rProc.wait()
 				else:
 					#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
-					connAI[rbInfo.id[0]].settimeout(0)
+					try:
+						connAI[rbInfo.id[0]].settimeout(0)
+					except:
+						print 'error!!!!,',rbInfo#for test
+						print 'gProcess: ',gProcess
 					try:
 						connAI[rbInfo.id[0]].recv(1024)
 					except:
@@ -385,9 +383,12 @@ class Sai(threading.Thread):
 					
 					
 					sio._sends(connAI[rbInfo.id[0]],rbInfo)
-					print 'rbInfo sent'
+					print 'rbInfo sent to AI'
 					try:
 						rCommand = sio._recvs(connAI[rbInfo.id[0]])
+						print 'AI',rbInfo.id[0],'\'s command:',
+						sio.cmdDisplay(rCommand)
+						print 'command end'
 					except socket.timeout:
 						rCommand = basic.Command()
 					rProcess = sio.RCOMMAND_SET
@@ -405,15 +406,11 @@ class Sai(threading.Thread):
 					break
 				rProc.release()
 			
-				
-		
 		#向AI发送结束标志
 		for i in range(2):
 			connAI[i].send('|')
 			connAI[i].close()
 
-
-			
 class Prog_Run(threading.Thread):
 	def __init__(self,progPath):
 		threading.Thread.__init__(self)

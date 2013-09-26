@@ -85,7 +85,11 @@ def _ReplayFileName(aiInfo):
 	result += '.rep'
 	return result
 
-
+def cmdDisplay(cmd):
+	print 'move:',cmd.move
+	print 'order:',cmd.order
+	print 'target:',cmd.target
+	
 class Prog_Run(threading.Thread):
 	def __init__(self,progPath):
 		threading.Thread.__init__(self)

@@ -184,7 +184,7 @@ class Ui_Player(QThread):
 					#检查player是否是第一个开始做命令的,若是则要等待initialize(需要加强双向等待)
 					if self.flag:
 						WaitForIni.wait(self.lock)
-#			time.sleep(2)
+			time.sleep(3)
 			self.func()
 			print "func called"
 			WaitForCommand.wait(self.lock)
@@ -564,7 +564,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 					flag = True
 			finally:
 				mutex.unlock()
-			if flag:
+			if flag and self.replayWindow.gameBegInfo[self.replayWindow.nowRound].id[0] == 1:
 				#wake 动画
 				WaitForAni.wakeAll()
 				self.roundLabel.setText(_frUtf("开始操作吧!"))

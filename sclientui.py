@@ -58,11 +58,11 @@ except:
 	exit(1)
 	
 gameMode = sio.AI_VS_AI
-gameMapPath = u'C:\\Users\\woinck\\Documents\\GitHub\\platform\\new_map.map'
+gameMapPath = u'C:\\Users\\woinck\\Documents\\GitHub\\DS15-dev\\new_map.map'
 
 gameAIPath=[]
 #若某方（1P,2P）由玩家控制，请将其AIPath设为 None
-aiPath = u'C:\\Users\\woinck\\Documents\\GitHub\\platform\\sclientai.py'
+aiPath = u'C:\\Users\\woinck\\Documents\\GitHub\\DS15-dev\\sclientai.py'
 gameAIPath.append(aiPath)
 gameAIPath.append(aiPath)
 
@@ -86,7 +86,7 @@ print 'map recv'
 rbInfo = sio._recvs(conn)
 #展示
 rCommand,reInfo = sio._recvs(conn)
-while reInfo.over == -1:
+while not reInfo.over:
 	print 'rInfo recv'
 	print 'over=',reInfo.over
 	#展示
