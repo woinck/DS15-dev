@@ -6,7 +6,7 @@
 #动画等特效部分,没完成
 DEBUGGER_USE = 0
 from myHumanReplay import *
-import sys,copy
+import sys,copy,time
 import main
 from functools import partial
 from myGetRoute import getAttackRange
@@ -672,12 +672,14 @@ class HumanReplay(QGraphicsView):
 											 endInfo.effect[0])
 			self.animationItem.extend(item)
 			self.animation.addAnimation(ani)
+			
 			#target die
 			if endInfo.base[cmd.target[0]][cmd.target[1]].life == 0:
 				anim, item = self.dieAnimation(cmd.target)
 				self.animationItem.extend(item)
 				self.animation.addAnimation(anim)
 #			elif endInfo.effect[1] != -1:
+			
 			#fight back
 			anim, item = self.attackAnimation(self.UnitBase[cmd.target[0]][cmd.target[1]], (self.UnitBase[cmd.target[0]][cmd.target[1]].corX,\
 																								self.UnitBase[cmd.target[0]][cmd.target[1]].corY),

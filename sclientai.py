@@ -36,7 +36,6 @@ aiInfo='Sample'
 #==================================================================
 
 conn=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-
 try:
 	conn.connect((sio.HOST,sio.AI_PORT))
 	print 'connected!'
@@ -46,6 +45,7 @@ except:
 	exit(1)
 mapInfo,base=sio._recvs(conn)
 sio._sends(conn,(aiInfo,GetHeroType(mapInfo,base)))
+print 'info sent'
 while True:
 	rBeginInfo=sio._recvs(conn)
 	print 'rbInfo got'

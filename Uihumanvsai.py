@@ -26,6 +26,7 @@ WaitForHero=QWaitCondition()
 WaitForAni=QWaitCondition()
 WaitForIni=QWaitCondition()
 WaitForReplay=QWaitCondition()
+WaitForTemp=QWaitCondition()
 mutex = QMutex()
 #tmp
 #for debug
@@ -73,7 +74,11 @@ class AiThread(QThread):
 			self.mutex.unlock()
 	def run(self):
 		temp = sio._recvs(self.conn)#add base info
+		print 'i sent it!!!!!!!!!!'
+		self.emit(SIGNAL("tmpRecv()"))
 		#print temp#for test
+		#global WaitForTemp
+		#WaitForTemp.wakeAll()
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
 		frInfo = sio._recvs(self.conn)
 
@@ -107,25 +112,28 @@ class AiThread(QThread):
 	#	是否存储回放文件
 		if not self.isStopped():
 			global WaitForReplay
+
 			self.mutex.lock()
 			WaitForReplay.wait(self.mutex)
 
 			sio._sends(self.conn, self.replay_mode)
+
+
 		self.conn.close()
 
 class Ui_Player(QThread):
 	def __init__(self,num, func, parent):
-			super(Ui_Player, self).__init__(parent)
-			self.name = 'Thread-Player'
-			self.num = num
-			self.command = None
-			self.lock = QReadWriteLock()
-			self.stopped = False
-			self.func = func
-			self.cmdNum = 0
-			self.flag = 1
-#			self.parent = parent
-			self.result = ("Player", (6,6))
+		super(Ui_Player, self).__init__(parent)
+		self.name = 'Thread-Player'
+		self.num = num
+		self.command = None
+		self.lock = QReadWriteLock()
+		self.stopped = False
+		self.func = func
+		self.cmdNum = 0
+		self.flag = 1
+#		self.parent = parent
+		self.result = ("Player", (6,6))
 
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -154,74 +162,72 @@ class Ui_Player(QThread):
 
 	def AI(self,rBeginInfo):
 
-			self.command=basic.Command()
-			global mutex, Already_Wait
-			global WaitForCommand,WaitForAni,WaitForIni
-			self.lock.lockForRead()
-			global Able_To_Comm
-			flag1 = False
-			#检查able_TO_comm全局变量,如果主线程已经准备好所有只待开始做命令则直接开始
+		self.command=basic.Command()
+		global mutex, Already_Wait
+		global WaitForCommand,WaitForAni,WaitForIni
+		self.lock.lockForRead()
+		global Able_To_Comm
+		flag1 = False
+		#检查able_TO_comm全局变量,如果主线程已经准备好所有只待开始做命令则直接开始
+		try:
+			mutex.lock()
+			print "able to command?", Able_To_Comm
+			if Able_To_Comm:
+				flag1 = True
+				Able_To_Comm = False
+		finally:
+			mutex.unlock()
+		if not flag1:#flag1 = AbleToComm
 			try:
-				mutex.lock()
-				print "able to command?", Able_To_Comm
-				if Able_To_Comm:
-					flag1 = True
-					Able_To_Comm = False
-			finally:
-				mutex.unlock()
-			if not flag1:#flag1 = AbleToComm
-				try:
-					self.lock.lockForRead()
-					if self.cmdNum or not self.flag:
-						try:
-							mutex.lock()
-							Already_Wait = True
-						finally:
-							mutex.unlock()
+				self.lock.lockForRead()
+				if self.cmdNum or not self.flag:
+					try:
+						mutex.lock()
+						Already_Wait = True
+					finally:
+						mutex.unlock()
 #			self.emit(SIGNAL("waitforC()"))
 			# time for player to make a command here!!
-						print "~~~ani waiting"#for test
-						WaitForAni.wait(self.lock)
+					print "~~~ani waiting"#for test
+					WaitForAni.wait(self.lock)
 #			self.lock.lockForRead()
-					else:
-						self.emit(SIGNAL("firstCmd()"))
-						#print "lala"#for test
-						#检查player是否是第一个开始做命令的,若是则要等待initialize(需要加强双向等待)
-						WaitForIni.wait(self.lock)
-				finally:
-					self.lock.unlock()
+				else:
+					self.emit(SIGNAL("firstCmd()"))
+					#print "lala"#for test
+					#检查player是否是第一个开始做命令的,若是则要等待initialize(需要加强双向等待)
+					WaitForIni.wait(self.lock)
+			finally:
+				self.lock.unlock()
 
-			self.func()
-			print "func called"#for test
-			WaitForCommand.wait(self.lock)
-			self.lock.unlock()
-			return self.command
+		self.func()
+		print "func called"#for test
+		WaitForCommand.wait(self.lock)
+		self.lock.unlock()
+		return self.command
 
 	def run(self):
-			mapInfo,base = sio._recvs(self.conn)
-		#	mapInfo = mapReverse(mapInfo)#debugging
-
-			self.emit(SIGNAL("mapRecv"), mapInfo)
-			result = self.GetHeroType(mapInfo)
-			sio._sends(self.conn, (result[0],result[1][0]))
-
-			while True and not self.isStopped():
-				readFlag2 = 0
-				while not readFlag2:
-					ready2 = select.select([self.conn], [], [], WAIT_TIME)
-					if ready2[0]:
-						rBeginInfo = sio._recvs(self.conn)
-						readFlag2 = 1
-					if self.isStopped():
-						break
-				print 'rbInfo got'
-				if rBeginInfo != '|':
-					sio._sends(self.conn,self.AI(rBeginInfo))
-					print 'cmd sent'
-					self.cmdNum += 1
-				else:
+		mapInfo,base = sio._recvs(self.conn)
+	#	mapInfo = mapReverse(mapInfo)#debugging
+		self.emit(SIGNAL("mapRecv"), mapInfo)
+		result = self.GetHeroType(mapInfo)
+		sio._sends(self.conn, (result[0],result[1][0]))
+		while True and not self.isStopped():
+			readFlag2 = 0
+			while not readFlag2:
+				ready2 = select.select([self.conn], [], [], WAIT_TIME)
+				if ready2[0]:
+					rBeginInfo = sio._recvs(self.conn)
+					readFlag2 = 1
+				if self.isStopped():
 					break
-			self.conn.close()
+			print 'rbInfo got'
+			if rBeginInfo != '|':
+				sio._sends(self.conn,self.AI(rBeginInfo))
+				print 'cmd sent'
+				self.cmdNum += 1
+			else:
+				break
+		self.conn.close()
 
 	def stop(self):
 		try:
@@ -358,10 +364,16 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.aiThread, SIGNAL("finished()"), self.aiThread,
 						 SLOT("deleteLater()"))
 		self.connect(self.aiThread, SIGNAL("finished()"), partial(self.on_threadF,0))
+		self.connect(self.aiThread, SIGNAL("tmpRecv()"), self.on_tmpRecv)
+		self.aiThread.start()
+		
+	def on_tmpRecv(self):
 		self.playThread = Ui_Player(0, self.getComm, self)
 #		try:
 		self.playThread.initialize()
-		print "link now 2"
+
+#print "link now 2"#for test
+
 #		except:
 #			if not flag:
 #				flag = 2
@@ -376,30 +388,30 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.playThread, SIGNAL("finished()"), self.playThread,
 						 SLOT("deleteLater()"))
 		self.connect(self.playThread, SIGNAL("finished()"), partial(self.on_threadF,1))
-
-		if flag == 0:
-			self.started = True
-			self.updateUi()
-			self.playThread.start()
-			self.aiThread.start()
-		elif flag == 1:
-			QMessageBox.critical(self, "Connection Error",
-								 "Failed to connect to UI_PORT\n",
-								 QMessageBox.Ok, QMessageBox.NoButton)
-			self.aiThread.deleteLater()
-			self.playThread.deleteLater()
-		elif flag == 2:
-			QMessageBox.critical(self, "Connection Error",
-									  "Failed to connect to AI_PORT\n",
-									  QMessageBox.Ok, QMessageBox.NoButton)
-			self.playThread.deleteLater()
-			self.aiThread.deleteLater()
-		else:
-			QMessageBox.critical(self, "Connection Error",
-								 "Failed to connect to UI_PORT and the AI_PORT\n",
-								 QMessageBox.Ok, QMessageBox.NoButton)
-			self.aiThread.deleteLater()
-			self.playThread.deleteLater()
+		self.playThread.start()
+#		if flag == 0:
+#			self.started = True
+#			self.updateUi()
+#			self.playThread.start()
+#			self.aiThread.start()
+#		elif flag == 1:
+#			QMessageBox.critical(self, "Connection Error",
+#								 "Failed to connect to UI_PORT\n",
+#								 QMessageBox.Ok, QMessageBox.NoButton)
+#			self.aiThread.deleteLater()
+#			self.playThread.deleteLater()
+#		elif flag == 2:
+#			QMessageBox.critical(self, "Connection Error",
+#									  "Failed to connect to AI_PORT\n",
+#									  QMessageBox.Ok, QMessageBox.NoButton)
+#			self.playThread.deleteLater()
+#			self.aiThread.deleteLater()
+#		else:
+#			QMessageBox.critical(self, "Connection Error",
+#								 "Failed to connect to UI_PORT and the AI_PORT\n",
+#								 QMessageBox.Ok, QMessageBox.NoButton)
+#			self.aiThread.deleteLater()
+#			self.playThread.deleteLater()
 
 	@pyqtSlot()
 	def on_helpButton_clicked(self):
@@ -640,6 +652,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		global WaitForReplay
 		if answer == QMessageBox.Yes:
 			#把每个回合信息写入(也可以考虑在游戏一开始就设置这个选择)
+
 			try:
 				self.aiThread.mutex.lock()
 				self.aiThread.replay_mode = True
