@@ -348,6 +348,7 @@ class HumanReplay(QGraphicsView):
 		self.latestStatus = self.latestRound = 0
 		self.gameBegInfo.append(frInfo)
 		self.run = True
+
 		self.mouseUnit.setVis(True)
 		if not self.stateMachine.isRunning():
 			self.stateMachine.start()
@@ -369,6 +370,9 @@ class HumanReplay(QGraphicsView):
 	#从当前回合开始播放至这一回合结束
 	def TerminateAni(self):
 		if self.animation:
+			if isinstance(self.sender(), QAbstractAnimation):
+				print "finished called terminate"#for test
+			print "terminate ani is called"#for test
 			self.animation.stop()
 			#self.animation.deleteLater()
 			self.animation.clear()
@@ -637,6 +641,7 @@ class HumanReplay(QGraphicsView):
 		#还没有更新完
 		if len(self.gameEndInfo) < self.nowRound + 1:
 			return
+		print "terminate ani in play()"#for test
 		self.TerminateAni()
 
 		unit_id = self.gameBegInfo[self.nowRound].id
@@ -694,13 +699,17 @@ class HumanReplay(QGraphicsView):
 		self.animation.addAnimation(QPauseAnimation(1000))
 		self.connect(self.animation, SIGNAL("finished()"), self.moveAnimEnd)
 		#self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
+		#self.connect(self.animation, SIGNAL("finished()"), self.__test)
 		self.connect(self.animation, SIGNAL("finished()"), self.TerminateAni)	
 		print "animation start::::",self.animation,"duration::", self.animation.totalDuration()
 		self.animation.start()
 
+	def __test(self):
+		self.animation = None
 	#展示round_, status的场面
 	def GoToRound(self, round_, status):
 #		if self.animation:
+		print "terminate ani in gotor"#for test
 		self.TerminateAni()
 
 		if round_ * 2 + status > self.latestRound * 2 + self.latestStatus or round_ < 0:
@@ -749,6 +758,7 @@ class HumanReplay(QGraphicsView):
 	#	self.transPoint = None
 	#供结束游戏时的完全清理,需要保存录像请在此之前提取游戏信息
 	def reset(self):
+		print "terminate ani in reset"
 		self.TerminateAni()
 		self.emit(SIGNAL("endGame()"))
 		self.resetToPlay()

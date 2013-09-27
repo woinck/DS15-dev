@@ -32,31 +32,7 @@ mutex = QMutex()
 DEFAULT_MAP = os.getcwd() + "//new_map.map"
 DEFAULT_AI = os.getcwd() + "//sclientai.py"
 
-def mapReverse(maps):
-    new_map = []
-    for i in range(len(maps[0])):
-        new_map.append([])
-        for j in range(len(maps)):
-            new_map[i].append(maps[j][i])
-    return new_map
 
-def baseReverse(base):
-	for i in range(2):
-		for j in range(len(base[0])):
-			base[i][j].position = (base[i][j].position[1], base[i][j].position[0])
-
-def listReverse(list):
-	for i in range(len(list)):
-		list[i] = (list[i][1], list[i][0])
-
-def begInfoReverse(begInfo):
-	baseReverse(begInfo.base)
-	listReverse(begInfo.range)
-	listReverse(begInfo.temple)
-	
-def endInfoReverse(endInfo):
-	baseReverse(endInfo.base)
-	listReverse(endInfo.route)
 class ConnectionError(Exception):
 	def __init__(self, value = ""):
 		super(ConnectionError, self).__init__()
@@ -100,7 +76,7 @@ class AiThread(QThread):
 		#print temp#for test
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
 		frInfo = sio._recvs(self.conn)
-		#mapInfo = mapReverse(mapInfo)#debugging
+
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
 		print "first rbInfo"
 		rCommand, reInfo = sio._recvs(self.conn)
@@ -127,12 +103,14 @@ class AiThread(QThread):
 		if not self.isStopped():
 			winner = sio._recvs(self.conn)
 			self.emit(SIGNAL("gameWinner"),winner)
+			print "emit gamewinner!!!!!!!"#for test
 	#	是否存储回放文件
-                if not self.isStopped():
-                        global WaitForReplay
-                        WaitForReplay.wait()
+		if not self.isStopped():
+			global WaitForReplay
+			self.mutex.lock()
+			WaitForReplay.wait(self.mutex)
 
-                        sio._sends(self.conn,replay_mode)
+			sio._sends(self.conn, self.replay_mode)
 		self.conn.close()
 
 class Ui_Player(QThread):
@@ -221,7 +199,7 @@ class Ui_Player(QThread):
 
 	def run(self):
 			mapInfo,base = sio._recvs(self.conn)
-			mapInfo = mapReverse(mapInfo)#debugging
+		#	mapInfo = mapReverse(mapInfo)#debugging
 
 			self.emit(SIGNAL("mapRecv"), mapInfo)
 			result = self.GetHeroType(mapInfo)
@@ -358,7 +336,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	@pyqtSlot()
 	def on_startButton_clicked(self):
 
-                flag = 0
+		flag = 0
 		self.aiThread = AiThread(self)
  #	   try:
 		if self.info_ai.text() and self.info_map.text():
@@ -370,7 +348,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 #		except:
 
 #		else:
-                print "link now"
+		print "link now"
 		self.connect(self.aiThread, SIGNAL("firstRecv"), self.on_firstRecv)
 		self.connect(self.aiThread, SIGNAL("rbRecv"), self.on_rbRecv)
 		self.connect(self.aiThread, SIGNAL("reRecv"), self.on_reRecv)
@@ -383,7 +361,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.playThread = Ui_Player(0, self.getComm, self)
 #		try:
 		self.playThread.initialize()
-                print "link now 2"
+		print "link now 2"
 #		except:
 #			if not flag:
 #				flag = 2
@@ -578,8 +556,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.Ani_Finished = True#？？？？是否改成全局变量
 		if len(self.gameBegInfo) <= self.nowRound + 1:
 			print "nani!!! you are here!!?now round:", self.nowRound, "total:", len(self.gameBegInfo) - 1#for test
-			if self.nowRound == self.lastRound and self.winner:
-				self.on_gameWinner(self.winner)
+			print "nowRound:::", self.nowRound, "lastRondw",self.lastRound,"winner:::",self.winner
+			if self.nowRound == self.lastRound and self.winner != None:
+				self.on_gameEnd(self.winner)
 		else:
 			self.nowRound += 1
 			print "goto", self.nowRound
@@ -651,16 +630,22 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		if not (self.nowRound == self.replayWindow.latestRound and self.Ani_Finished):
 			self.lastRound = self.replayWindow.latestRound
 			self.winner = winner
-			return
+			print "game winner is::::", winner
+
+	def on_gameEnd(self, winner):
 		QMessageBox.information(self, "Game Winner", "player %s win the game" %winner)
 		#需要其他特效再加
 		answer = QMessageBox.question(self, _frUtf("保存"), _frUtf("是否保存回放文件?"),
-                                              QMessageBox.Yes, QMessageBox.No)
-                global WaitForReplay
+											  QMessageBox.Yes, QMessageBox.No)
+		global WaitForReplay
 		if answer == QMessageBox.Yes:
 			#把每个回合信息写入(也可以考虑在游戏一开始就设置这个选择)
-                        self.aiThread.replay_mode = True
-                WaitForReplay.wakeAll()
+			try:
+				self.aiThread.mutex.lock()
+				self.aiThread.replay_mode = True
+			finally:
+				self.aiThread.mutex.unlock()
+				WaitForReplay.wakeAll()
 		#一些清理工作，方便开始下一局游戏,
 		self.started = False
 		self.updateUi()
