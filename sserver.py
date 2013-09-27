@@ -341,6 +341,10 @@ class Sai(threading.Thread):
 				for i in range(2):
 					try:
 						sio._sends(connAI[i],(mapInfo,base))
+					except:
+						pass
+						
+					try:
 						aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
@@ -387,8 +391,11 @@ class Sai(threading.Thread):
 					else:
 						connAI[rbInfo.id[0]].settimeout(None)
 					
-					
-					sio._sends(connAI[rbInfo.id[0]],rbInfo)
+					try:
+						sio._sends(connAI[rbInfo.id[0]],rbInfo)
+					except:
+						pass
+						
 					print 'rbInfo sent to AI'
 
 					try:
@@ -398,6 +405,9 @@ class Sai(threading.Thread):
 						print 'command end'
 					except socket.timeout:
 						rCommand = basic.Command()
+					except:
+						#AI连接错误，判负！#########################################
+						pass
 					rProcess = sio.RCOMMAND_SET
 					rProc.notifyAll()
 					rProc.release()
