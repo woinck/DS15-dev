@@ -1,28 +1,38 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
   <!--unit pic-->
-  <file alias="saber.png">image/saber.png</file>
-  <file alias="lancer.png">image/lancer.png</file>
-  <file alias="archer.png">image/archer.png</file>
-  <file alias="dragon_rider.png">image/dragon_rider.png</file>
-  <file alias="warrior.png">image/warrior.png</file>
-  <file alias="wizard.png">image/wizard.png</file>
-  <file alias="hero_1.png">image/hero_1.png</file>
-  <file alias="hero_2.png">image/hero_2.png</file>
-  <file alias="hero_3.png">image/hero_3.png</file>
-  <file alias="plain.png">image/plain.png</file>
-  <file alias="mountain.png">image/mountain.png</file>
-  <file alias="forest.png">image/forest.png</file>
-  <file alias="barrier.png">image/barrier.png</file>
+  <file alias="saber1.png">image/saber1.png</file>
+  <file alias="lancer1.png">image/lancer1.png</file>
+  <file alias="archer1.png">image/archer1.png</file>
+  <file alias="dragon_rider1.png">image/dragon_rider1.png</file>
+  <file alias="warrior1.png">image/warrior1.png</file>
+  <file alias="wizard1.png">image/wizard1.png</file>
+  <file alias="hero_11.png">image/hero_11.png</file>
+  <file alias="hero_21.png">image/hero_21.png</file>
+  <file alias="hero_31.png">image/hero_31.png</file>
+<file alias="saber0.png">image/saber0.png</file>
+<file alias="lancer0.png">image/lancer0.png</file>
+<file alias="archer0.png">image/archer0.png</file>
+<file alias="dragon_rider0.png">image/dragon_rider0.png</file>
+<file alias="warrior0.png">image/warrior0.png</file>
+<file alias="wizard0.png">image/wizard0.png</file>
+<file alias="hero_10.png">image/hero_10.png</file>
+<file alias="hero_20.png">image/hero_20.png</file>
+<file alias="hero_30.png">image/hero_30.png</file>
+
+  <file alias="plain.png">image/plain0.png</file>
+  <file alias="mountain.png">image/mountain0.png</file>
+  <file alias="forest.png">image/forest0.png</file>
+  <file alias="barrier.png">image/barrier0.png</file>
   <file alias="turret.png">image/turret.png</file>
   <file alias="trap.png">image/trap.png</file>
-  <file alias="temple.png">image/temple.png</file>
+  <file alias="temple.png">image/temple0.png</file>
   <file alias="gear.png">image/gear.png</file>
   <file alias="attack_cursor.png">image/attack_cursor.png</file>
   <file alias="skill_cursor.png">image/skill_cursor.png</file>
   <file alias="normal_cursor.png">image/normal_cursor.png</file>
   <file alias="attack_ind1.png">image/attack_ind1.png</file>
-  <file alias="mirror.png">image/mirror.png</file>
+  <file alias="mirror.png">image/mirror0.png</file>
   <file alias="trans0.png">image/trans0.png</file>
   <file alias="trans1.png">image/trans1.png</file>
   <!--icon pic-->

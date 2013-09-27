@@ -6,7 +6,7 @@
 #动画等特效部分,没完成
 DEBUGGER_USE = 0
 from myHumanReplay import *
-import sys,copy
+import sys,copy,time
 import main
 from functools import partial
 from myGetRoute import getAttackRange
@@ -90,7 +90,7 @@ class HumanReplay(QGraphicsView):
 		#鼠标选定单位
 		self.focusUnit = MouseFocusUnit(0, 0)
 		self.scene.addItem(self.focusUnit)
-		self.animation = QSequentialAnimationGroup()
+		#self.animation = QSequentialAnimationGroup()#debugging
 		self.focusUnit.setVisible(False)
 
 		self.mouseUnit = MouseIndUnit(0, 0)
@@ -129,7 +129,7 @@ class HumanReplay(QGraphicsView):
 	#begin to get command
 	def GetCommand(self):
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
-		print "now move unit!!!!!:", self.nowMoveUnit.idNum
+		#print "now move unit!!!!!:", self.nowMoveUnit.idNum#for test
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
 
@@ -165,10 +165,10 @@ class HumanReplay(QGraphicsView):
 		for it in items:
 			if isinstance(it, SoldierUnit):
 				self.emit(SIGNAL("unitSelected"),it.obj)
-				print "emit unit", it.obj.kind
+				##print "emit unit", it.obj.kind#for test
 			elif isinstance(it, MapUnit):
 				self.emit(SIGNAL("mapSelected"), it.obj)
-				print "emit map", it.obj.kind
+				#print "emit map", it.obj.kind#for test
 				item = it
 		if event.button() == Qt.RightButton:
 			return
@@ -187,11 +187,11 @@ class HumanReplay(QGraphicsView):
 			if (item.corX, item.corY) not in self.move_range_list:
 				return
 			self.moveToPos = (item.corX, item.corY)
-			print "move to pos", self.moveToPos#for test
+			#print "move to pos", self.moveToPos#for test
 			#在这里判断mirror传递是否会成功，并根据mirror传递是否成功画出route和攻击范围
 			if item.obj.kind == basic.MIRROR:
 				#print "i am on mirror, to judge"#for test
-				self.transPoint = item.obj.out
+				self.transPoint = (item.obj.out[1], item.obj.out[0])
 				items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False))
 				for it in items:
 					if isinstance(it, SoldierUnit):
@@ -245,12 +245,12 @@ class HumanReplay(QGraphicsView):
 		if now_state == self.State_No_Comm:
 			self.Operation = self.moveToPos = self.command = None
 		elif now_state == self.State_Move:
-			print "move state"# for test
+			#print "move state"# for test
 			if isinstance(self.nowMoveUnit, SoldierUnit):
 				self.transPoint = None
 				self.focusUnit.setPos(self.nowMoveUnit.corX, self.nowMoveUnit.corY)
 				self.move_range_list = self.gameBegInfo[self.latestRound].range
-				print "this is move range list::::", self.move_range_list
+				#print "this is move range list::::", self.move_range_list
 				#getMoveArrange(self.getMap(self.latestRound,0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id)#改成逻辑的函数
 				self.drawArrange(self.move_range_list,self.tmp_move_list)
 				#setCursor
@@ -266,7 +266,7 @@ class HumanReplay(QGraphicsView):
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png"),0,0))
 				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
-				print "transPoint is trans Point is ::::", self.transPoint
+				#print "transPoint is trans Point is ::::", self.transPoint
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point)
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
 			elif self.Operation == 2:
@@ -370,13 +370,14 @@ class HumanReplay(QGraphicsView):
 	#从当前回合开始播放至这一回合结束
 	def TerminateAni(self):
 		if self.animation:
-			if isinstance(self.sender(), QAbstractAnimation):
-				print "finished called terminate"#for test
-			print "terminate ani is called"#for test
+			#if isinstance(self.sender(), QAbstractAnimation):
+			#	print "finished called terminate"#for test
+			##print "terminate ani is called"#for test
 			self.animation.stop()
-			#self.animation.deleteLater()
-			self.animation.clear()
-			#self.animation = None
+			self.animation.deleteLater()
+			#self.animation.clear()
+			#print "animation = None ininin terminate ani"
+			self.animation = None
 		for item in self.animationItem:
 			self.scene.removeItem(item)
 		self.animationItem = []
@@ -397,7 +398,7 @@ class HumanReplay(QGraphicsView):
 		for i in range(steps):
 			pos = GetPos(route[i][0], route[i][1])
 			movAnim.setKeyValueAt(float(i + 1)/steps, pos)
-		print route
+		#print route
 		if route:
 			movAnim.setEndValue(GetPos(route[-1][0],route[-1][1]))
 		else:
@@ -635,22 +636,22 @@ class HumanReplay(QGraphicsView):
 		return anim, items
 	def Play(self):
 		#回合末没有动画,先调转再调用
-		print "Play called!!!!!!!!!!!!!"
+		#print "Play called!!!!!!!!!!!!!"#for test
 		if self.nowStatus:
 			return
 		#还没有更新完
 		if len(self.gameEndInfo) < self.nowRound + 1:
 			return
-		print "terminate ani in play()"#for test
+		#print "terminate ani in play()"#for test
 		self.TerminateAni()
 
 		unit_id = self.gameBegInfo[self.nowRound].id
 		unit_move = self.UnitBase[unit_id[0]][unit_id[1]]
-		print "unit move id!!!!!!!!", unit_id#for test
+		#print "unit move id!!!!!!!!", unit_id#for test
 		cmd = self.gameEndInfo[self.nowRound][0]
 		endInfo = self.gameEndInfo[self.nowRound][1]
 		#print "begin to add animation"#for test
-		#self.animation = QSequentialAnimationGroup()
+		self.animation = QSequentialAnimationGroup()
 
 		#移动动画
 		ani, item = self.moveAnimation(unit_move, cmd.move, endInfo.route)
@@ -659,9 +660,9 @@ class HumanReplay(QGraphicsView):
 		ani = QPauseAnimation(300)
 		self.animation.addAnimation(ani)
 
-		print "cmd move position:", cmd.move, " while end:", endInfo.base[unit_id[0]][unit_id[1]].position
+		#print "cmd move position:", cmd.move, " while end:", endInfo.base[unit_id[0]][unit_id[1]].position
 		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
-			print "transition??????",cmd.move," --- ", endInfo.base[unit_id[0]][unit_id[1]].position
+			#print "transition??????",cmd.move," --- ", endInfo.base[unit_id[0]][unit_id[1]].position#for test
 			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
 			self.animation.addAnimation(ani)
 			self.animationItem.extend(item)
@@ -672,12 +673,14 @@ class HumanReplay(QGraphicsView):
 											 endInfo.effect[0])
 			self.animationItem.extend(item)
 			self.animation.addAnimation(ani)
+			
 			#target die
 			if endInfo.base[cmd.target[0]][cmd.target[1]].life == 0:
 				anim, item = self.dieAnimation(cmd.target)
 				self.animationItem.extend(item)
 				self.animation.addAnimation(anim)
 #			elif endInfo.effect[1] != -1:
+			
 			#fight back
 			anim, item = self.attackAnimation(self.UnitBase[cmd.target[0]][cmd.target[1]], (self.UnitBase[cmd.target[0]][cmd.target[1]].corX,\
 																								self.UnitBase[cmd.target[0]][cmd.target[1]].corY),
@@ -698,18 +701,19 @@ class HumanReplay(QGraphicsView):
 		#待机只暂停1秒
 		self.animation.addAnimation(QPauseAnimation(1000))
 		self.connect(self.animation, SIGNAL("finished()"), self.moveAnimEnd)
-		#self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
+		self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
 		#self.connect(self.animation, SIGNAL("finished()"), self.__test)
-		self.connect(self.animation, SIGNAL("finished()"), self.TerminateAni)	
-		print "animation start::::",self.animation,"duration::", self.animation.totalDuration()
+		#self.connect(self.animation, SIGNAL("finished()"), self.TerminateAni)	
+		print "animation start::::","duration::", self.animation.totalDuration()
 		self.animation.start()
 
 	def __test(self):
+		#print "animation = None called!!!!"#for test
 		self.animation = None
 	#展示round_, status的场面
 	def GoToRound(self, round_, status):
 #		if self.animation:
-		print "terminate ani in gotor"#for test
+		#print "terminate ani in gotor"#for test
 		self.TerminateAni()
 
 		if round_ * 2 + status > self.latestRound * 2 + self.latestStatus or round_ < 0:
@@ -758,7 +762,7 @@ class HumanReplay(QGraphicsView):
 	#	self.transPoint = None
 	#供结束游戏时的完全清理,需要保存录像请在此之前提取游戏信息
 	def reset(self):
-		print "terminate ani in reset"
+		#print "terminate ani in reset"#for test
 		self.TerminateAni()
 		self.emit(SIGNAL("endGame()"))
 		self.resetToPlay()

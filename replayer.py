@@ -62,6 +62,9 @@ class Replayer(QWidget, Ui_Replayer):
 
 		#connect signals
 		self.connect(self, SIGNAL("toPause()"),  partial(self.pauseButton.setChecked, True), Qt.QueuedConnection)
+		self.connect(self.pauseButton, SIGNAL("toggled(bool)"), self.on_pauseButton_toggled)#for test
+		self.connect(self.playBackwardButton, SIGNAL("toggled(bool)"), self.on_playBackwardButton_toggled)#for test
+		self.connect(self.playForwardButton, SIGNAL("toggled(bool)"), self.on_playForwardButton_toggled)#for test
 		self.replayWidget.moveAnimEnd.connect(self.on_animEnd)
 		self.updateUi()
 
@@ -121,12 +124,14 @@ class Replayer(QWidget, Ui_Replayer):
 		self.updateUi()
 
 	@pyqtSlot()
-	def on_pauseButton_triggered(self, pause):
+	def on_pauseButton_toggled(self, pause):
 		self.checkTimer()
 		self.isPaused = pause
+		print "pause trigger!!!:",pause#for test
 		if not self.started:
 			return
 		if pause:
+			print "gotor called in pausebutton"#for test
 			self.replayWidget.GoToRound(self.replayWidget.nowRound, self.replayWidget.nowStatus)
 		else:
 			if self.replayWidget.nowStatus:
@@ -134,9 +139,11 @@ class Replayer(QWidget, Ui_Replayer):
 					self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
 				except:
 					self.emit(SIGNAL("toPause()"))
+					print "emit to pause"
 				else:
 					self.replayWidget.Play()
-
+			else:
+				self.replayWidget.Play()
 	@pyqtSlot()
 	def on_nextStepButton_clicked(self):
 		self.checkTimer()
@@ -158,9 +165,10 @@ class Replayer(QWidget, Ui_Replayer):
 			self.replayWidget.Play()
 
 	@pyqtSlot()
-	def on_playForwardButton_triggered(self, trigger):
-		if self.playBackButton.isChecked():
-			self.playBackButton.setChecked(False)
+	def on_playForwardButton_toggled(self, trigger):
+		print "playForwardbutton clicked triger:", trigger#for test
+		if self.playBackwardButton.isChecked():
+			self.playBackwardButton.setChecked(False)
 		if trigger:
 			self.BorF = 'f'
 			self.timer = self.startTimer(500)
@@ -169,7 +177,8 @@ class Replayer(QWidget, Ui_Replayer):
 			self.timer = None
 
 	@pyqtSlot()
-	def on_playBackwardButton_triggered(self, trigger):
+	def on_playBackwardButton_toggled(self, trigger):
+		print "playBackwardButton trigger:", trigger#for test
 		if self.playForwardButton.isChecked():
 			self.playForwardButton.setChecked(False)
 		if trigger:
@@ -183,6 +192,7 @@ class Replayer(QWidget, Ui_Replayer):
 
 	def timerEvent(self, event):
 		if event.timerId() == self.timer:
+			 print "recv timer event!!!"#for test
 			 change = 1 if self.BorF == 'f' else -1
 			 try:
 				 self.replayWidget.GoToRound(self.replayWidget.nowRound + change, 0)
@@ -195,8 +205,9 @@ class Replayer(QWidget, Ui_Replayer):
 			QWidget.timerEvent(self, event)
 
 	def on_animEnd(self):
+		self.replayWidget.GoToRound(self.replayWidget.nowRound, 1)
 		try:
-			print "call go to round on animEnd::",self.replayWidget.nowRound
+			#print "call go to round on animEnd::",self.replayWidget.nowRound#for test
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
 		except:
 			self.pauseButton.setChecked(True)

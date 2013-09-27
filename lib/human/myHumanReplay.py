@@ -80,9 +80,9 @@ class SoldierUnit(AbstractUnit):
     def paint(self, painter, option, widget = None):
 #        painter = QPainter()
         painter.save()
-        filename = ":" + FILE_UNIT[self.obj.kind] + ".png"
+        filename = ":" + FILE_UNIT[self.obj.kind] + "%d.png"%(self.idNum[0])
         image = QImage(filename).convertToFormat(QImage.Format_ARGB32)
-        painter.setCompositionMode(QPainter.CompositionMode_Multiply)
+       # painter.setCompositionMode(QPainter.CompositionMode_Multiply)
         painter.drawImage(QPoint(EDGE_WIDTH/2, EDGE_WIDTH/2), image.scaled(UNIT_WIDTH, UNIT_HEIGHT,
                                                                            Qt.IgnoreAspectRatio))
         painter.restore()
