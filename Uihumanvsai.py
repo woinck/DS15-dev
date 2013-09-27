@@ -292,8 +292,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 #		self.connect(self.replayWindow, SIGNAL("mapSelected"), self.on_mapS)
 		self.connect(self.replayWindow, SIGNAL("unitSelected"), self.infoWidget.newUnitInfo)
 		self.connect(self.replayWindow, SIGNAL("mapSelected"), self.infoWidget.newMapInfo)
-		#self.replayWindow.moveAnimEnd.connect(self.on_aniFinished)
-		self.connect(self.replayWindow.animation, SIGNAL("finished()"), self.on_aniFinished)#for test
+		self.replayWindow.moveAnimEnd.connect(self.on_aniFinished)
+		#self.connect(self.replayWindow.animation, SIGNAL("finished()"), self.on_aniFinished)#for test
 		self.connect(self, SIGNAL("ableToPlay()"), self.on_ablePlay, Qt.QueuedConnection)
 		#other
 		pal = self.scoLabel1.palette()
