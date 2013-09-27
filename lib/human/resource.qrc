@@ -24,8 +24,8 @@
   <file alias="mountain.png">image/mountain0.png</file>
   <file alias="forest.png">image/forest0.png</file>
   <file alias="barrier.png">image/barrier0.png</file>
-  <file alias="turret.png">image/turret.png</file>
-  <file alias="trap.png">image/trap.png</file>
+  <!--<file alias="turret.png">image/turret.png</file>-->
+  <!--<file alias="trap.png">image/trap.png</file>-->
   <file alias="temple.png">image/temple0.png</file>
   <file alias="gear.png">image/gear.png</file>
   <file alias="attack_cursor.png">image/attack_cursor.png</file>
@@ -35,29 +35,20 @@
   <file alias="mirror.png">image/mirror0.png</file>
   <file alias="trans0.png">image/trans0.png</file>
   <file alias="trans1.png">image/trans1.png</file>
-  <!--icon pic-->
-  <file alias="gameStart.png">icons/gameStart.png</file>
-  <file alias="gamePause.png">icons/gamePause.png</file>
-  <file alias="gameEnd.png">icons/gameEnd.png</file>
-  <file alias="loadAI.png">icons/loadAI.png</file>
-  <file alias="loadMap.png">icons/loadMap.png</file>
-  <file alias="modeRun.png">icons/modeRun.png</file>
-  <file alias="modeDebug.png">icons/modeDebug.png</file>
-  <file alias="reset.png">icons/reset.png</file>
-  <file alias="icon.png">icons/icon.png</file>
+
   <!--replay icon pic-->
-  <file alias="endPlay.png">image_replay/endPlay.png</file>
-  <file alias="exit.png">image_replay/exit.png</file>
-  <file alias="preStep.png">image_replay/preStep.png</file>
-  <file alias="nextStep.png">image_replay/nextStep.png</file>
-  <file alias="open.png">image_replay/open.png</file>
-  <file alias="noSound.png">image_replay/noSound.png</file>
-  <file alias="playSound.png">image_replay/playSound.png</file>
-  <file alias="playBackward.png">image_replay/playBackward0.png</file>
-  <file alias="playForward0.png">image_replay/playForward0.png</file>
-  <file alias="pause.png">image_replay/pause.png</file>
+  <file alias="endPlay.png">image/endPlay.png</file>
+  <file alias="exit.png">image/exit.png</file>
+  <file alias="preStep.png">image/preStep.png</file>
+  <file alias="nextStep.png">image/nextStep.png</file>
+  <file alias="open.png">image/open.png</file>
+  <file alias="noSound.png">image/noSound.png</file>
+  <file alias="playSound.png">image/playSound.png</file>
+  <file alias="playBackward.png">image/playBackward0.png</file>
+  <file alias="playForward0.png">image/playForward0.png</file>
+  <file alias="pause.png">image/pause.png</file>
   <!--backgroud-->
-  <file alias="replay_back.png">image_replay/replay_back.png</file>
-  <file alias="replay_mapback.png">image_replay/replay_mapback.png</file>
+  <file alias="replay_back.png">image/replay_back.png</file>
+  <file alias="replay_mapback.png">image/replay_mapback.png</file>
 </qresource>
 </RCC>
