@@ -269,6 +269,7 @@ class Slogic(threading.Thread):
 				else:
 					rbInfo = sio._recvs(connLogic)
 					print 'rbInfo received from logic'#for test
+					print 'move range::::::',rbInfo.range
 					rProcess = sio.RBINFO_SET
 					rProc.notifyAll()
 					rProc.release()

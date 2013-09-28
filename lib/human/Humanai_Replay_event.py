@@ -361,7 +361,9 @@ class HumanReplay(QGraphicsView):
 	def UpdateEndData(self, comInfo, reInfo):
 		self.gameEndInfo.append((comInfo, reInfo))
 		self.latestStatus = 1
-		self.mapChangeInfo.append(reInfo.change)
+		#self.mapChangeInfo.append(reInfo.change)
+		self.mapChangeInfo.append([])
+		
 #		if reInfo.change:
 #			map_item = self.scene.items(GetPos(change[1][0], change[1][1]))[-1]
 #			map_item.obj = Map_Basic(change[0])

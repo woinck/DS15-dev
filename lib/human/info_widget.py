@@ -64,7 +64,7 @@ class InfoWidget(QTabWidget):
         self.infoWidget_Unit.info_life.setText("%d" %base_unit.life)
         self.infoWidget_Unit.info_attack.setText("%d" %base_unit.strength)
         self.infoWidget_Unit.info_defence.setText("%d" %base_unit.defence)
-        self.infoWidget_Unit.info_speed.setText("%d" %base_unit.speed)
+        self.infoWidget_Unit.info_speed.setText("%d" %base_unit.agility)
         self.infoWidget_Unit.info_moverange.setText("%d" %base_unit.move_range)
         self.infoWidget_Unit.info_attackrange.setText("%s" %base_unit.attack_range)
 
