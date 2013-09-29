@@ -12,18 +12,23 @@ NumToUnitType = {0:"SABER",1:"LANCER",2:"ARCHER",3:"DRAGON RIDER",
                 4:"WARRIOR", 5:"WIZARD", 6:"HERO_1", 7:"HERO_2",
                 8:"HERO_3"}
 NumToActionType = {0:"待机", 1:"攻击", 2:"技能"}
-StyleSheet = """
-QLineEdit{
-background-color: rgb(0, 0, 200);
-color: white;
-}
-"""
+#QTabWidget{
+#background-color: rgb(255,255,255,0);
+#StyleSheet = """
+#QTabWidget{
+#background: transparent;
+#}
+#QLineEdit{
+#background-color: rgb(0, 0, 200,50);
+#color: white;
+#}
+#"""
 class InfoWidget(QTabWidget):
     def __init__(self, parent =None):
         super(InfoWidget, self).__init__(parent)
 
         self.setAutoFillBackground(True)
-        self.setStyleSheet("background: transparency;")
+        self.setStyleSheet("background: transparent;")
 #        self.infoWidget_Game = InfoWidget1()
         self.infoWidget_Unit = InfoWidget2()
         self.infoWidget_Map = InfoWidget3()
@@ -128,7 +133,8 @@ class InfoWidget1(QWidget):
         self.layout.addWidget(self.info_score, 8, 1)
 
         self.setLayout(self.layout)
-        self.setStyleSheet(StyleSheet)
+        self.setStyleSheet("background: transparent;")
+        self.setAutoFillBackground(True)
     def setAiFileinfo(self, loaded_ai):
         self.info_aifile1.setText(loaded_ai[0])
         if len(loaded_ai) == 2:
@@ -184,7 +190,8 @@ class InfoWidget2(QWidget):
         self.info_attackrange = QLabel("")
         self.infos.append(self.info_attackrange)
 
-        self.setStyleSheet(StyleSheet)
+        self.setStyleSheet("background:transparent;")
+        self.setAutoFillBackground(True)
         for info in self.infos:
             info.setFrameStyle(QFrame.StyledPanel|QFrame.Sunken)
             info.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed))
@@ -223,6 +230,8 @@ class InfoWidget3(QWidget):
         self.info_consumption = QLabel("")
         self.infos.append(self.info_consumption)
 
+        self.setStyleSheet("background:transparent;border:0px")
+        self.setAutoFillBackground(True)
         for info in self.infos:
             info.setFrameStyle(QFrame.StyledPanel|QFrame.Sunken)
             info.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed))

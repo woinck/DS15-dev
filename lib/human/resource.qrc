@@ -37,6 +37,7 @@
   <file alias="trans1.png">image/trans1.png</file>
 
   <!--replay icon pic-->
+  <file alias="rePlay.png">image/rePlay.png</file>
   <file alias="endPlay.png">image/endPlay.png</file>
   <file alias="exit.png">image/exit.png</file>
   <file alias="preStep.png">image/preStep.png</file>
@@ -44,7 +45,7 @@
   <file alias="open.png">image/open.png</file>
   <file alias="noSound.png">image/noSound.png</file>
   <file alias="playSound.png">image/playSound.png</file>
-  <file alias="playBackward.png">image/playBackward0.png</file>
+  <file alias="playBackward0.png">image/playBackward0.png</file>
   <file alias="playForward0.png">image/playForward0.png</file>
   <file alias="pause.png">image/pause.png</file>
   <!--backgroud-->
