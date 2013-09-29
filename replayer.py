@@ -49,6 +49,7 @@ class Replayer(QWidget, Ui_Replayer):
 		for i in range(len(self.buttons)):
 			pixmap = QPixmap(":" + BUTTONPIC[i] + ".png")
 			self.buttons[i].setIcon(QIcon(pixmap))
+			self.buttons[i].setStyleSheet("border-radius: 20px")
 		  #  self.buttons[i].setMask(pixmap.createHeuristicMask())
 		#信息变量
 		self.isPaused = False
