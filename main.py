@@ -97,9 +97,9 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
     attack_1 = -1; attack_2 = -1
     route = [base[j][i].position]
     if move_position in move_range:
-        sc = whole_map[base[j][i].position[j]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
+        sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
         if not sc:
-            whole_map[base[j][i].position[j]][base[j][i].position[1]].leave(base, (j, i))
+            whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))
         route += available_spots(whole_map, base, unit_id, move_position)        
         base[j][i].move(move_position)
         if not sc:
@@ -127,7 +127,7 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
     return basic.Round_End_Info(base, route, (attack_1, attack_2), score, over)
 def end_score(score, base, turn):
     '''结束后计算积分返回胜队，（-1表示平局）'''
-    if	turn >= basic.TURN_MAX:
+    if turn >= basic.TURN_MAX:
         for i in [0,1]:
             for j in range(0, len(base[i])):
                 if base[i][j].life > 0:
