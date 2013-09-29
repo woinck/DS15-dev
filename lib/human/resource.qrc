@@ -10,15 +10,15 @@
   <file alias="hero_11.png">image/hero_11.png</file>
   <file alias="hero_21.png">image/hero_21.png</file>
   <file alias="hero_31.png">image/hero_31.png</file>
-<file alias="saber0.png">image/saber0.png</file>
-<file alias="lancer0.png">image/lancer0.png</file>
-<file alias="archer0.png">image/archer0.png</file>
-<file alias="dragon_rider0.png">image/dragon_rider0.png</file>
-<file alias="warrior0.png">image/warrior0.png</file>
-<file alias="wizard0.png">image/wizard0.png</file>
-<file alias="hero_10.png">image/hero_10.png</file>
-<file alias="hero_20.png">image/hero_20.png</file>
-<file alias="hero_30.png">image/hero_30.png</file>
+  <file alias="saber0.png">image/saber0.png</file>
+  <file alias="lancer0.png">image/lancer0.png</file>
+  <file alias="archer0.png">image/archer0.png</file>
+  <file alias="dragon_rider0.png">image/dragon_rider0.png</file>
+  <file alias="warrior0.png">image/warrior0.png</file>
+  <file alias="wizard0.png">image/wizard0.png</file>
+  <file alias="hero_10.png">image/hero_10.png</file>
+  <file alias="hero_20.png">image/hero_20.png</file>
+  <file alias="hero_30.png">image/hero_30.png</file>
 
   <file alias="plain.png">image/plain0.png</file>
   <file alias="mountain.png">image/mountain0.png</file>
@@ -50,5 +50,12 @@
   <!--backgroud-->
   <file alias="replay_back.png">image/replay_back.png</file>
   <file alias="replay_mapback.png">image/replay_mapback.png</file>
+  <!--human vs ai-->
+  <file alias="humanai_back.jpg">image/humanai_back.jpg</file>
+  <file alias="start0.png">image/start0.png</file>
+  <file alias="return0.png">image/return0.png</file>
+  <file alias="openMap0.png">image/openMap0.png</file>
+  <file alias="openAI0.png">image/openAI0.png</file>
+  <file alias="help0.png">image/help0.png</file>
 </qresource>
 </RCC>

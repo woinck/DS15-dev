@@ -14,14 +14,16 @@ NumToUnitType = {0:"SABER",1:"LANCER",2:"ARCHER",3:"DRAGON RIDER",
 NumToActionType = {0:"待机", 1:"攻击", 2:"技能"}
 StyleSheet = """
 QLineEdit{
-background-color: rgb(255, 255, 127);
-color: darkblue;
+background-color: rgb(0, 0, 200);
+color: white;
 }
 """
 class InfoWidget(QTabWidget):
     def __init__(self, parent =None):
         super(InfoWidget, self).__init__(parent)
 
+        self.setAutoFillBackground(True)
+        self.setStyleSheet("background: transparency;")
 #        self.infoWidget_Game = InfoWidget1()
         self.infoWidget_Unit = InfoWidget2()
         self.infoWidget_Map = InfoWidget3()
@@ -182,6 +184,7 @@ class InfoWidget2(QWidget):
         self.info_attackrange = QLabel("")
         self.infos.append(self.info_attackrange)
 
+        self.setStyleSheet(StyleSheet)
         for info in self.infos:
             info.setFrameStyle(QFrame.StyledPanel|QFrame.Sunken)
             info.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed))

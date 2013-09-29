@@ -21,9 +21,9 @@ class ReplayMap(QWidget, Ui_Replaymap):
 		palette = QPalette()
 		#print "size..............:",self.size().width(),self.size().height()#for test
 		palette.setBrush(QPalette.Window,
-						 QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
-																	  Qt.IgnoreAspectRatio,
-																	  Qt.SmoothTransformation)))
+                                 QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
+                                                                              Qt.IgnoreAspectRatio,
+                                                                              Qt.SmoothTransformation)))
 		self.setPalette(palette)
 
 		self.replayWidget = HumanReplay(scene)

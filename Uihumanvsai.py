@@ -253,16 +253,33 @@ class Ui_Player(QThread):
 #		#end GetCommand()
 #		pass
 
+ButtonPics = ["start0", "return0", "openMap0", "openAI0", "help0"]
 class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
+        styleSheet = """
+QPushButton{ border-radius: 20px;}
+QPushButton:hover{border-style
+QPushButton:pressed{border-style: inset;}
+"""
 	willReturn = pyqtSignal()
 	def __init__(self, parent = None):
 		super(HumanvsAi, self).__init__(parent)
 		self.setupUi(self)
-	 #   pal = self.palette()
-	#	pal.setBrush(QPalette.Window, QBrush(Qt.NoBrush))
-	 #   self.setPalette(pal)
 
 
+                palette = self.palette()
+		palette.setBrush(QPalette.Window,
+                                 QBrush(QPixmap(":humanai_back.jpg").scaled(self.size(),
+                                                                            Qt.IgnoreAspectRatio,
+                                                                            Qt.SmoothTransformation)))
+																	  Qt.IgnoreAspectRatio,
+																	  Qt.SmoothTransformation)))
+		self.setPalette(palette)
+                self.setStyleSheet(HumanvsAi.styleSheet)
+                #画button图片
+                buttons = [self.startButton, self.returnButton, self.mapButton,
+                           self.aiButton, self.helpButton]
+                for i in range(len(buttons)):
+                        buttons[i].setIcon(QIcon(QImage(":" + ButtonPics[i] + ".png")).scaled(buttons[i].size()))
 		self.aiPath = ""
 		self.mapPath = ""
 		self.started = False
