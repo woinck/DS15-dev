@@ -263,22 +263,29 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	def __init__(self, parent = None):
 		super(HumanvsAi, self).__init__(parent)
 		self.setupUi(self)
+
 		#试图放成好看的全屏...
-		desk_size = QApplication.desktop().screenGeometry()
-		self.resize(desk_size.width(), desk_size.height())
+		#old_size = self.size()
+		#desk_size = QApplication.desktop().screenGeometry()
+		#factorx = desk_size.width() / old_size.width()
+		#factory = desk_size.height() / old_size.height()
+		#self.resize(desk_size.width(), desk_size.height())
+		self.setFixedSize(self.size())
 		palette = self.palette()
 		palette.setBrush(QPalette.Window,
 		QBrush(QPixmap(":humanai_back.jpg").scaled(self.size(),
 													Qt.IgnoreAspectRatio,
 													Qt.SmoothTransformation)))
-
+		#for widget in [self.aiButton, self.info_ai, self.mapButton, self.info_map,
+		#				self.verticalLayout, self.verti
 		self.setPalette(palette)
 		# self.setStyleSheet(HumanvsAi.styleSheet)
 		#画button图片
 		buttons = [self.startButton, self.returnButton, self.mapButton,
 				self.aiButton, self.helpButton]
 		for i in range(len(buttons)):
-			buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png").scaled(buttons[i].size())))
+			buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png")))
+			buttons[i].setIconSize(buttons[i].size())
 			buttons[i].setStyleSheet("border-radius: 30px;")
 		self.aiPath = ""
 		self.mapPath = ""
@@ -313,14 +320,14 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		#self.connect(self.replayWindow.animation, SIGNAL("finished()"), self.on_aniFinished)#for test
 		self.connect(self, SIGNAL("ableToPlay()"), self.on_ablePlay, Qt.QueuedConnection)
 		#other
-		pal = self.scoLabel1.palette()
-		br = QBrush(Qt.Dense3Pattern)
-		br.setColor(QColor(255,51,0,200))
-		pal.setBrush(QPalette.Window, br)
-		self.scoLabel1.setPalette(pal)
-		self.scoLabel2.setPalette(pal)
+	#	pal = self.scoLabel1.palette()
+	#	br = QBrush(Qt.Dense3Pattern)
+	#	br.setColor(QColor(255,51,0,200))
+	#	pal.setBrush(QPalette.Window, br)
+	#	self.scoLabel1.setPalette(pal)
+	#	self.scoLabel2.setPalette(pal)
 
-		self.roundLabel.setWindowOpacity(0)
+		#self.roundLabel.setWindowOpacity(0)
 
 	def updateUi(self):
 #		if self.mapPath and self.aiPath and not self.started:
@@ -489,6 +496,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			print "command:", cmd.move, cmd.order,cmd.target
 	def on_getHero(self):
 		dialog = GetHeroTypeDlg(self)
+		dialog.show()
 		name = ""
 		if dialog.exec_():
 			if len(dialog.choice) == 0:
@@ -526,8 +534,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.nowRound = 0
 		self.replayWindow.GoToRound(self.nowRound, 0)
 		WaitForIni.wakeAll()
-		self.roundLabel.setText("Round %d" %(self.nowRound))
-		self.labelAnimation()
+		#self.roundLabel.setText("Round %d" %(self.nowRound))
+		#self.labelAnimation()
 		try:
 			self.playThread.lock.lockForWrite()
 			self.playThread.flag = frInfo.id[0]
@@ -544,8 +552,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		if self.Ani_Finished and len(self.gameBegInfo) == self.nowRound + 2:
 			self.nowRound += 1
 			self.replayWindow.GoToRound(self.nowRound, 0)
-			self.roundLabel.setText("Round %d" %self.nowRound)
-			self.labelAnimation()
+		#	self.roundLabel.setText("Round %d" %self.nowRound)
+			#self.labelAnimation()
 			#设置ani_Finished False
 #			self.Ani_Finished = False
 			#并且发出ablePlay要么play动画,要么开始等待作出命令
@@ -592,8 +600,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.nowRound += 1
 			print "goto", self.nowRound
 			self.replayWindow.GoToRound(self.nowRound, 0)
-			self.roundLabel.setText("Round %d" %self.nowRound)
-			self.labelAnimation()
+			#self.roundLabel.setText("Round %d" %self.nowRound)
+			#self.labelAnimation()
 			self.emit(SIGNAL("ableToPlay()"))
 	#判断有没有回合结束信息相关的更新
 	def on_ablePlay(self):
@@ -614,8 +622,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			if flag and self.replayWindow.gameBegInfo[self.replayWindow.nowRound].id[0] == 1:
 				#wake 动画
 				WaitForAni.wakeAll()
-				self.roundLabel.setText(_frUtf("开始操作吧!"))
-				self.labelAnimation()
+			#	self.roundLabel.setText(_frUtf("开始操作吧!"))
+		#		self.labelAnimation()
 			#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
 			else:
 				try:
@@ -628,8 +636,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 					mutex.unlock()
 				if flag:
 					WaitForAni.wakeAll()
-					self.roundLabel.setText(_frUtf("开始操作吧!"))
-					self.labelAnimation()
+				#	self.roundLabel.setText(_frUtf("开始操作吧!"))
+				#	self.labelAnimation()
 				#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
 				else:
 					try:
@@ -648,9 +656,10 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 
 	def on_firstCmd(self):
+		pass
 #		time.sleep(1)
-		self.roundLabel.setText(_frUtf("开始操作吧!"))
-		self.labelAnimation()
+	#	self.roundLabel.setText(_frUtf("开始操作吧!"))
+	#	self.labelAnimation()
 
 	def on_mapRecv(self, mapInfo):
 		self.replayWindow.SetInitMap(mapInfo)
@@ -694,45 +703,47 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		pass
 	def setRoundEndInfo(self, rCommand, reInfo):
 		#同步分数
-		sco1 = reInfo.score[0]
-		sco2 = reInfo.score[1]
-		self.scoLabel1.setText("%d"%sco1)
-		self.scoLabel2.setText("%d"%sco2)
+		pass
+		#sco1 = reInfo.score[0]
+		#sco2 = reInfo.score[1]
+		#print "sco setset!!!",sco1, sco2#for test
+		#self.scoLabel1.setText("%d"%sco1)
+		#self.scoLabel2.setText("%d"%sco2)
  
-	def labelAnimation(self):
-		animation_1 = QParallelAnimationGroup(self)
-		animation_1_1 = QPropertyAnimation(self.roundLabel, "geometry")
-		animation_1_1.setDuration(2000)
-		animation_1_1.setStartValue(self.roundLabel.geometry())
-		animation_1_1.setEndValue(QRect(450,150,141,41))
-		animation_1_2 = QPropertyAnimation(self.roundLabel, "windowOpacity")
-		animation_1_2.setDuration(1500)
-		animation_1_2.setStartValue(0)
-		animation_1_2.setEndValue(1)
-		animation_1_1.setEasingCurve(QEasingCurve.OutCubic)
-		animation_1.addAnimation(animation_1_1)
-		animation_1.addAnimation(animation_1_2)
+	#def labelAnimation(self):
+	#	animation_1 = QParallelAnimationGroup(self)
+	#	animation_1_1 = QPropertyAnimation(self.roundLabel, "geometry")
+	#	animation_1_1.setDuration(2000)
+	#	animation_1_1.setStartValue(self.roundLabel.geometry())
+	#	animation_1_1.setEndValue(QRect(450,150,141,41))
+	#	animation_1_2 = QPropertyAnimation(self.roundLabel, "opacity")
+	#	animation_1_2.setDuration(1500)
+	#	animation_1_2.setStartValue(0)
+	#	animation_1_2.setEndValue(1)
+	#	animation_1_1.setEasingCurve(QEasingCurve.OutCubic)
+	#	animation_1.addAnimation(animation_1_1)
+	#	animation_1.addAnimation(animation_1_2)
 
-		animation_2 = QParallelAnimationGroup(self)
-		animation_2_1 = QPropertyAnimation(self.roundLabel, "geometry")
-		animation_2_1.setDuration(2000)
-		animation_2_1.setStartValue(self.roundLabel.geometry())
-		animation_2_1.setEndValue(QRect(450, 40, 141, 41))
-		animation_2_2 = QPropertyAnimation(self.roundLabel, "windowOpacity")
-		animation_2_2.setDuration(1000)
-		animation_2_2.setStartValue(1)
-		animation_2_2.setEndValue(0)
-		animation_2_1.setEasingCurve(QEasingCurve.OutCubic)
-		animation_2.addAnimation(animation_2_1)
-		animation_2.addAnimation(animation_2_2)
+	#	animation_2 = QParallelAnimationGroup(self)
+	#	animation_2_1 = QPropertyAnimation(self.roundLabel, "geometry")
+	#	animation_2_1.setDuration(2000)
+	#	animation_2_1.setStartValue(self.roundLabel.geometry())
+	#	animation_2_1.setEndValue(QRect(450, 40, 141, 41))
+	#	animation_2_2 = QPropertyAnimation(self.roundLabel, "opacity")
+	#	animation_2_2.setDuration(1000)
+	#	animation_2_2.setStartValue(1)
+	#	animation_2_2.setEndValue(0)
+	#	animation_2_1.setEasingCurve(QEasingCurve.OutCubic)
+	#	animation_2.addAnimation(animation_2_1)
+	#	animation_2.addAnimation(animation_2_2)
 
-		animation = QSequentialAnimationGroup(self)
-		animation_3 = QPauseAnimation(1000)
-		animation.addAnimation(animation_1)
-		animation.addAnimation(animation_3)
-		animation.addAnimation(animation_2)
-		self.connect(animation, SIGNAL("finished()"), animation, SLOT("deleteLater()"))
-		animation.start()
+	#	animation = QSequentialAnimationGroup(self)
+	#	animation_3 = QPauseAnimation(1000)
+	#	animation.addAnimation(animation_1)
+	#	animation.addAnimation(animation_3)
+	#	animation.addAnimation(animation_2)
+	#	self.connect(animation, SIGNAL("finished()"), animation, SLOT("deleteLater()"))
+	#	animation.start()
 
 
 #test
@@ -740,6 +751,6 @@ if __name__ == "__main__":
 	import sys
 	app = QApplication(sys.argv)
 	form = HumanvsAi()
-	form.showFullScreen()
-	#form.show()
+	#form.showFullScreen()
+	form.show()
 	app.exec_()
