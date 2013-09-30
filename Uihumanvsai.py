@@ -255,7 +255,7 @@ class Ui_Player(QThread):
 
 ButtonPics = ["start0", "return0", "openMap0", "openAI0", "help0"]
 class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
-#        styleSheet = """
+#styleSheet = """
 #QPushButton{ }
 #QPushButton:pressed{border-style: inset;}
 #"""
@@ -263,21 +263,22 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	def __init__(self, parent = None):
 		super(HumanvsAi, self).__init__(parent)
 		self.setupUi(self)
-
-
-                palette = self.palette()
+		#试图放成好看的全屏...
+		desk_size = QApplication.desktop().screenGeometry()
+		self.resize(desk_size.width(), desk_size.height())
+		palette = self.palette()
 		palette.setBrush(QPalette.Window,
-                                 QBrush(QPixmap(":humanai_back.jpg").scaled(self.size(),
-                                                                            Qt.IgnoreAspectRatio,
-                                                                            Qt.SmoothTransformation)))
-		
+		QBrush(QPixmap(":humanai_back.jpg").scaled(self.size(),
+													Qt.IgnoreAspectRatio,
+													Qt.SmoothTransformation)))
+
 		self.setPalette(palette)
-               # self.setStyleSheet(HumanvsAi.styleSheet)
-                #画button图片
-                buttons = [self.startButton, self.returnButton, self.mapButton,
-                           self.aiButton, self.helpButton]
-                for i in range(len(buttons)):
-                        buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png").scaled(buttons[i].size())))
+		# self.setStyleSheet(HumanvsAi.styleSheet)
+		#画button图片
+		buttons = [self.startButton, self.returnButton, self.mapButton,
+				self.aiButton, self.helpButton]
+		for i in range(len(buttons)):
+			buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png").scaled(buttons[i].size())))
 			buttons[i].setStyleSheet("border-radius: 30px;")
 		self.aiPath = ""
 		self.mapPath = ""
@@ -740,5 +741,5 @@ if __name__ == "__main__":
 	app = QApplication(sys.argv)
 	form = HumanvsAi()
 	form.showFullScreen()
-	form.show()
+	#form.show()
 	app.exec_()
