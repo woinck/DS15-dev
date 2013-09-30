@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 import lib.human.ui_humanvsai
 from lib.human.Humanai_Replay_event import HumanReplay
 from lib.human.info_widget import *
-import basic, sio, select, os, socket
+import basic, sio, select, os, socket, time
 from lib.human.herotypedlg import GetHeroTypeDlg
 from functools import partial
 #from AI_debugger import AiThread
@@ -49,9 +49,10 @@ class AiThread(QThread):
 	def initialize(self, gameAIPath, gameMapPath):
 
 		if not sio.DEBUG_MODE:
-			server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
-			server_run.start()
-
+			#server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			#server_run.start()
+			sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+	
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))

@@ -1,8 +1,5 @@
 # -*- coding: UTF-8 -*-
-
-
 import sio, socket, time, threading, os,subprocess
-
 from field_shelve import *
 
 #from sclientui import UI_Run
@@ -62,13 +59,13 @@ class Sui(threading.Thread):
 			conn.send('|')
 			print 'i sent it!!!!!!!!!!!!'
 		else:
-			os.system('cmd /c start %s' %(AIPath))
-#			subprocess.call(['python', AIPath])
+			#os.system('cmd /c start %s' %(AIPath))
+			sio.Prog_Run(AIPath)
 	def run(self):
 		global gProcess,rProcess
 		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch
 		global rbInfo,reInfo,rCommand
-		global ai_thread,logic_thread,logc_run
+		global ai_thread,logic_thread,logic_run
 		
 		#定义回放列表用于生成回放文件，每个元素储存一个回合的信息
 		replayInfo=[]
@@ -90,7 +87,7 @@ class Sui(threading.Thread):
 		
 		if gameMode <= sio.PLAYER_VS_PLAYER:
 			if not sio.DEBUG_MODE:
-				logic_run.start()
+				sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 				time.sleep(0.1)
 			logic_thread.start()
 		
@@ -441,14 +438,7 @@ class Sai(threading.Thread):
 			connAI[i].send('|')
 			connAI[i].close()
 
-class Prog_Run(threading.Thread):
-	def __init__(self,progPath):
-		threading.Thread.__init__(self)
-		self.progPath=progPath
-					
-	def run(self):
-		os.system('cmd /c start %s' %(self.progPath))
-#                subprocess.call(['python', self.progPath])
+
 
 global mapInfo,heroType,aiInfo
 global rbInfo,reInfo,rCommand
@@ -472,7 +462,8 @@ rProc=threading.Condition()
 #运行线程		
 ui_thread = Sui()
 ai_thread = Sai()
-ui_run = sio.Prog_Run(os.getcwd() + sio.UI_FILE_NAME)
+
+#ui_run = sio.Prog_Run(os.getcwd() + sio.UI_FILE_NAME)
 logic_run = sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 logic_thread = Slogic()
 
