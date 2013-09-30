@@ -739,6 +739,6 @@ if __name__ == "__main__":
 	import sys
 	app = QApplication(sys.argv)
 	form = HumanvsAi()
-#	form.showFullScreen()
+	form.showFullScreen()
 	form.show()
 	app.exec_()

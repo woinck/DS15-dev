@@ -175,15 +175,15 @@ class HumanReplay(QGraphicsView):
 
 		if not self.focusUnit.isVisible():
 			self.focusUnit.setVisible(True)
-		if self.focusUnit in items:
-			return
+		#if self.focusUnit in items:
+		#	return
 
 		if not self.now_state == self.State_Move:
 			self.focusUnit.setPos(item.corX, item.corY)
 		if self.now_state == self.State_No_Comm or self.now_state == self.State_Opr:
 			return
 		if self.now_state == self.State_Move:
-
+			print "move_range_list:::::::::::::::::", self.move_range_list
 			if (item.corX, item.corY) not in self.move_range_list:
 				return
 			self.moveToPos = (item.corX, item.corY)
