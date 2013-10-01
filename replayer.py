@@ -49,8 +49,9 @@ class Replayer(QWidget, Ui_Replayer):
 		for i in range(len(self.buttons)):
 			pixmap = QPixmap(":" + BUTTONPIC[i] + ".png")
 			self.buttons[i].setIcon(QIcon(pixmap))
+			self.buttons[i].setIconSize(self.buttons[i].size())
 			self.buttons[i].setStyleSheet("border-radius: 20px")
-		  #  self.buttons[i].setMask(pixmap.createHeuristicMask())
+
 		#信息变量
 		self.isPaused = False
 		self.started = False
@@ -88,16 +89,15 @@ class Replayer(QWidget, Ui_Replayer):
 		fname = QFileDialog.getOpenFileName(self, QString.fromUtf8("加载回放文件"), REPLAY_FILE_DIR, "replay files(*.rep)")
    #	 print fname
 		if fname and fname!= self.repFileName:
-			#try:
-			fileInfo = sio._ReadFile(fname)
-			#except:
-			#	QMessageBox.critical(self, QString.fromUtf8("文件加载错误"), QString.fromUtf8("加载中出现问题,加载失败。"), QMessageBox.Ok, QMessageBox.NoButton)
-			#else:
-#			print "fileinfo is ", fileInfo#fortest
-			self.fileInfo = fileInfo
-			self.repFileName = fname
+			try:
+				fileInfo = sio._ReadFile(fname)
+			except:
+				QMessageBox.critical(self, QString.fromUtf8("文件加载错误"), QString.fromUtf8("加载中出现问题,加载失败。"), QMessageBox.Ok, QMessageBox.NoButton)
+			else:
+				self.fileInfo = fileInfo
+				self.repFileName = fname
 				#self.reloaded = True
-			self.updateUi()
+				self.updateUi()
 
 	@pyqtSlot()
 	def on_rePlayButton_clicked(self):

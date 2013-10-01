@@ -234,17 +234,6 @@ class Ui_Player(QThread):
 		finally:
 			self.lock.unlock()
 
-#class CommThread(QThread):
-#	def __init__(self, func, parent = None):
-#		super(CommTread, self).__init__(parent)
-#		self.func = func
-
-#	def run(self):
-#		self.func()
-#	def stop(self):
-#		#end GetCommand()
-#		pass
-
 ButtonPics = ["start0", "return0", "openMap0", "openAI0", "help0"]
 class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 #styleSheet = """
