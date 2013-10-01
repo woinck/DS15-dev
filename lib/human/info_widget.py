@@ -27,51 +27,24 @@ class InfoWidget(QTabWidget):
 	def __init__(self, parent =None):
 		super(InfoWidget, self).__init__(parent)
 
-		#self.setAutoFillBackground(True)
-		#self.setWindowOpacity(0.6)
-		#pal = self.palette()
-		#pal.setBrush(QPalette.Window, QBrush(Qt.NoBrush))
-		#self.setPalette(pal)
-		self.setWindowFlags(Qt.FramelessWindowHint)
-		self.setAttribute(Qt.WA_TranslucentBackground)
-	   # self.setStyleSheet("background: transparent;")
-		#self.setStyleSheet("background: transparent; border:0px")
-#		self.infoWidget_Game = InfoWidget1()
+		self.setStyleSheet("QTabBar::tab { background: gray; color: white; padding: 5px; }"
+							"QTabWidget::tab-bar {alignment: center;}"
+									"QTabBar::tab:selected { background: lightgray; } "
+									"QTabWidget::pane { border: 0; } "
+									"QWidget { background: transparent; } ")
+									#"QTabWidget:QWidget::QLineEdit {border:0px; background: white;}")
+		old_font = self.font()
+		new_font = QFont()
+		new_font.setBold(True)
+		new_font.setPointSize(old_font.pointSize() + 1)
+		self.setFont(new_font)
 		self.infoWidget_Unit = InfoWidget2()
 		self.infoWidget_Map = InfoWidget3()
-#		self.addTab(self.infoWidget_Game, "Game info")
 		self.addTab(self.infoWidget_Unit, "Unit info")
 		self.addTab(self.infoWidget_Map, "Map info")
-#		self.setTabToolTip(1, "the global infos and game runing infos")
 		self.setTabToolTip(1, "the right-button-pressed unit's infos")
 		self.setTabToolTip(2, "the right-button-pressed map-grid's infos")
 
-	#reimplement close event:仅仅设置它不可见,而不是关闭
-#	def closeEvent(self, event):
-#		self.hide()
-#		event.ignore()
-	#为了同步主界面窗口菜单的显示加入的event handler
-#	def hideEvent(self, event):
- #	   self.emit(SIGNAL("hided()"))
-	#展现战斗信息
-#	def beginRoundInfo(self, beginfo):
-#		self.infoWidget_Game.resetEnd()
-#		self.infoWidget_Game.setUnitinfo("%s" %beginfo.id)
-#		self.beg_Flag = 1
-#	def endRoundInfo(self, cmd, endinfo):
-#		self.infoWidget_Game.setCmdinfo("move to %s,%s %s" %(cmd.move,
-#															 NumToActionType[cmd.order],
-#															 cmd.target))
-#		self.infoWidget_Game.setEffectinfo("%s" %endinfo.effect)
-#		self.infoWidget_Game.setScoreinfo("%d : %d" %(endinfo.score[0],endinfo.score[1]))
-#		self.beg_Flag = 0
-#	def goToGameInfo(self, _round, round_info):
-#		self.sender = self.sender()
-#		self.infoWidget_Game.setRoundInfo(_round)
-#
-#		if self.sender == None:
-#			pass
-		#待实现,在跳转回合时从回放里设置的类传出的信号设置
 	#展现单位,地形信息
 	def newUnitInfo(self, base_unit):
 		self.infoWidget_Unit.info_type.setText(NumToUnitType[base_unit.kind])
@@ -87,97 +60,13 @@ class InfoWidget(QTabWidget):
 		self.infoWidget_Map.info_score.setText("%d" %map_basic.score)
 		self.infoWidget_Map.info_consumption.setText("%d" %map_basic.move_consumption)
 
-#展示游戏基础信息
-class InfoWidget1(QWidget):
-	def __init__(self, parent = None):
-		super(InfoWidget1, self).__init__(parent)
 
-		self.label_aifile = QLabel("AI file path:")
-		self.info_aifile1 = QLineEdit("")
-		self.info_aifile1.setReadOnly(True)
-		self.info_aifile2 = QLineEdit("")
-		self.info_aifile2.setReadOnly(True)
-		self.label_mapfile = QLabel("MAP file path:")
-		self.info_mapfile = QLineEdit("")
-		self.info_mapfile.setReadOnly(True)
-		self.label_round = QLabel("current round:")
-		self.info_round = QLineEdit("")
-		self.info_round.setReadOnly(True)
-		self.label_unit = QLabel("current aciton_unit:")
-		self.info_unit = QLineEdit("")
-		self.info_unit.setReadOnly(True)
-		self.label_time = QLabel("time used:")
-		self.info_time = QLineEdit("")
-		self.info_time.setReadOnly(True)
-		self.label_cmd = QLabel("command:")
-		self.info_cmd = QLineEdit("")
-		self.info_cmd.setReadOnly(True)
-		self.label_effect = QLabel("attack effect:")
-		self.info_effect = QLineEdit("")
-		self.info_effect.setReadOnly(True)
-		self.label_score = QLabel("socre:")
-		self.info_score = QLineEdit("0:0")
-		self.info_score.setReadOnly(True)
-
-		self.layout = QGridLayout()
-		self.layout.addWidget(self.label_aifile, 0, 0)
-		self.layout.addWidget(self.info_aifile1, 0, 1)
-		self.layout.addWidget(self.info_aifile2, 1, 1)
-		self.layout.addWidget(self.label_mapfile, 2, 0)
-		self.layout.addWidget(self.info_mapfile, 2, 1)
-		self.layout.addWidget(self.label_round, 3, 0)
-
-		self.layout.addWidget(self.info_round, 3, 1)
-		self.layout.addWidget(self.label_unit, 4, 0)
-		self.layout.addWidget(self.info_unit, 4, 1)
-		self.layout.addWidget(self.label_time, 5, 0)
-		self.layout.addWidget(self.info_time, 5, 1)
-		self.layout.addWidget(self.label_cmd, 6, 0)
-		self.layout.addWidget(self.info_cmd, 6, 1)
-		self.layout.addWidget(self.label_effect, 7, 0)
-		self.layout.addWidget(self.info_effect, 7, 1)
-		self.layout.addWidget(self.label_score, 8, 0)
-		self.layout.addWidget(self.info_score, 8, 1)
-
-		self.setLayout(self.layout)
-		#self.setStyleSheet("background: transparent; border:0px")
-		self.setAutoFillBackground(True)
-		#self.setWindowOpacity(0.6)
-		#pal = self.palette()
-		#pal.setBrush(QPalette.Window, QBrush(Qt.NoBrush))
-		#self.setPalette(pal)
-		self.setWindowFlags(Qt.FramelessWindowHint)
-		self.setAttribute(Qt.WA_TranslucentBackground)
-	def setAiFileinfo(self, loaded_ai):
-		self.info_aifile1.setText(loaded_ai[0])
-		if len(loaded_ai) == 2:
-			self.info_aifile2.setText(loaded_ai[1])
-		else:
-			self.info_aifile2.setText("Default")
-			
-	def setMapFileinfo(self, str):
-		self.info_mapfile.setText(str)
-
-	def setRoundinfo(self, r):
-		self.info_round.setText(r)
-	def setUnitinfo(self, str):
-		self.info_unit.setText(str)
-	def setTimeinfo(self, str):
-		self.info_time.setText(str)
-	def setCmdinfo(self, str):
-		self.info_cmd.setText(str)
-	def setEffectinfo(self,str):
-		self.info_effect.setText(str)
-	def setScoreinfo(self, str):
-		self.info_score.setText(str)
-	def resetEnd(self):
-		self.setEffectinfo("")
-		self.setCmdinfo("")
 #展示单位基础信息
 class InfoWidget2(QWidget):
 	def __init__(self, parent = None):
 		super(InfoWidget2, self).__init__(parent)
 		self.infos = []
+
 
 		self.label_type = QLabel("unit type:")
 		self.info_type = QLabel("")
@@ -201,18 +90,26 @@ class InfoWidget2(QWidget):
 		self.info_attackrange = QLabel("")
 		self.infos.append(self.info_attackrange)
 
-		#self.setStyleSheet("background: transparent; border:0px")
-		self.setAutoFillBackground(True)
-		#self.setWindowOpacity(0.6)
-		pal = self.palette()
-		pal.setBrush(QPalette.Window, QBrush(Qt.NoBrush))
-		self.setPalette(pal)
-		self.setWindowFlags(Qt.FramelessWindowHint)
-		self.setAttribute(Qt.WA_TranslucentBackground)
-		self.setWindowFlags(Qt.FramelessWindowHint)
+		labels = [self.label_type, self.label_attack, self.label_life, self.label_speed,
+					self.label_defence, self.label_attackrange, self.label_moverange]
+
+		old_font = self.font()
+		new_font = QFont()
+		new_font.setBold(True)
+		new_font.setPointSize(old_font.pointSize() + 3)
+
+		
+		pal = self.label_type.palette()
+		pal.setBrush(QPalette.WindowText, QColor(Qt.white))
+
 		for info in self.infos:
 			info.setFrameStyle(QFrame.StyledPanel|QFrame.Sunken)
 			info.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed))
+			info.setFont(new_font)
+			info.setPalette(pal)
+		for label in labels:
+			label.setFont(new_font)
+			label.setPalette(pal)
 
 		self.layout = QGridLayout()
 		self.layout.addWidget(self.label_type, 0, 0)
@@ -248,17 +145,24 @@ class InfoWidget3(QWidget):
 		self.info_consumption = QLabel("")
 		self.infos.append(self.info_consumption)
 
-		#self.setStyleSheet("background: transparent; border:0px")
-		#self.setAutoFillBackground(True)
-		#self.setWindowOpacity(0.6)
-		#pal = self.palette()
-		#pal.setBrush(QPalette.Window, QBrush(Qt.NoBrush))
-		#self.setPalette(pal)
-		self.setWindowFlags(Qt.FramelessWindowHint)
-		self.setAttribute(Qt.WA_TranslucentBackground)
+		labels = [self.label_type, self.label_consumption, self.label_score]
+
+		old_font = self.font()
+		new_font = QFont()
+		new_font.setBold(True)
+		new_font.setPointSize(old_font.pointSize() + 3)
+
+		pal = self.label_type.palette()
+		pal.setBrush(QPalette.WindowText, QColor(Qt.white))
+
 		for info in self.infos:
 			info.setFrameStyle(QFrame.StyledPanel|QFrame.Sunken)
 			info.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed))
+			info.setFont(new_font)
+			info.setPalette(pal)
+		for label in labels:
+			label.setFont(new_font)
+			label.setPalette(pal)
 
 		self.layout = QGridLayout()
 		self.layout.addWidget(self.label_type, 0, 0)

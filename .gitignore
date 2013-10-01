@@ -4,3 +4,7 @@
 #emacs
 [#]*[#]
 *~
+
+#not nessasary
+ReplayFiles/
+*.map
