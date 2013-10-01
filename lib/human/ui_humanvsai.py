@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_humanvsai.ui'
 #
-# Created: Tue Oct 01 00:19:18 2013
+# Created: Tue Oct 01 23:51:19 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -115,6 +115,31 @@ class Ui_HumanvsAi(object):
         self.playerLabel.setFont(font)
         self.playerLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.playerLabel.setObjectName(_fromUtf8("playerLabel"))
+        self.roundLabel = QtGui.QLabel(HumanvsAi)
+        self.roundLabel.setGeometry(QtCore.QRect(470, 20, 100, 40))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.roundLabel.sizePolicy().hasHeightForWidth())
+        self.roundLabel.setSizePolicy(sizePolicy)
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        self.roundLabel.setPalette(palette)
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        font.setBold(True)
+        font.setWeight(75)
+        self.roundLabel.setFont(font)
+        self.roundLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.roundLabel.setObjectName(_fromUtf8("roundLabel"))
 
         self.retranslateUi(HumanvsAi)
         QtCore.QMetaObject.connectSlotsByName(HumanvsAi)
@@ -123,4 +148,5 @@ class Ui_HumanvsAi(object):
         HumanvsAi.setWindowTitle(_translate("HumanvsAi", "Form", None))
         self.label.setText(_translate("HumanvsAi", "AI", None))
         self.playerLabel.setText(_translate("HumanvsAi", "Player", None))
+        self.roundLabel.setText(_translate("HumanvsAi", "Round 0", None))
 

@@ -73,19 +73,17 @@ class AiThread(QThread):
 			self.mutex.unlock()
 	def run(self):
 		temp = sio._recvs(self.conn)#add base info
-		print 'i sent it!!!!!!!!!!'
+
 		self.emit(SIGNAL("tmpRecv()"))
 
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
 		frInfo = sio._recvs(self.conn)
-
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
-		print "first rbInfo"
+
 		rCommand, reInfo = sio._recvs(self.conn)
 		self.emit(SIGNAL("reRecv"), rCommand, reInfo)
 		while not reInfo.over and not self.isStopped():
 			rbInfo = sio._recvs(self.conn)
-			#print "here is rbInfo got in platform"#for test
 			if self.isStopped():
 				break
 			self.emit(SIGNAL("rbRecv"),rbInfo)
@@ -105,7 +103,6 @@ class AiThread(QThread):
 		if not self.isStopped():
 			winner = sio._recvs(self.conn)
 			self.emit(SIGNAL("gameWinner"),winner)
-			print "emit gamewinner!!!!!!!"#for test
 	#	是否存储回放文件
 		if not self.isStopped():
 			global WaitForReplay
@@ -185,7 +182,6 @@ class Ui_Player(QThread):
 #			self.lock.lockForRead()
 				else:
 					self.emit(SIGNAL("firstCmd()"))
-					#print "lala"#for test
 					#检查player是否是第一个开始做命令的,若是则要等待initialize(需要加强双向等待)
 					WaitForIni.wait(self.lock)
 			finally:
@@ -264,8 +260,6 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.mapPath = ""
 		self.started = False
 		self.nowRound = 0
-		self.gameBegInfo = []
-		self.gameEndInfo = []
 		self.startButton.setEnabled(False)
 		self.Able_To_Play = True
 		self.winner = None
@@ -463,11 +457,12 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	def on_firstRecv(self, mapInfo, frInfo, aiInfo, baseInfo):
 		self.replayWindow.Initialize(basic.Begin_Info(mapInfo, baseInfo), frInfo)
-		self.gameBegInfo.append(frInfo)
+
 		#展示
 		global WaitForIni
 		self.nowRound = 0
 		self.replayWindow.GoToRound(self.nowRound, 0)
+		self.roundLabel.setText("Round 0")
 		WaitForIni.wakeAll()
 		try:
 			self.playThread.lock.lockForWrite()
@@ -479,23 +474,22 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	def on_rbRecv(self, rbInfo):
 		self.replayWindow.UpdateBeginData(rbInfo)
-		self.gameBegInfo.append(rbInfo)
 #		#如果动画已经结束且在等待这一次的rbinfo,就调转回合
-		if self.Ani_Finished and len(self.gameBegInfo) == self.nowRound + 2:
+		if self.Ani_Finished and len(self.replayWindow.gameBegInfo) == self.nowRound + 2:
 			self.nowRound += 1
 			self.replayWindow.GoToRound(self.nowRound, 0)
+			self.roundLabel.setText("Round %d" %self.nowRound)
 			#并且发出ablePlay要么play动画,要么开始等待作出命令
 			self.emit(SIGNAL("ableToPlay()"))#queued connection
 
 	def on_reRecv(self, rCommand, reInfo):
 		self.replayWindow.UpdateEndData(rCommand, reInfo)
-		self.gameEndInfo.append((rCommand,reInfo))
 		#第一次接收直接开始播放
-		if len(self.gameEndInfo) == 1:
+		if len(self.replayWindow.gameEndInfo) == 1:
 			self.Ani_Finished = False
 			self.replayWindow.Play()
 		#如果动画已结束则会设置abletoplay为False不然就设置abletoplay为假
-		if self.Ani_Finished and len(self.gameEndInfo) == self.nowRound + 1:
+		if self.Ani_Finished and len(self.replayWindow.gameEndInfo) == self.nowRound + 1:
 			self.Ani_Finished = False
 			self.replayWindow.Play()
 
@@ -505,8 +499,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		print "anifinished!!!!!!!!!!!!~~~~~~"#for test
 		self.replayWindow.GoToRound(self.nowRound , 1)
 		self.Ani_Finished = True
-		if len(self.gameBegInfo) <= self.nowRound + 1:
-			print "nani!!! you are here!!?now round:", self.nowRound, "total:", len(self.gameBegInfo) - 1#for test
+		if len(self.replayWindow.gameBegInfo) <= self.nowRound + 1:
+			print "nani!!! you are here!!?now round:", self.nowRound, "total:", len(self.replayWindow.gameBegInfo) - 1#for test
 			print "nowRound:::", self.nowRound, "lastRondw",self.lastRound,"winner:::",self.winner
 			if self.nowRound == self.lastRound and self.winner != None:
 				self.on_gameEnd(self.winner)
@@ -514,13 +508,14 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.nowRound += 1
 			print "goto", self.nowRound
 			self.replayWindow.GoToRound(self.nowRound, 0)
+			self.roundLabel.setText("Round %d" %self.nowRound)
 			self.emit(SIGNAL("ableToPlay()"))
 
 	#判断有没有回合结束信息相关的更新
 	def on_ablePlay(self):
 		#判断是否更新到足够播放的回合末信息,如果没有则设置Able_To_Play（基本不可能但还是在调试后加上）并判断是否该是下达命令的时候了
 		global Able_To_Comm,mutex
-		if len(self.gameEndInfo) < self.nowRound + 1:#==
+		if len(self.replayWindow.gameEndInfo) < self.nowRound + 1:#==
 			global Already_Wait,WaitForAni,mutex
 			#临时的判断可以不可以开始做命令的变量
 			flag = False
@@ -596,8 +591,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	
 	def reset(self):
 		self.started = False
-		self.gameBegInfo = []
-		self.gameEndInfo = []
+
 		self.winner = None
 		self.lastRound = -1
 		self.Able_To_Play = True
