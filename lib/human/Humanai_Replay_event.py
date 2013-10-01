@@ -48,10 +48,6 @@ class HumanReplay(QGraphicsView):
 
 		#设置透明
 		self.setStyleSheet("background: transparent; border:0px")
-	 #   self.setWindowFlags(Qt.FramelessWindowHint)
-	 #   self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-	 #   self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-	  #  self.setWindowOpacity(0.6)
 		self.scene = scene
 		self.setScene(self.scene)
 		self.run = False
@@ -125,7 +121,7 @@ class HumanReplay(QGraphicsView):
 		for state in self.stateList:
 			self.connect(state, SIGNAL("entered()"), self.on_Entered)
 		self.connect(self.State_Target, SIGNAL("exited()"), self.on_Exited)
-#		self.stateMachine.start()
+
 	#begin to get command
 	def GetCommand(self):
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
@@ -156,7 +152,6 @@ class HumanReplay(QGraphicsView):
 			QGraphicsView.mousePressEvent(self, event)
 			return
 
-			
 		pos = event.pos()
 		items = self.items(pos)
 		if not items:
@@ -175,8 +170,7 @@ class HumanReplay(QGraphicsView):
 
 		if not self.focusUnit.isVisible():
 			self.focusUnit.setVisible(True)
-		#if self.focusUnit in items:
-		#	return
+
 
 		if not self.now_state == self.State_Move:
 			self.focusUnit.setPos(item.corX, item.corY)
