@@ -117,7 +117,7 @@ class AiThread(QThread):
 
 			self.mutex.lock()
 			WaitForReplay.wait(self.mutex)
-
+			print 'replay_mode::::::::::::',replay_mode
 			sio._sends(self.conn, self.replay_mode)
 
 

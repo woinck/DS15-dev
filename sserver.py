@@ -203,9 +203,11 @@ class Sui(threading.Thread):
 				try:
 					sio._sends(connUI,winner)
 				except:
+					print 'winner sent failed!!!!!!'
 					connUI.shutdown(socket.SHUT_RDWR)
 					exit(1)
 				connUI.settimeout(None)
+				print 'receiving rep mode'
 				replay_mode = sio._recvs(connUI)
 				print 'replay_mode::::::::::::',replay_mode
 				time.sleep(3)#for test
