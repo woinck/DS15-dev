@@ -74,7 +74,7 @@ class AiThread(QThread):
 			self.mutex.unlock()
 	@pyqtSlot()
 	def on_shut(self):
-		#self.conn.close()
+		self.conn.close()
 		self.quit()
 
 	def run(self):
@@ -92,15 +92,8 @@ class AiThread(QThread):
 			if self.isStopped():
 				break
 			self.emit(SIGNAL("rbRecv"),rbInfo)
-			readFlag = 0
-			while not readFlag:
-				ready = select.select([self.conn], [], [], WAIT_TIME)
-				if ready[0]:
-					rCommand,reInfo = sio._recvs(self.conn)
-					readFlag = 1
+			rCommand,reInfo = sio._recvs(self.conn)
 
-				if self.isStopped():
-					break
 			if self.isStopped():
 				break
 
@@ -114,7 +107,7 @@ class AiThread(QThread):
 
 			self.mutex.lock()
 			WaitForReplay.wait(self.mutex)
-			print 'replay_mode::::::::::::',replay_mode
+
 			sio._sends(self.conn, self.replay_mode)
 
 
@@ -134,7 +127,7 @@ class Ui_Player(QThread):
 		self.result = ("Player", (6,6))
 	@pyqtSlot()
 	def on_shut(self):
-	#	self.conn.close()
+		self.conn.close()
 		self.quit()
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -208,14 +201,9 @@ class Ui_Player(QThread):
 		result = self.GetHeroType(mapInfo)
 		sio._sends(self.conn, (result[0],result[1][0]))
 		while True and not self.isStopped():
-			readFlag2 = 0
-			while not readFlag2:
-				ready2 = select.select([self.conn], [], [], WAIT_TIME)
-				if ready2[0]:
-					rBeginInfo = sio._recvs(self.conn)
-					readFlag2 = 1
-				if self.isStopped():
-					break
+			rBeginInfo = sio._recvs(self.conn)
+			if self.isStopped():
+				break
 			print 'rbInfo got'
 			if rBeginInfo != '|':
 				sio._sends(self.conn,self.AI(rBeginInfo))
@@ -501,6 +489,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.replayWindow.UpdateEndData(rCommand, reInfo)
 		#第一次接收直接开始播放
 		if len(self.replayWindow.gameEndInfo) == 1:
+			print "for replayer debugging!:", self.replayWindow.gameBegInfo[0].base[1][1].kind#gameEndInfo[0][0].target#for test
 			self.Ani_Finished = False
 			self.replayWindow.Play()
 		#如果动画已结束则会设置abletoplay为False不然就设置abletoplay为假
@@ -588,18 +577,19 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.winner = winner
 
 	def on_gameEnd(self, winner):
-		QMessageBox.information(self, "Game Winner", "player %s win the game" %winner)
+		info = "Player %d win the game" %winner if winner != -1 else "DRAW!"
+		QMessageBox.information(self, "Game Winner", info)
 		#需要其他特效再加
 		answer = QMessageBox.question(self, _frUtf("保存"), _frUtf("是否保存回放文件?"),
 											  QMessageBox.Yes, QMessageBox.No)
 		global WaitForReplay
-		if answer == QMessageBox.Yes:
-			try:
-				self.aiThread.mutex.lock()
+		try:
+			self.aiThread.mutex.lock()
+			if answer == QMessageBox.Yes:
 				self.aiThread.replay_mode = True
-			finally:
-				self.aiThread.mutex.unlock()
-				WaitForReplay.wakeAll()
+		finally:
+			self.aiThread.mutex.unlock()
+			WaitForReplay.wakeAll()
 		#一些清理工作，方便开始下一局游戏,
 		self.reset()
 		self.replayWindow.reset()
