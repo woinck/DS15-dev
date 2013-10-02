@@ -5,6 +5,7 @@
 from lib.human.ui_replayer import Ui_Replayer
 from lib.human.ui_replaymap import Ui_Replaymap
 from lib.human.Humanai_Replay_event import *
+
 import sio,basic
 #import testdata#for test
 REPLAY_FILE_DIR = "."
@@ -20,9 +21,9 @@ class ReplayMap(QWidget, Ui_Replaymap):
 		palette = QPalette()
 		#print "size..............:",self.size().width(),self.size().height()#for test
 		palette.setBrush(QPalette.Window,
-						 QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
-																	  Qt.IgnoreAspectRatio,
-																	  Qt.SmoothTransformation)))
+                                 QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
+                                                                              Qt.IgnoreAspectRatio,
+                                                                              Qt.SmoothTransformation)))
 		self.setPalette(palette)
 
 		self.replayWidget = HumanReplay(scene)
@@ -48,7 +49,9 @@ class Replayer(QWidget, Ui_Replayer):
 		for i in range(len(self.buttons)):
 			pixmap = QPixmap(":" + BUTTONPIC[i] + ".png")
 			self.buttons[i].setIcon(QIcon(pixmap))
-		  #  self.buttons[i].setMask(pixmap.createHeuristicMask())
+			self.buttons[i].setIconSize(self.buttons[i].size())
+			self.buttons[i].setStyleSheet("border-radius: 20px")
+
 		#信息变量
 		self.isPaused = False
 		self.started = False
@@ -89,9 +92,8 @@ class Replayer(QWidget, Ui_Replayer):
 			try:
 				fileInfo = sio._ReadFile(fname)
 			except:
-				QMessageBox.critical(QString.fromUtf8("文件加载错误"), QString.fromUtf8("加载中出现问题,加载失败。"), QMessageBox.Ok, QMessageBox.NoButton)
+				QMessageBox.critical(self, QString.fromUtf8("文件加载错误"), QString.fromUtf8("加载中出现问题,加载失败。"), QMessageBox.Ok, QMessageBox.NoButton)
 			else:
-#				print "fileinfo is ", fileInfo#fortest
 				self.fileInfo = fileInfo
 				self.repFileName = fname
 				#self.reloaded = True
@@ -125,8 +127,8 @@ class Replayer(QWidget, Ui_Replayer):
 
 	@pyqtSlot()
 	def on_pauseButton_toggled(self, pause):
-		self.checkTimer()
 		self.isPaused = pause
+		self.checkTimer()
 		print "pause trigger!!!:",pause#for test
 		if not self.started:
 			return
@@ -151,8 +153,10 @@ class Replayer(QWidget, Ui_Replayer):
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
 		except:
 			return
+		print self.isPaused
 		if not self.isPaused:
-			self.replayWidget.Play()
+			#self.replayWidget.Play()
+			self.pauseButton.setChecked(False)
 
 	@pyqtSlot()
 	def on_preStepButton_clicked(self):
@@ -162,7 +166,7 @@ class Replayer(QWidget, Ui_Replayer):
 		except:
 			return
 		if not self.isPaused:
-			self.replayWidget.Play()
+			self.pauseButton.setChecked(False)
 
 	@pyqtSlot()
 	def on_playForwardButton_toggled(self, trigger):
@@ -175,6 +179,8 @@ class Replayer(QWidget, Ui_Replayer):
 		else:
 			self.killTimer(self.timer)
 			self.timer = None
+			if not self.isPaused:
+				self.pauseButton.setChecked(False)
 
 	@pyqtSlot()
 	def on_playBackwardButton_toggled(self, trigger):
@@ -189,6 +195,8 @@ class Replayer(QWidget, Ui_Replayer):
 		else:
 			self.killTimer(self.timer)
 			self.timer = None
+			if not self.isPaused:
+				self.pauseButton.setChecked(False)
 
 	def timerEvent(self, event):
 		if event.timerId() == self.timer:
@@ -232,4 +240,4 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		form.close()
 		app.quit()
-		print "abc"
+

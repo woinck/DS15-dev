@@ -48,10 +48,6 @@ class HumanReplay(QGraphicsView):
 
 		#设置透明
 		self.setStyleSheet("background: transparent; border:0px")
-	 #   self.setWindowFlags(Qt.FramelessWindowHint)
-	 #   self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-	 #   self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-	  #  self.setWindowOpacity(0.6)
 		self.scene = scene
 		self.setScene(self.scene)
 		self.run = False
@@ -125,7 +121,7 @@ class HumanReplay(QGraphicsView):
 		for state in self.stateList:
 			self.connect(state, SIGNAL("entered()"), self.on_Entered)
 		self.connect(self.State_Target, SIGNAL("exited()"), self.on_Exited)
-#		self.stateMachine.start()
+
 	#begin to get command
 	def GetCommand(self):
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
@@ -156,7 +152,6 @@ class HumanReplay(QGraphicsView):
 			QGraphicsView.mousePressEvent(self, event)
 			return
 
-			
 		pos = event.pos()
 		items = self.items(pos)
 		if not items:
@@ -175,15 +170,14 @@ class HumanReplay(QGraphicsView):
 
 		if not self.focusUnit.isVisible():
 			self.focusUnit.setVisible(True)
-		if self.focusUnit in items:
-			return
+
 
 		if not self.now_state == self.State_Move:
 			self.focusUnit.setPos(item.corX, item.corY)
 		if self.now_state == self.State_No_Comm or self.now_state == self.State_Opr:
 			return
 		if self.now_state == self.State_Move:
-
+			print "move_range_list:::::::::::::::::", self.move_range_list
 			if (item.corX, item.corY) not in self.move_range_list:
 				return
 			self.moveToPos = (item.corX, item.corY)
@@ -191,7 +185,7 @@ class HumanReplay(QGraphicsView):
 			#在这里判断mirror传递是否会成功，并根据mirror传递是否成功画出route和攻击范围
 			if item.obj.kind == basic.MIRROR:
 				#print "i am on mirror, to judge"#for test
-				self.transPoint = (item.obj.out[1], item.obj.out[0])
+				self.transPoint = item.obj.out
 				items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False))
 				for it in items:
 					if isinstance(it, SoldierUnit):
