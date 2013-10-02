@@ -64,7 +64,7 @@ class Sui(threading.Thread):
 			sio.Prog_Run(AIPath)
 	def run(self):
 		global gProcess,rProcess
-		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch
+		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch,aiConnErr
 		global rbInfo,reInfo,rCommand
 		global ai_thread,logic_thread
 		
@@ -205,7 +205,10 @@ class Sui(threading.Thread):
 				except:
 					connUI.shutdown(socket.SHUT_RDWR)
 					exit(1)
+				connUI.settimeout(None)
 				replay_mode = sio._recvs(connUI)
+				print 'replay_mode::::::::::::',replay_mode
+				time.sleep(3)#for test
 				gProc.notifyAll()
 				gProc.release()
 				break
@@ -230,7 +233,7 @@ class Slogic(threading.Thread):
 		self.name = 'Thread-Logic'
 	
 	def run(self):
-		global gProcess,rProcess,mapInfo,heroType,aiInfo,rbInfo,reInfo,rCommand,winner,base
+		global gProcess,rProcess,mapInfo,heroType,aiInfo,rbInfo,reInfo,rCommand,winner,base,aiConnErr
 		
 		connLogic = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
@@ -292,16 +295,18 @@ class Slogic(threading.Thread):
 				#print 'logic acquired',rProcess
 				if rProcess != sio.RCOMMAND_SET:
 					rProc.wait()
-				else:
+				else:	
 					sio._sends(connLogic,rCommand)
 					reInfo = sio._recvs(connLogic)
+					if aiConnErr[rbInfo.id[0]]:
+						reInfo.over = sio.AI_BREAKDOWN
 					print 'reInfo received from logic'
 					rProc.release()
 					break
 				rProc.release()
 
 			#判断游戏是否结束，并调整游戏进度标记
-			if reInfo.over:
+			if reInfo.over != sio.CONTINUE:
 				gProc.acquire()
 				gProcess = sio.OVER
 				gProc.notifyAll()
@@ -314,8 +319,13 @@ class Slogic(threading.Thread):
 				rProc.release()
 				break	
 			print '333'
-			
-		winner = sio._recvs(connLogic)
+		
+		if reInfo.over == sio.NORMAL_OVER:
+			winner = sio._recvs(connLogic)
+		if reInfo.over == sio.AI_BREAKDOWN:
+			for i in range(2):
+				if aiConnErr[i] == True:
+					winner = i
 		print 'winner: ',winner
 		
 		#接收胜利方信息
@@ -330,9 +340,10 @@ class Sai(threading.Thread):
 	def __init__(self):
 		threading.Thread.__init__(self)
 		self.name = 'Thread-AI'
+		self.connErr = False
 	
 	def run(self):
-		global gProcess,rProcess,mapInfo,heroType,aiInfo,base
+		global gProcess,rProcess,mapInfo,heroType,aiInfo,base, aiConnErr
 		global rbInfo,reInfo,rCommand
 		global gameMode,timeoutSwitch
 		
@@ -356,8 +367,8 @@ class Sai(threading.Thread):
 				for i in range(2):
 					try:
 						sio._sends(connAI[i],(mapInfo,base))
-					except:
-						pass
+					except sio.ConnException:
+						aiConnErr[i] = True
 						
 					try:
 						aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
@@ -392,11 +403,9 @@ class Sai(threading.Thread):
 					rProc.wait()
 				else:
 					#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
-					try:
-						connAI[rbInfo.id[0]].settimeout(0)
-					except:
-						print 'error!!!!,',rbInfo#for test
-						print 'gProcess: ',gProcess
+			
+					connAI[rbInfo.id[0]].settimeout(0)
+				
 					try:
 						connAI[rbInfo.id[0]].recv(1024)
 					except:
@@ -409,21 +418,22 @@ class Sai(threading.Thread):
 					
 					try:
 						sio._sends(connAI[rbInfo.id[0]],rbInfo)
-					except:
-						pass
+					except sio.ConnException:
+						#AI连接错误，标记至connErr中
+						aiConnErr[rbInfo.id[0]] = True
 						
 					#print 'rbInfo sent to AI'
-
-					try:
-						rCommand = sio._recvs(connAI[rbInfo.id[0]])
-						#print 'AI',rbInfo.id[0],'\'s command:',
-						#sio.cmdDisplay(rCommand)
-						#print 'command end'
-					except socket.timeout:
+					if aiConnErr[rbInfo.id[0]] == True:
 						rCommand = basic.Command()
-					except:
-						#AI连接错误，判负！#########################################
-						pass
+					else:
+						try:
+							rCommand = sio._recvs(connAI[rbInfo.id[0]])
+							#print 'AI',rbInfo.id[0],'\'s command:',
+							#sio.cmdDisplay(rCommand)
+							#print 'command end'
+						except socket.timeout:
+							rCommand = basic.Command()
+
 					rProcess = sio.RCOMMAND_SET
 					rProc.notifyAll()
 					rProc.release()
@@ -440,12 +450,13 @@ class Sai(threading.Thread):
 				rProc.release()
 			
 		#向AI发送结束标志
-		for i in range(2):
-			connAI[i].send('|')
-			connAI[i].shutdown(socket.SHUT_RDWR)
+		if reInfo.over == sio.NORMAL_OVER:
+			for i in range(2):
+				connAI[i].send('|')
+				connAI[i].shutdown(socket.SHUT_RDWR)
 
 
-global mapInfo,heroType,aiInfo
+global mapInfo,heroType,aiInfo,aiConnErr
 global rbInfo,reInfo,rCommand
 global winner,gameMode,timeoutSwitch
 global whole_map,base
@@ -454,6 +465,7 @@ aiInfo=[]
 heroType=[]
 reInfo=None
 timeoutSwitch=[1,1]
+aiConnErr = [False,False]
 
 mapInfo = []
 base = [[], []]

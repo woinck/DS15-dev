@@ -48,6 +48,10 @@ RBINFO_SENT_TO_UI = 2
 RCOMMAND_SET = 3
 REINFO_SET = 4
 
+#OVER的值
+CONTINUE = 0
+NORMAL_OVER = 1
+AI_BREAKDOWN = 2
 
 class MapInfo:
 	def __init__(self,whole_map):
@@ -155,7 +159,7 @@ def _WriteFile(fileInfo,filePath):
 		cPickle.dump(fileInfo,save)
 	
 def _ReplayFileName(aiInfo):
-	result = ''
+	result = '\\'
 	result += aiInfo[0] + '_vs_' + aiInfo[1] + '_'
 	result += time.strftime('%Y%m%d-%H-%M-%S')
 	result += '.rep'
