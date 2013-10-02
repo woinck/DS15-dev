@@ -141,7 +141,7 @@ def _recvs(conn):
 	while c != '|':
 		result = result + c
 		c = conn.recv(1)
-	conn.send('#')
+	conn.send('|')
 	if result == '':
 		return '|'
 	else:

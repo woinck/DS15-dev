@@ -218,7 +218,7 @@ class Sui(threading.Thread):
 		
 		#存回放文件
 		print 'replay_mode:::::::::::::',replay_mode
-		if replay_mode:	
+		if replay_mode == True:	
 			#检验回放文件目录
 			try:
 				os.mkdir(os.getcwd() + sio.REPLAY_FILE_PATH)
