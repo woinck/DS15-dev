@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 import lib.human.ui_humanvsai
 from lib.human.Humanai_Replay_event import HumanReplay
 from lib.human.info_widget import *
-import basic, sio, select, os, socket
+import basic, sio, select, os, socket, time
 from lib.human.herotypedlg import GetHeroTypeDlg
 from lib.human.helpDlg import HelpDlg
 from functools import partial
@@ -48,9 +48,10 @@ class AiThread(QThread):
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
 		if not sio.DEBUG_MODE:
-			server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
-			server_run.start()
-
+			#server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			#server_run.start()
+			sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+	
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))
@@ -71,9 +72,13 @@ class AiThread(QThread):
 			self.closed = True
 		finally:
 			self.mutex.unlock()
+	@pyqtSlot()
+	def on_shut(self):
+		#self.conn.close()
+		self.quit()
+
 	def run(self):
 		temp = sio._recvs(self.conn)#add base info
-
 		self.emit(SIGNAL("tmpRecv()"))
 
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
@@ -109,7 +114,7 @@ class AiThread(QThread):
 
 			self.mutex.lock()
 			WaitForReplay.wait(self.mutex)
-
+			print 'replay_mode::::::::::::',replay_mode
 			sio._sends(self.conn, self.replay_mode)
 
 
@@ -127,7 +132,10 @@ class Ui_Player(QThread):
 		self.cmdNum = 0
 		self.flag = 1
 		self.result = ("Player", (6,6))
-
+	@pyqtSlot()
+	def on_shut(self):
+	#	self.conn.close()
+		self.quit()
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		for i in range(5):
@@ -346,6 +354,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 							 SLOT("deleteLater()"))
 			self.connect(self.aiThread, SIGNAL("finished()"), partial(self.on_threadF,0))
 			self.connect(self.aiThread, SIGNAL("tmpRecv()"), self.on_tmpRecv)
+			#self.connect(self, SIGNAL("aiShut()"), self.aiThread, SLOT("quit()"))
+			self.connect(self, SIGNAL("aiShut()"), self.aiThread, SLOT("on_shut()"))
 			self.aiThread.start()
 		
 		self.updateUi()
@@ -370,6 +380,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.connect(self.playThread, SIGNAL("finished()"), self.playThread,
 							 SLOT("deleteLater()"))
 			self.connect(self.playThread, SIGNAL("finished()"), partial(self.on_threadF,1))
+			#self.connect(self, SIGNAL("playShut()"), self.playThread, SLOT("quit()"))
+			self.connect(self, SIGNAL("playShut()"), self.playThread, SLOT("on_shut()"))
 			self.playThread.start()
 		self.updateUi()
 
@@ -390,11 +402,13 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				return
 			#清理工作，停止游戏，关闭线程,强制结束游戏
 			if self.aiThread and self.aiThread.isRunning():
-				print "before aiThread terminate"
+				print "before aiThread terminate"#for test
 				#self.aiThread.terminate()
-
-				self.aiThread.quit()
-				print "after aiThread terminate"
+				#self.aiThread.conn.shutdown(socket.SHUT_RDWR)
+				self.emit(SIGNAL("aiShut()"))
+				#self.aiThread.exit()
+				#self.aiThread.wait()
+				print "after aiThread terminate"#for test
 				#self.aiThread.stop()
 				#self.aiThread.wait()
 			global WaitForCommand, WaitForIni, WaitForAni
@@ -404,7 +418,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			if self.playThread and self.playThread.isRunning():
 				print "before playThread terminate"
 				#self.playThread.terminate()
-				self.playThread.quit()
+				#self.playThread.exit()
+				self.emit(SIGNAL("playShut()"))
 				print "after playThread terminate"
 				#self.playThread.stop()
 				#self.playThread.wait()
@@ -587,6 +602,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				WaitForReplay.wakeAll()
 		#一些清理工作，方便开始下一局游戏,
 		self.reset()
+		self.replayWindow.reset()
 		self.updateUi()
 	
 	def reset(self):
