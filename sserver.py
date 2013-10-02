@@ -210,7 +210,6 @@ class Sui(threading.Thread):
 				print 'receiving rep mode'
 				replay_mode = sio._recvs(connUI)
 				print 'replay_mode::::::::::::',replay_mode
-				time.sleep(3)#for test
 				gProc.notifyAll()
 				gProc.release()
 				break
@@ -284,7 +283,6 @@ class Slogic(threading.Thread):
 				else:
 					rbInfo = sio._recvs(connLogic)
 					print 'rbInfo received from logic'#for test
-					print 'move range::::::',rbInfo.range
 					rProcess = sio.RBINFO_SET
 					rProc.notifyAll()
 					rProc.release()
