@@ -60,6 +60,7 @@ while not over and turn < basic.TURN_MAX:
 			break
 		
 winner = main.end_score(score, base, turn)
+print 'winner:',winner
 sio._sends(conn, winner)
 conn.close()
 print 'logic end'
