@@ -74,7 +74,8 @@ class AiThread(QThread):
 		finally:
 			self.mutex.unlock()
 	def run(self):
-		temp = sio._recvs(self.conn)#add base info
+		#temp = sio._recvs(self.conn)#add base info
+		sio._recvs(self.conn)
 		print 'i sent it!!!!!!!!!!'
 		self.emit(SIGNAL("tmpRecv()"))
 		#print temp#for test

@@ -62,4 +62,4 @@ while not over and turn < basic.TURN_MAX:
 winner = main.end_score(score, base, turn)
 sio._sends(conn, winner)
 conn.close()
-raw_input('logic end')
+print 'logic end'

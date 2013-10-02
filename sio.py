@@ -10,7 +10,8 @@ DEBUG_MODE = 0
 为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
 为1时需先手动运行logic,再运行sserver,再运行ui
 '''
-REPLAY_MODE = 0 #此常量为1时会生成回放文件,废弃
+SINGLE_PROCESS = 0 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
+REPLAY_MODE = 0 #此常量为1时会生成回放文件,######废弃######
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
 AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
 
@@ -28,6 +29,7 @@ AI_PORT = 8803 # AI 连接端口
 SERV_FILE_NAME = '\\sserver.py'
 UI_FILE_NAME = '\\ai_debugger.py' # UI程序文件名,若有变化请修改此常量!
 LOGIC_FILE_NAME = '\\sclientlogic.py' # logic 程序文件名,若有变化请修改此常量!
+REPLAY_FILE_PATH = '\\ReplayFiles'
 
 #游戏/回合进程标记,对战流程用
 START = 0
@@ -113,18 +115,29 @@ def _cpp_recvs(conn, cmd):
         cmd.target_id = int(rbuf[1])
         cmd.move = (int(rbuf[2]), int(rbuf[3]))
 
+		
+class ConnException(Exception):
+	def __init__(self):
+		Exception.__init__(self)
+		
+		
 #将对象以字符串形式通过指定连接发送
 def _sends(conn,data):
-	conn.send(cPickle.dumps(data))
-	conn.send('|')
+	try:
+		conn.send(cPickle.dumps(data))
+		conn.send('|')
+		conn.recv(1)
+	except:
+		raise ConnException()
 
-#接收字符串并将其转换为对象返回，空则返回'#'
+#接收字符串并将其转换为对象返回，空则返回'|'
 def _recvs(conn):
 	result = ''
 	c = conn.recv(1)
 	while c != '|':
 		result = result + c
 		c = conn.recv(1)
+	conn.send('|')
 	if result == '':
 		return '|'
 	else:
@@ -160,5 +173,9 @@ class Prog_Run(progPath):
 		#subprocess.Popen('python ' + progPath,shell = True)
 '''
 def Prog_Run(progPath):	
-	#os.system('cmd /c start %s' %(self.progPath))
-	subprocess.Popen('python ' + progPath)
+	global SINGLE_PROCESS
+	if SINGLE_PROCESS:
+		subprocess.Popen('python ' + progPath)
+	else:
+		os.system('cmd /c start %s' %(progPath))
+		

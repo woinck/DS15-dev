@@ -2,8 +2,6 @@
 import sio, socket, time, threading, os,subprocess
 from field_shelve import *
 
-#from sclientui import UI_Run
-#from sclientlogic import Logic_Run
 
 def _SocketConnect(host,port,connName,list = 1):
 	global gProcess,gProc
@@ -56,8 +54,11 @@ class Sui(threading.Thread):
 		
 	def run_AI(self,conn,AIPath):
 		if AIPath == None:
-			conn.send('|')
-			print 'i sent it!!!!!!!!!!!!'
+			try:
+				conn.send('|')
+			except:
+				conn.shutdown(socket.SHUT_RDWR)
+				exit(1)
 		else:
 			#os.system('cmd /c start %s' %(AIPath))
 			sio.Prog_Run(AIPath)
@@ -65,18 +66,17 @@ class Sui(threading.Thread):
 		global gProcess,rProcess
 		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch
 		global rbInfo,reInfo,rCommand
-		global ai_thread,logic_thread,logic_run
+		global ai_thread,logic_thread
 		
 		#定义回放列表用于生成回放文件，每个元素储存一个回合的信息
 		replayInfo=[]
 		
 		#与UI连接
 		connUI,address = _SocketConnect(sio.HOST,sio.UI_PORT,'UI')
-		print '1'
+		connUI.settimeout(1)
+		
 		#接收游戏模式、地图和AI信息
 		gameMode,gameMapPath,gameAIPath=sio._recvs(connUI)
-		
-		print gameAIPath#for test
 		
 		#设置AI超时开关
 		for i in range(2):
@@ -92,11 +92,9 @@ class Sui(threading.Thread):
 			logic_thread.start()
 		
 		#读取地图文件
-		(mapInfo,base)=read_from(gameMapPath)
-				
-		#field.get_map(gameMapPath, mapInfo, base)
-		
 		print 'gameAIPath: ',gameAIPath#for test
+		print 'gameMapPath: ',gameMapPath#for test
+		(mapInfo,base)=read_from(gameMapPath)		
 		
 		#运行AI线程及文件
 		while gProc.acquire():
@@ -121,7 +119,7 @@ class Sui(threading.Thread):
 				break
 			gProc.release()
 
-			#所有连接建立后，将游戏进度前调
+		#所有连接建立后，将游戏进度前调
 		while gProc.acquire():
 			if gProcess != sio.CONNECTED:
 				gProc.wait()
@@ -137,7 +135,11 @@ class Sui(threading.Thread):
 			if gProcess != sio.HERO_TYPE_SET:
 				gProc.wait()
 			else:
-				sio._sends(connUI,(mapInfo,base,aiInfo))
+				try:
+					sio._sends(connUI,(mapInfo,base,aiInfo))
+				except:
+					connUI.shutdown(socket.SHUT_RDWR)
+					exit(1)
 				replayInfo.append((mapInfo,base,aiInfo))
 				gProcess = sio.ROUND
 				gProc.notifyAll()
@@ -156,7 +158,11 @@ class Sui(threading.Thread):
 					rProc.wait()
 				else:
 					#发送回合信息
-					sio._sends(connUI,rbInfo)
+					try:
+						sio._sends(connUI,rbInfo)
+					except:
+						connUI.shutdown(socket.SHUT_RDWR)
+						exit(1)
 					print 'rbInfo sent to ui'
 					rProcess = sio.RBINFO_SENT_TO_UI
 					rProc.notifyAll()
@@ -170,7 +176,11 @@ class Sui(threading.Thread):
 					rProc.wait()
 				else:
 					#发送回合信息
-					sio._sends(connUI,(rCommand,reInfo))
+					try:	
+						sio._sends(connUI,(rCommand,reInfo))
+					except:
+						connUI.shutdown(socket.SHUT_RDWR)
+						exit(1)
 					print 'reInfo sent to ui'#for test
 					#回合信息存至回放列表中
 					replayInfo.append([rbInfo,rCommand,reInfo])
@@ -190,7 +200,11 @@ class Sui(threading.Thread):
 			if gProcess != sio.WINNER_SET:
 				gProc.wait()
 			else:
-				sio._sends(connUI,winner)
+				try:
+					sio._sends(connUI,winner)
+				except:
+					connUI.shutdown(socket.SHUT_RDWR)
+					exit(1)
 				replay_mode = sio._recvs(connUI)
 				gProc.notifyAll()
 				gProc.release()
@@ -198,16 +212,17 @@ class Sui(threading.Thread):
 			gProc.release()
 		
 		#存回放文件
+		print 'replay_mode:::::::::::::',replay_mode
 		if replay_mode:	
 			#检验回放文件目录
 			try:
-				os.mkdir(os.getcwd() + '\\ReplayFiles')
+				os.mkdir(os.getcwd() + sio.REPLAY_FILE_PATH)
 			except:
 				pass
 			#写入回放
-			sio._WriteFile(replayInfo,os.getcwd() + '\\ReplayFiles\\' + sio._ReplayFileName(aiInfo))
+			sio._WriteFile(replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(aiInfo))
 			
-		connUI.close()
+		connUI.shutdown(socket.SHUT_RDWR)
 		
 class Slogic(threading.Thread):
 	def __init__(self):
@@ -216,8 +231,6 @@ class Slogic(threading.Thread):
 	
 	def run(self):
 		global gProcess,rProcess,mapInfo,heroType,aiInfo,rbInfo,reInfo,rCommand,winner,base
-
-		#connLogic,address = _SocketConnect(sio.HOST,sio.LOGIC_PORT,'Logic')
 		
 		connLogic = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
@@ -260,6 +273,7 @@ class Slogic(threading.Thread):
 		while gProcess != sio.OVER:
 			#接收回合开始信息
 			time.sleep(1)#time delay
+			print '111'
 			while rProc.acquire():
 				if rProcess != sio.START:
 					rProc.wait()
@@ -285,7 +299,7 @@ class Slogic(threading.Thread):
 					rProc.release()
 					break
 				rProc.release()
-			
+
 			#判断游戏是否结束，并调整游戏进度标记
 			if reInfo.over:
 				gProc.acquire()
@@ -299,7 +313,7 @@ class Slogic(threading.Thread):
 				rProc.notifyAll()
 				rProc.release()
 				break	
-			
+			print '333'
 			
 		winner = sio._recvs(connLogic)
 		print 'winner: ',winner
@@ -310,7 +324,7 @@ class Slogic(threading.Thread):
 		gProc.notifyAll()
 		gProc.release()
 		
-		connLogic.close()
+		connLogic.shutdown(socket.SHUT_RDWR)
 
 class Sai(threading.Thread):
 	def __init__(self):
@@ -331,12 +345,8 @@ class Sai(threading.Thread):
 		for i in range(2):
 			if timeoutSwitch[i]==1:
 				connAI[i].settimeout(sio.AI_CMD_TIMEOUT)
-				print '1111111111111'
 			else:
 				connAI[i].settimeout(None)
-
-				print "settime out:::",i#for test
-
 		
 		#向AI传输地图信息并接收AI的反馈
 		while gProc.acquire():
@@ -344,7 +354,6 @@ class Sai(threading.Thread):
 				gProc.wait()
 			else:
 				for i in range(2):
-					print 'i::::::::::::::::',i
 					try:
 						sio._sends(connAI[i],(mapInfo,base))
 					except:
@@ -352,14 +361,11 @@ class Sai(threading.Thread):
 						
 					try:
 						aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
-						print aiInfoTemp,heroTypeTemp
 						print 'ai',i,'\'s Info received'
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
 					
 					except socket.timeout:
-
-						print "timeout::::",i#for test
 						print 'fail to receive AI',i,'\'s information, default settings will be used...'
 						aiInfo.append('Player'+str(i))
 						heroType.append(6)
@@ -368,7 +374,7 @@ class Sai(threading.Thread):
 					base[i][0].kind=heroType[i]
 				#调节游戏进度标记
 				gProcess = sio.HERO_TYPE_SET
-				print 'heroType set'#for test
+				#print 'heroType set'#for test
 				gProc.notifyAll()
 				gProc.release()
 				break
@@ -406,13 +412,13 @@ class Sai(threading.Thread):
 					except:
 						pass
 						
-					print 'rbInfo sent to AI'
+					#print 'rbInfo sent to AI'
 
 					try:
 						rCommand = sio._recvs(connAI[rbInfo.id[0]])
-						print 'AI',rbInfo.id[0],'\'s command:',
-						sio.cmdDisplay(rCommand)
-						print 'command end'
+						#print 'AI',rbInfo.id[0],'\'s command:',
+						#sio.cmdDisplay(rCommand)
+						#print 'command end'
 					except socket.timeout:
 						rCommand = basic.Command()
 					except:
@@ -436,8 +442,7 @@ class Sai(threading.Thread):
 		#向AI发送结束标志
 		for i in range(2):
 			connAI[i].send('|')
-			connAI[i].close()
-
+			connAI[i].shutdown(socket.SHUT_RDWR)
 
 
 global mapInfo,heroType,aiInfo
@@ -462,15 +467,13 @@ rProc=threading.Condition()
 #运行线程		
 ui_thread = Sui()
 ai_thread = Sai()
-
-#ui_run = sio.Prog_Run(os.getcwd() + sio.UI_FILE_NAME)
-logic_run = sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 logic_thread = Slogic()
 
+ai_thread.daemon = True
+logic_thread.daemon = True
+
 ui_thread.start()
-'''
-if not sio.DEBUG_MODE:
-	ui_run.start()
-'''
-	
-raw_input('')
+ui_thread.join()
+print 'UI is over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+#time.sleep(10)
+#raw_input('')
