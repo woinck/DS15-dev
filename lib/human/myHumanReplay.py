@@ -9,6 +9,7 @@ UNIT_WIDTH = 50
 UNIT_HEIGHT = 50
 EDGE_WIDTH = 4
 EXTRA_WIDTH = 4
+MAX_OPACITY = 0.8
 
 FILE_UNIT = ["saber", "lancer", "archer", "dragon_rider", "warrior",
              "wizard", "hero_1", "hero_2", "hero_3"]
@@ -27,7 +28,7 @@ class AbstractUnit(QGraphicsObject):
 
     def __init__(self, x, y, parent):
         super(AbstractUnit, self).__init__(parent)
-#        self.setOpacity(MAX_OPACITY)
+        self.setOpacity(MAX_OPACITY)
         self.corX = x
         self.corY = y
     def boundingRect(self):

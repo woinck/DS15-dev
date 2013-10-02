@@ -4,3 +4,8 @@
 #emacs
 [#]*[#]
 *~
+
+#not nessasary
+ReplayFiles/
+*.map
+log.txt

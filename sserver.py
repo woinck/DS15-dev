@@ -217,7 +217,6 @@ class Sui(threading.Thread):
 			gProc.release()
 		
 		#存回放文件
-		print 'replay_mode:::::::::::::',replay_mode
 		if replay_mode == True:	
 			#检验回放文件目录
 			try:
@@ -429,11 +428,16 @@ class Sai(threading.Thread):
 						rCommand = basic.Command()
 					else:
 						try:
+							print 'prepare to receive cmd'
 							rCommand = sio._recvs(connAI[rbInfo.id[0]])
-							#print 'AI',rbInfo.id[0],'\'s command:',
-							#sio.cmdDisplay(rCommand)
-							#print 'command end'
+							print 'AI',rbInfo.id[0],'\'s command:',
+							sio.cmdDisplay(rCommand)
+							print 'command end'
 						except socket.timeout:
+							rCommand = basic.Command()
+						except sio.ConnException:
+							print 'in aiConnErr!!!!!!!!!!!!'
+							aiConnErr[rbInfo.id[0]] = True
 							rCommand = basic.Command()
 
 					rProcess = sio.RCOMMAND_SET

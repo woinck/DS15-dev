@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Replaymap</class>
+ <widget class="QWidget" name="Replaymap">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>831</width>
+    <height>501</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>19</x>
+     <y>19</y>
+     <width>791</width>
+     <height>471</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="replayLayout"/>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

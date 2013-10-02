@@ -1,63 +1,55 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-  <!--unit pic-->
-  <file alias="saber1.png">image/saber1.png</file>
-  <file alias="lancer1.png">image/lancer1.png</file>
-  <file alias="archer1.png">image/archer1.png</file>
-  <file alias="dragon_rider1.png">image/dragon_rider1.png</file>
-  <file alias="warrior1.png">image/warrior1.png</file>
-  <file alias="wizard1.png">image/wizard1.png</file>
-  <file alias="hero_11.png">image/hero_11.png</file>
-  <file alias="hero_21.png">image/hero_21.png</file>
-  <file alias="hero_31.png">image/hero_31.png</file>
-<file alias="saber0.png">image/saber0.png</file>
-<file alias="lancer0.png">image/lancer0.png</file>
-<file alias="archer0.png">image/archer0.png</file>
-<file alias="dragon_rider0.png">image/dragon_rider0.png</file>
-<file alias="warrior0.png">image/warrior0.png</file>
-<file alias="wizard0.png">image/wizard0.png</file>
-<file alias="hero_10.png">image/hero_10.png</file>
-<file alias="hero_20.png">image/hero_20.png</file>
-<file alias="hero_30.png">image/hero_30.png</file>
-
-  <file alias="plain.png">image/plain0.png</file>
-  <file alias="mountain.png">image/mountain0.png</file>
-  <file alias="forest.png">image/forest0.png</file>
-  <file alias="barrier.png">image/barrier0.png</file>
-  <file alias="turret.png">image/turret.png</file>
-  <file alias="trap.png">image/trap.png</file>
-  <file alias="temple.png">image/temple0.png</file>
-  <file alias="gear.png">image/gear.png</file>
-  <file alias="attack_cursor.png">image/attack_cursor.png</file>
-  <file alias="skill_cursor.png">image/skill_cursor.png</file>
-  <file alias="normal_cursor.png">image/normal_cursor.png</file>
-  <file alias="attack_ind1.png">image/attack_ind1.png</file>
-  <file alias="mirror.png">image/mirror0.png</file>
-  <file alias="trans0.png">image/trans0.png</file>
-  <file alias="trans1.png">image/trans1.png</file>
-  <!--icon pic-->
-  <file alias="gameStart.png">icons/gameStart.png</file>
-  <file alias="gamePause.png">icons/gamePause.png</file>
-  <file alias="gameEnd.png">icons/gameEnd.png</file>
-  <file alias="loadAI.png">icons/loadAI.png</file>
-  <file alias="loadMap.png">icons/loadMap.png</file>
-  <file alias="modeRun.png">icons/modeRun.png</file>
-  <file alias="modeDebug.png">icons/modeDebug.png</file>
-  <file alias="reset.png">icons/reset.png</file>
-  <file alias="icon.png">icons/icon.png</file>
-  <!--replay icon pic-->
-  <file alias="endPlay.png">image_replay/endPlay.png</file>
-  <file alias="exit.png">image_replay/exit.png</file>
-  <file alias="preStep.png">image_replay/preStep.png</file>
-  <file alias="nextStep.png">image_replay/nextStep.png</file>
-  <file alias="open.png">image_replay/open.png</file>
-  <file alias="noSound.png">image_replay/noSound.png</file>
-  <file alias="playSound.png">image_replay/playSound.png</file>
-  <file alias="playBackward.png">image_replay/playBackward0.png</file>
-  <file alias="playForward0.png">image_replay/playForward0.png</file>
-  <file alias="pause.png">image_replay/pause.png</file>
-  <!--backgroud-->
-  <file alias="replay_back.png">image_replay/replay_back.png</file>
-  <file alias="replay_mapback.png">image_replay/replay_mapback.png</file>
-</qresource>
+<RCC>
+  <qresource>
+    <file alias="saber1.png">image/saber1.png</file>
+    <file alias="lancer1.png">image/lancer1.png</file>
+    <file alias="archer1.png">image/archer1.png</file>
+    <file alias="dragon_rider1.png">image/dragon_rider1.png</file>
+    <file alias="warrior1.png">image/warrior1.png</file>
+    <file alias="wizard1.png">image/wizard1.png</file>
+    <file alias="hero_11.png">image/hero_11.png</file>
+    <file alias="hero_21.png">image/hero_21.png</file>
+    <file alias="hero_31.png">image/hero_31.png</file>
+    <file alias="saber0.png">image/saber0.png</file>
+    <file alias="lancer0.png">image/lancer0.png</file>
+    <file alias="archer0.png">image/archer0.png</file>
+    <file alias="dragon_rider0.png">image/dragon_rider0.png</file>
+    <file alias="warrior0.png">image/warrior0.png</file>
+    <file alias="wizard0.png">image/wizard0.png</file>
+    <file alias="hero_10.png">image/hero_10.png</file>
+    <file alias="hero_20.png">image/hero_20.png</file>
+    <file alias="hero_30.png">image/hero_30.png</file>
+    <file alias="plain.png">image/plain0.png</file>
+    <file alias="mountain.png">image/mountain0.png</file>
+    <file alias="forest.png">image/forest0.png</file>
+    <file alias="barrier.png">image/barrier0.png</file>
+    <file alias="temple.png">image/temple0.png</file>
+    <file alias="gear.png">image/gear.png</file>
+    <file alias="attack_cursor.png">image/attack_cursor.png</file>
+    <file alias="skill_cursor.png">image/skill_cursor.png</file>
+    <file alias="normal_cursor.png">image/normal_cursor.png</file>
+    <file alias="attack_ind1.png">image/attack_ind1.png</file>
+    <file alias="mirror.png">image/mirror0.png</file>
+    <file alias="trans0.png">image/trans0.png</file>
+    <file alias="trans1.png">image/trans1.png</file>
+    <file alias="rePlay.png">image/rePlay.png</file>
+    <file alias="endPlay.png">image/endPlay.png</file>
+    <file alias="exit.png">image/exit.png</file>
+    <file alias="preStep.png">image/preStep.png</file>
+    <file alias="nextStep.png">image/nextStep.png</file>
+    <file alias="open.png">image/open.png</file>
+    <file alias="noSound.png">image/noSound.png</file>
+    <file alias="playSound.png">image/playSound.png</file>
+    <file alias="playBackward0.png">image/playBackward0.png</file>
+    <file alias="playForward0.png">image/playForward0.png</file>
+    <file alias="pause.png">image/pause.png</file>
+    <file alias="replay_back.png">image/replay_back.png</file>
+    <file alias="replay_mapback.png">image/replay_mapback.png</file>
+    <file alias="humanai_back.jpg">image/humanai_back.jpg</file>
+    <file alias="start0.png">image/start0.png</file>
+    <file alias="return0.png">image/return0.png</file>
+    <file alias="openMap0.png">image/openMap0.png</file>
+    <file alias="openAI0.png">image/openAI0.png</file>
+    <file alias="help1.png">image/help1.png</file>
+    <file alias="help0.png">image/help0.png</file>
+  </qresource>
 </RCC>
