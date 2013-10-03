@@ -1,0 +1,1 @@
+python aa.py py2exe

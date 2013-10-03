@@ -109,7 +109,7 @@ class Replayer(QWidget, Ui_Replayer):
 			#self.fileInfo.insert(0, basic.Begin_Info(testdata.maps, testdata.units0))#for test
 			self.replayWidget.Initialize(basic.Begin_Info(self.fileInfo[0][0],self.fileInfo[0][1]), self.fileInfo[1][0])
 			self.replayWidget.UpdateEndData(*self.fileInfo[1][1:])
-			print "the first round end data	:", self.fileInfo[1][0].base[1][1].kind#self.fileInfo[1][1].target
+			#print "the first round end data	:", self.fileInfo[1][0].base[1][1].kind#self.fileInfo[1][1].target
 			for roundInfo in self.fileInfo[2:]:
 				self.replayWidget.UpdateBeginData(roundInfo[0])
 				self.replayWidget.UpdateEndData(*roundInfo[1:])

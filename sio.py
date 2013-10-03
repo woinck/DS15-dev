@@ -10,7 +10,8 @@ DEBUG_MODE = 1
 为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
 为1时需先手动运行logic,再运行sserver,再运行ui
 '''
-SINGLE_PROCESS = 0 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
+RELEASE_MODE = 0
+SINGLE_PROCESS = 1 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
 REPLAY_MODE = 0 #此常量为1时会生成回放文件,######废弃######
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
 AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
@@ -26,9 +27,14 @@ LOGIC_PORT = 8801 # logic 连接端口
 UI_PORT = 8802 # UI 连接端口
 AI_PORT = 8803 # AI 连接端口
 
-SERV_FILE_NAME = '\\sserver.py'
+if RELEASE_MODE:
+	SERV_FILE_NAME = '\\sserver.exe'
+	LOGIC_FILE_NAME = '\\sclientlogic.exe'
+else:
+	SERV_FILE_NAME = '\\sserver.py'	
+	LOGIC_FILE_NAME = '\\sclientlogic.py' # logic 程序文件名,若有变化请修改此常量!
+
 UI_FILE_NAME = '\\ai_debugger.py' # UI程序文件名,若有变化请修改此常量!
-LOGIC_FILE_NAME = '\\sclientlogic.py' # logic 程序文件名,若有变化请修改此常量!
 REPLAY_FILE_PATH = '\\ReplayFiles'
 
 #游戏/回合进程标记,对战流程用
@@ -189,7 +195,10 @@ class Prog_Run(progPath):
 def Prog_Run(progPath):	
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
-		result = subprocess.Popen('python ' + progPath)
+		if RELEASE_MODE:
+			result = subprocess.Popen(progPath)
+		else:
+			result = subprocess.Popen('python ' +progPath)
 	else:
 		os.system('cmd /c start %s' %(progPath))
 		result = None

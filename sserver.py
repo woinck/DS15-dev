@@ -66,6 +66,7 @@ class Sui(threading.Thread):
 			if sio.DEBUG_MODE:
 				return None
 			else:
+				print 'ai running'
 				return sio.Prog_Run(AIPath)
 	def run(self):
 		global gProcess,rProcess
@@ -99,8 +100,8 @@ class Sui(threading.Thread):
 		#读取地图文件
 		print 'gameAIPath: ',gameAIPath#for test
 		print 'gameMapPath: ',gameMapPath#for test
-		(mapInfo,base)=read_from(gameMapPath)		
-		
+		#(mapInfo,base)=read_from(gameMapPath)		
+		(mapInfo,base)=sio._ReadFile(gameMapPath)
 		#运行AI线程及文件
 		AIProg = []
 		while gProc.acquire():
@@ -282,7 +283,6 @@ class Slogic(threading.Thread):
 		while gProcess != sio.OVER:
 			#接收回合开始信息
 			time.sleep(1)#time delay
-			print '111'
 			while rProc.acquire():
 				if rProcess != sio.START:
 					rProc.wait()
