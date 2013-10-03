@@ -24,6 +24,7 @@
     <file alias="barrier.png">image/barrier0.png</file>
     <file alias="temple.png">image/temple0.png</file>
     <file alias="gear.png">image/gear.png</file>
+	<file alias="turret.png">image/turret.png</file>
     <file alias="attack_cursor.png">image/attack_cursor.png</file>
     <file alias="skill_cursor.png">image/skill_cursor.png</file>
     <file alias="normal_cursor.png">image/normal_cursor.png</file>

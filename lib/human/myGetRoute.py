@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:UTF-8 -*-
 #我自己用个人算法给队式写的搜路函数
-import copy
+import copy,basic
 #游戏中废弃
 def GetRoute(map_list, units_list, idNum, end_pos):
 	"""参量map_list为传入的二维地图数组，行列分别代表着地图上的行列;

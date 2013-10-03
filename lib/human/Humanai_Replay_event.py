@@ -182,15 +182,15 @@ class HumanReplay(QGraphicsView):
 		if self.now_state == self.State_No_Comm or self.now_state == self.State_Opr:
 			return
 		if self.now_state == self.State_Move:
-			print "move_range_list:::::::::::::::::", self.move_range_list#for test
+			#print "move_range_list:::::::::::::::::", self.move_range_list#for test
 			if (item.corX, item.corY) not in self.move_range_list:
 				return
 			self.moveToPos = (item.corX, item.corY)
 			#print "move to pos", self.moveToPos#for test
 			#在这里判断mirror传递是否会成功，并根据mirror传递是否成功画出route和攻击范围
 			if item.obj.kind == basic.MIRROR:
-				#print "i am on mirror, to judge"#for test
 				self.transPoint = item.obj.out
+				print "myout is is::::::::::::", item.obj.out
 				#items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False) + QPoint(0.1, 0.1))
 				#print "itemsitems!!!!!!!", items
 				flag = False
@@ -198,12 +198,11 @@ class HumanReplay(QGraphicsView):
 					if flag == True:
 						break
 					for it in self.UnitBase[i]:
-						if it.scene() == self.scene:
+						if it.scene() == self.scene and it.obj.pos == self.transPoint:
 							print "yes!!!!there is a soldier!"
 							self.transPoint = None
 							flag = True
 							break
-
 			self.moveFinished.emit()
 			return
 		if self.now_state == self.State_Target:
@@ -275,8 +274,9 @@ class HumanReplay(QGraphicsView):
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
 				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
+				print "move unit kind::::", self.nowMoveUnit.obj.kind, "mapkind:::::::::::"#,# self.iniMapInfo[tmp_poing[1]][tmp_point[0]]
 				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
-				print "turet flag:::", turret_flag
+				print "turet flag:::~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", turret_flag#for test
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
 				print "attack range::::::::::::::::", self.attack_range_list#for test
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
@@ -466,7 +466,7 @@ class HumanReplay(QGraphicsView):
 		#攻击效果展示
 
 		if effect:
-			label = EffectIndUnit("- %d" %(self.gameEndInfo[self.nowRound][1].base[attack_target[0]][attack_target[1]].life -\
+			label = EffectIndUnit("- %d" %(-self.gameEndInfo[self.nowRound][1].base[attack_target[0]][attack_target[1]].life +\
 											self.gameBegInfo[self.nowRound].base[attack_target[0]][attack_target[1]].life)
 								  )
 		else:

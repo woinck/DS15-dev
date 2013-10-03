@@ -256,13 +256,14 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.setupUi(self)
 
 		self.setFixedSize(self.size())
-		palette = self.palette()
-		palette.setBrush(QPalette.Window,
-						QBrush(QPixmap(":humanai_back.jpg").scaled(self.size(),
-																	Qt.IgnoreAspectRatio,
-																	Qt.SmoothTransformation)))
+		#palette = self.palette()
+		#palette.setBrush(QPalette.Window,
+		#				QBrush(QPixmap(":humanai_back.jpg").scaled(self.size(),
+		#															Qt.IgnoreAspectRatio,
+		#															Qt.SmoothTransformation)))
 
-		self.setPalette(palette)
+		#self.setPalette(palette)
+		self.setStyleSheet("#HumanvsAi{border-image:url(/lib/human/image/humanai_back.png) 3 7 3 7;}")
 		#画button图片
 		buttons = [self.startButton, self.returnButton, self.mapButton,
 				self.aiButton, self.helpButton]
