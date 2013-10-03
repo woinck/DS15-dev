@@ -266,7 +266,7 @@ class HumanReplay(QGraphicsView):
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point)
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
 			elif self.Operation == 2:
-			  #  self.setCursor(QCursor(QPixmap(":skill_cursor.png"),0,0))
+			    self.setCursor(QCursor(QPixmap(":skill_cursor.png"),0,0))
 				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
 				self.attack_range_list = poses
 				self.drawArrange(poses, self.tmp_attack_list)
