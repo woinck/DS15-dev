@@ -94,7 +94,7 @@ class HumanReplay(QGraphicsView):
 		self.mouseUnit.setVisible(False)
 		self.scene.addItem(self.mouseUnit)
 		self.mouseUnit.setPos(0,0)
-		self.setCursor(QCursor(QPixmap(":normal_cursor.png"),0,0))
+		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 		#状态机定义与连接
 		self.stateMachine = QStateMachine(self)
 		self.State_Run = QState(self.stateMachine)
@@ -159,6 +159,7 @@ class HumanReplay(QGraphicsView):
 		if not items:
 			return
 		#右键发出信息,但不设置focus
+		flag = False
 		for it in items:
 			if isinstance(it, SoldierUnit):
 				self.emit(SIGNAL("unitSelected"),it.obj)
@@ -167,9 +168,11 @@ class HumanReplay(QGraphicsView):
 				self.emit(SIGNAL("mapSelected"), it.obj)
 				#print "emit map", it.obj.kind#for test
 				item = it
+				flag = True
 		if event.button() == Qt.RightButton:
 			return
-
+		if not flag:
+			return
 		if not self.focusUnit.isVisible():
 			self.focusUnit.setVisible(True)
 
@@ -179,7 +182,7 @@ class HumanReplay(QGraphicsView):
 		if self.now_state == self.State_No_Comm or self.now_state == self.State_Opr:
 			return
 		if self.now_state == self.State_Move:
-			print "move_range_list:::::::::::::::::", self.move_range_list
+			print "move_range_list:::::::::::::::::", self.move_range_list#for test
 			if (item.corX, item.corY) not in self.move_range_list:
 				return
 			self.moveToPos = (item.corX, item.corY)
@@ -188,11 +191,19 @@ class HumanReplay(QGraphicsView):
 			if item.obj.kind == basic.MIRROR:
 				#print "i am on mirror, to judge"#for test
 				self.transPoint = item.obj.out
-				items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False))
-				for it in items:
-					if isinstance(it, SoldierUnit):
-						self.transPoint = None
+				#items = self.items(GetPos(item.obj.out[0], item.obj.out[1], False) + QPoint(0.1, 0.1))
+				#print "itemsitems!!!!!!!", items
+				flag = False
+				for i in range(2):
+					if flag == True:
 						break
+					for it in self.UnitBase[i]:
+						if it.scene() == self.scene:
+							print "yes!!!!there is a soldier!"
+							self.transPoint = None
+							flag = True
+							break
+
 			self.moveFinished.emit()
 			return
 		if self.now_state == self.State_Target:
@@ -243,6 +254,7 @@ class HumanReplay(QGraphicsView):
 		elif now_state == self.State_Move:
 			#print "move state"# for test
 			if isinstance(self.nowMoveUnit, SoldierUnit):
+				self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 				self.transPoint = None
 				self.focusUnit.setPos(self.nowMoveUnit.corX, self.nowMoveUnit.corY)
 				self.move_range_list = self.gameBegInfo[self.latestRound].range
@@ -255,18 +267,21 @@ class HumanReplay(QGraphicsView):
 				self.route_ind_list = main.available_spots(self.getMap(self.latestRound, 0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id,self.moveToPos)#改成逻辑的函数
 				self.drawRoute(self.route_ind_list,self.tmp_route_list)
 				#镜子
+				print "trans point:::", self.transPoint#for test
 				if self.transPoint:
 					#self.moveToPos = self.transPoint
 					self.drawRoute([self.transPoint], self.tmp_route_list)
 		elif now_state == self.State_Target:
 			if self.Operation == 1:
-				self.setCursor(QCursor(QPixmap(":attack_cursor.png"),0,0))
+				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
 				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
-				#print "transPoint is trans Point is ::::", self.transPoint
-				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point)
+				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
+				print "turet flag:::", turret_flag
+				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
+				print "attack range::::::::::::::::", self.attack_range_list#for test
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
 			elif self.Operation == 2:
-			    self.setCursor(QCursor(QPixmap(":skill_cursor.png"),0,0))
+				self.setCursor(QCursor(QPixmap(":skill_cursor.png").scaled(30,30),0,0))
 				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
 				self.attack_range_list = poses
 				self.drawArrange(poses, self.tmp_attack_list)
@@ -275,7 +290,7 @@ class HumanReplay(QGraphicsView):
 
 
 	def on_Exited(self):
-		self.setCursor(QCursor(QPixmap(":normal_cursor.png"),0,0))
+		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 
 	def drawArrange(self, arrange_list,list_):
 		for pos in arrange_list:
@@ -593,7 +608,7 @@ class HumanReplay(QGraphicsView):
 		ani.setEndValue(0)
 		anim.addAnimation(ani)
 
-		text = "回复技能" if kind == 8 else "某某光环"
+		text = "某某光环" if kind == 8 else "回复技能"
 		kind_ind = EffectIndUnit(QString.fromUtf8(text))
 		self.scene.addItem(kind_ind)
 		kind_ind.setOpacity(0)

@@ -270,6 +270,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png")))
 			buttons[i].setIconSize(buttons[i].size())
 			buttons[i].setStyleSheet("border-radius: 30px;")
+		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 		self.aiPath = ""
 		self.mapPath = ""
 		self.started = False
