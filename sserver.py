@@ -18,7 +18,10 @@ def _SocketConnect(host,port,connName,list = 1):
 	#设定AI连接最大时间
 	if connName == 'AI':
 		print 'waiting ai'
-		serv.settimeout(sio.AI_CONNECT_TIMEOUT)
+		if not sio.DEBUG_MODE:
+			serv.settimeout(sio.AI_CONNECT_TIMEOUT)
+		else:
+			serv.settimeout(None)
 		print '\n',
 	else:
 		serv.settimeout(None)
@@ -60,8 +63,10 @@ class Sui(threading.Thread):
 				conn.shutdown(socket.SHUT_RDWR)
 				exit(1)
 		else:
-			#os.system('cmd /c start %s' %(AIPath))
-			sio.Prog_Run(AIPath)
+			if sio.DEBUG_MODE:
+				return None
+			else:
+				return sio.Prog_Run(AIPath)
 	def run(self):
 		global gProcess,rProcess
 		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch,aiConnErr
@@ -97,6 +102,7 @@ class Sui(threading.Thread):
 		(mapInfo,base)=read_from(gameMapPath)		
 		
 		#运行AI线程及文件
+		AIProg = []
 		while gProc.acquire():
 			if gProcess != sio.LOGIC_CONNECTED:
 				gProc.wait()
@@ -104,7 +110,7 @@ class Sui(threading.Thread):
 				#运行AI连接线程
 				ai_thread.start()
 				#运行AI1
-				self.run_AI(connUI,gameAIPath[0])
+				AIProg.append(self.run_AI(connUI,gameAIPath[0]))
 				gProc.release()
 				break
 			gProc.release()
@@ -114,7 +120,7 @@ class Sui(threading.Thread):
 				gProc.wait()
 			else:
 				#运行AI2
-				self.run_AI(connUI,gameAIPath[1])
+				AIProg.append(self.run_AI(connUI,gameAIPath[1]))
 				gProc.release()
 				break
 			gProc.release()
@@ -210,15 +216,13 @@ class Sui(threading.Thread):
 				print 'receiving rep mode'
 				replay_mode = sio._recvs(connUI)
 				print 'replay_mode::::::::::::',replay_mode
-				time.sleep(3)#for test
 				gProc.notifyAll()
 				gProc.release()
 				break
 			gProc.release()
 		
 		#存回放文件
-		print 'replay_mode:::::::::::::',replay_mode
-		if replay_mode:	
+		if replay_mode == True:	
 			#检验回放文件目录
 			try:
 				os.mkdir(os.getcwd() + sio.REPLAY_FILE_PATH)
@@ -285,7 +289,6 @@ class Slogic(threading.Thread):
 				else:
 					rbInfo = sio._recvs(connLogic)
 					print 'rbInfo received from logic'#for test
-					print 'move range::::::',rbInfo.range
 					rProcess = sio.RBINFO_SET
 					rProc.notifyAll()
 					rProc.release()
@@ -360,7 +363,7 @@ class Sai(threading.Thread):
 				connAI[i].settimeout(sio.AI_CMD_TIMEOUT)
 			else:
 				connAI[i].settimeout(None)
-		
+
 		#向AI传输地图信息并接收AI的反馈
 		while gProc.acquire():
 			if gProcess != sio.MAP_SET:
@@ -429,11 +432,16 @@ class Sai(threading.Thread):
 						rCommand = basic.Command()
 					else:
 						try:
+							print 'prepare to receive cmd'
 							rCommand = sio._recvs(connAI[rbInfo.id[0]])
-							#print 'AI',rbInfo.id[0],'\'s command:',
-							#sio.cmdDisplay(rCommand)
-							#print 'command end'
+							print 'AI',rbInfo.id[0],'\'s command:',
+							sio.cmdDisplay(rCommand)
+							print 'command end'
 						except socket.timeout:
+							rCommand = basic.Command()
+						except sio.ConnException:
+							print 'in aiConnErr!!!!!!!!!!!!'
+							aiConnErr[rbInfo.id[0]] = True
 							rCommand = basic.Command()
 
 					rProcess = sio.RCOMMAND_SET

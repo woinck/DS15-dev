@@ -28,9 +28,10 @@ class AiThread(QThread):
 	def initialize(self, gameAIPath, gameMapPath):
 		
 		if not sio.DEBUG_MODE:
-			server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
-			server_run.start()
-		
+			#server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			#server_run.start()
+			sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))

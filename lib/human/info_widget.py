@@ -23,6 +23,7 @@ NumToActionType = {0:"待机", 1:"攻击", 2:"技能"}
 #color: white;
 #}
 #"""
+
 class InfoWidget(QTabWidget):
 	def __init__(self, parent =None):
 		super(InfoWidget, self).__init__(parent)

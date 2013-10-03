@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import cPickle, basic, threading, os, time, subprocess
+import cPickle, basic, threading, os, time, subprocess, socket
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 0
 #游戏运行参数
@@ -130,18 +130,28 @@ def _sends(conn,data):
 	try:
 		conn.send(cPickle.dumps(data))
 		conn.send('|')
-		conn.recv(1)
 	except:
 		raise ConnException()
 
 #接收字符串并将其转换为对象返回，空则返回'|'
 def _recvs(conn):
 	result = ''
-	c = conn.recv(1)
+	
+	try:
+		c = conn.recv(1)
+	except socket.timeout:
+		raise socket.timeout
+	except:
+		raise ConnException()
+		
 	while c != '|':
 		result = result + c
-		c = conn.recv(1)
-	conn.send('#')
+		try:
+			c = conn.recv(1)
+		except socket.timeout:
+			raise socket.timeout
+		except:
+			raise ConnException()
 	if result == '':
 		return '|'
 	else:
@@ -179,7 +189,9 @@ class Prog_Run(progPath):
 def Prog_Run(progPath):	
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
-		subprocess.Popen('python ' + progPath)
+		result = subprocess.Popen('python ' + progPath)
 	else:
 		os.system('cmd /c start %s' %(progPath))
+		result = None
+	return result
 		

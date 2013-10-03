@@ -48,10 +48,7 @@ class AiThread(QThread):
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
 		if not sio.DEBUG_MODE:
-			#server_run = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
-			#server_run.start()
-			sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
-	
+			serverProg = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))
@@ -74,9 +71,11 @@ class AiThread(QThread):
 			self.mutex.unlock()
 	@pyqtSlot()
 	def on_shut(self):
-		self.conn.close()
-		self.quit()
-
+		print 'in shut!!!!!!!!!'
+		self.conn.shutdown(socket.SHUT_RDWR)
+		#self.quit()
+		self.exit(0)
+		
 	def run(self):
 		temp = sio._recvs(self.conn)#add base info
 		self.emit(SIGNAL("tmpRecv()"))
@@ -88,13 +87,24 @@ class AiThread(QThread):
 		rCommand, reInfo = sio._recvs(self.conn)
 		self.emit(SIGNAL("reRecv"), rCommand, reInfo)
 		while not reInfo.over and not self.isStopped():
-			rbInfo = sio._recvs(self.conn)
+			try:
+				rbInfo = sio._recvs(self.conn)
+			except sio.ConnException:
+				#self.quit()
+				#pass
+				raise sio.ConnException
 			if self.isStopped():
 				break
 			self.emit(SIGNAL("rbRecv"),rbInfo)
-			rCommand,reInfo = sio._recvs(self.conn)
-
+			try:
+				rCommand,reInfo = sio._recvs(self.conn)
+			except sio.ConnException:
+				#self.quit()
+				#pass
+				raise sio.ConnException
+			
 			if self.isStopped():
+				print 'stopped!!!!!!!!!!!!'
 				break
 
 			self.emit(SIGNAL("reRecv"),rCommand, reInfo)
@@ -127,8 +137,10 @@ class Ui_Player(QThread):
 		self.result = ("Player", (6,6))
 	@pyqtSlot()
 	def on_shut(self):
-		self.conn.close()
-		self.quit()
+		print 'in shut!!!!!!alse'
+		self.conn.shutdown(socket.SHUT_RDWR)
+		#self.quit()
+		self.exit(0)
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		for i in range(5):
@@ -201,8 +213,14 @@ class Ui_Player(QThread):
 		result = self.GetHeroType(mapInfo)
 		sio._sends(self.conn, (result[0],result[1][0]))
 		while True and not self.isStopped():
-			rBeginInfo = sio._recvs(self.conn)
+			try:
+				rBeginInfo = sio._recvs(self.conn)
+			except sio.ConnException:
+				#self.quit()
+				#pass
+				raise sio.ConnException
 			if self.isStopped():
+				print 'is also stopped!!!!!!!'
 				break
 			print 'rbInfo got'
 			if rBeginInfo != '|':
@@ -292,7 +310,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	@pyqtSlot()
 	def on_aiButton_clicked(self):
 		filename = QFileDialog.getOpenFileName(self, _frUtf("载入ai文件"), AI_DIR,
-											   "ai files(*.py)")
+											   "ai files(*.exe;*.py)")
 		if filename:
 			self.aiPath = filename
 			self.info_ai.setText(filename)
@@ -390,13 +408,11 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				return
 			#清理工作，停止游戏，关闭线程,强制结束游戏
 			if self.aiThread and self.aiThread.isRunning():
-				print "before aiThread terminate"#for test
 				#self.aiThread.terminate()
 				#self.aiThread.conn.shutdown(socket.SHUT_RDWR)
 				self.emit(SIGNAL("aiShut()"))
 				#self.aiThread.exit()
 				#self.aiThread.wait()
-				print "after aiThread terminate"#for test
 				#self.aiThread.stop()
 				#self.aiThread.wait()
 			global WaitForCommand, WaitForIni, WaitForAni
@@ -404,11 +420,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			WaitForAni.wakeAll()
 			WaitForCommand.wakeAll()
 			if self.playThread and self.playThread.isRunning():
-				print "before playThread terminate"
 				#self.playThread.terminate()
 				#self.playThread.exit()
 				self.emit(SIGNAL("playShut()"))
-				print "after playThread terminate"
 				#self.playThread.stop()
 				#self.playThread.wait()
 			self.replayWindow.reset()
@@ -489,7 +503,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.replayWindow.UpdateEndData(rCommand, reInfo)
 		#第一次接收直接开始播放
 		if len(self.replayWindow.gameEndInfo) == 1:
-			print "for replayer debugging!:", self.replayWindow.gameBegInfo[0].base[1][1].kind#gameEndInfo[0][0].target#for test
+			#print "for replayer debugging!:", self.replayWindow.gameBegInfo[0].base[1][1].kind#gameEndInfo[0][0].target#for test
 			self.Ani_Finished = False
 			self.replayWindow.Play()
 		#如果动画已结束则会设置abletoplay为False不然就设置abletoplay为假
