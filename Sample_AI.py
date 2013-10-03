@@ -1,18 +1,18 @@
-import basic
+import basic, socket, time, sio
 import main
 ATTACK_RATE = 75
 DANGER_HP = 7
 def GetHeroType(mapInfo,base):
         s = 0; t = 0
         for i in mapInfo:
-                for j in mapInfo[i]:
+                for j in i:
                         if j.kind == 2 or j.kind == 1:
                                 s += 1
                         if j.kind == 3:
                                 t += 1
-        if t >= 1.0 / 3 * len(map_Info) * len(map_Info[0]):
+        if t >= 1.0 / 3 * len(mapInfo) * len(mapInfo[0]):
                 return basic.HERO_3
-        elif s >= 1.0 / 3 * len(map_Info) * len(map_Info[0]):
+        elif s >= 1.0 / 3 * len(mapInfo) * len(mapInfo[0]):
                 return basic.HERO_2
         else:
                 return basic.HERO_1
@@ -113,3 +113,27 @@ def AI(whole_map, Info):
                         team = 1 - team
 		result = basic.Command(order,find_position(whole_map, Info.base,Info.id,(team,target_id), distance, move),(team, target_id))
 	return result
+
+aiInfo = 'Sample_AI'
+conn=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+try:
+	conn.connect((sio.HOST,sio.AI_PORT))
+	print 'connected!'
+except:
+	print 'failed to connect, the program will exit...'
+	time.sleep(2)
+	exit(1)
+mapInfo,base=sio._recvs(conn)
+sio._sends(conn,(aiInfo,GetHeroType(mapInfo,base)))
+print 'info sent'
+while True:
+	rBeginInfo=sio._recvs(conn)
+	print 'rbInfo got'
+	if rBeginInfo != '|':
+		sio._sends(conn,AI(mapInfo,rBeginInfo))
+		print 'cmd sent\n\n'
+	else:
+		break
+
+conn.close()
+print ('ai end')

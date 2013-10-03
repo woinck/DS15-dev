@@ -61,12 +61,6 @@ class InfoWidget(QTabWidget):
 		self.infoWidget_Map.info_score.setText("%d" %map_basic.score)
 		self.infoWidget_Map.info_consumption.setText("%d" %map_basic.move_consumption)
 
-<<<<<<< HEAD
-
-#>>>>>>> debugging
-
-=======
->>>>>>> debugging
 #展示单位基础信息
 class InfoWidget2(QWidget):
 	def __init__(self, parent = None):

@@ -189,7 +189,9 @@ class Prog_Run(progPath):
 def Prog_Run(progPath):	
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
-		subprocess.Popen('python ' + progPath)
+		result = subprocess.Popen('python ' + progPath)
 	else:
 		os.system('cmd /c start %s' %(progPath))
+		result = None
+	return result
 		
