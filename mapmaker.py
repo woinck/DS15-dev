@@ -1,14 +1,15 @@
 from basic import *
 from field_shelve import *
+import sio
 m = Map_Basic
 u = Base_Unit
 mirror = Map_Mirror
-'''
+
 maps = [[m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
-        [mirror(6,(3, 0)), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
+        [mirror(6,(0, 3)), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
         [m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
-        [m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
-        [m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
+        [m(0), m(0), m(4), m(1), m(1), m(1), m(1), m(0)],
+        [m(0), m(4), m(1), m(1), m(1), m(1), m(1), m(0)],
         [m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
         [m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0)],
         [m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0)]]
@@ -21,5 +22,6 @@ maps = [[m(0), m(0)],
         [m(0), m(0)]]
 units0 = [[u(5, (0, 0))],
           [u(3, (1, 1))]]
- 
-write_to((maps,units0))
+''' 
+#write_to((maps,units0))
+sio._WriteFile((maps,units0),'C:\\Users\\woinck\\Documents\\GitHub\\DS15-dev\\mapwithturret.map')
