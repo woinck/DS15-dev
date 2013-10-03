@@ -51,7 +51,7 @@ class InfoWidget(QTabWidget):
 		self.infoWidget_Unit.info_life.setText("%d" %base_unit.life)
 		self.infoWidget_Unit.info_attack.setText("%d" %base_unit.strength)
 		self.infoWidget_Unit.info_defence.setText("%d" %base_unit.defence)
-		self.infoWidget_Unit.info_speed.setText("%d" %base_unit.speed)
+		self.infoWidget_Unit.info_speed.setText("%d" %base_unit.agility)
 		self.infoWidget_Unit.info_moverange.setText("%d" %base_unit.move_range)
 		self.infoWidget_Unit.info_attackrange.setText("%s" %base_unit.attack_range)
 
@@ -59,7 +59,6 @@ class InfoWidget(QTabWidget):
 		self.infoWidget_Map.info_type.setText(NumToMapType[map_basic.kind])
 		self.infoWidget_Map.info_score.setText("%d" %map_basic.score)
 		self.infoWidget_Map.info_consumption.setText("%d" %map_basic.move_consumption)
-
 
 #展示单位基础信息
 class InfoWidget2(QWidget):
@@ -77,7 +76,7 @@ class InfoWidget2(QWidget):
 		self.label_attack = QLabel("attack:")
 		self.info_attack = QLabel("")
 		self.infos.append(self.info_attack)
-		self.label_speed = QLabel("speed:")
+		self.label_speed = QLabel("agility:")
 		self.info_speed = QLabel("")
 		self.infos.append(self.info_speed)
 		self.label_defence = QLabel("defence:")

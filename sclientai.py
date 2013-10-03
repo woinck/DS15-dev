@@ -57,4 +57,3 @@ while True:
 
 conn.close()
 print ('ai end')
-time.sleep(10)

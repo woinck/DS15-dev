@@ -142,6 +142,8 @@ class HumanReplay(QGraphicsView):
 			return
 		item = items[-1]
 		if isinstance(item, EffectIndUnit):
+			if len(items) == 1:
+				return
 			item = items[0]
 		if self.mouseUnit.corX == item.corX and self.mouseUnit.corY == item.corY:
 			return
@@ -355,7 +357,9 @@ class HumanReplay(QGraphicsView):
 	def UpdateEndData(self, comInfo, reInfo):
 		self.gameEndInfo.append((comInfo, reInfo))
 		self.latestStatus = 1
-		self.mapChangeInfo.append(reInfo.change)
+		#self.mapChangeInfo.append(reInfo.change)
+		self.mapChangeInfo.append([])
+		
 #		if reInfo.change:
 #			map_item = self.scene.items(GetPos(change[1][0], change[1][1]))[-1]
 #			map_item.obj = Map_Basic(change[0])
@@ -777,6 +781,8 @@ class HumanReplay(QGraphicsView):
 		self.latestRound = 0
 		self.run = False
 		self.mouseUnit.setVis(False)
+		self.mouseUnit.setVisible(False)
+		self.focusUnit.setVisible(False)
 #test
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
