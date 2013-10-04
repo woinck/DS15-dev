@@ -71,9 +71,7 @@ class AiThread(QThread):
 			self.mutex.unlock()
 	@pyqtSlot()
 	def on_shut(self):
-		print 'in shut!!!!!!!!!'
 		self.conn.shutdown(socket.SHUT_RDWR)
-		#self.quit()
 		self.exit(0)
 		
 	def run(self):
@@ -104,7 +102,6 @@ class AiThread(QThread):
 				raise sio.ConnException
 			
 			if self.isStopped():
-				print 'stopped!!!!!!!!!!!!'
 				break
 
 			self.emit(SIGNAL("reRecv"),rCommand, reInfo)
@@ -137,9 +134,7 @@ class Ui_Player(QThread):
 		self.result = ("Player", (6,6))
 	@pyqtSlot()
 	def on_shut(self):
-		print 'in shut!!!!!!alse'
 		self.conn.shutdown(socket.SHUT_RDWR)
-		#self.quit()
 		self.exit(0)
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -155,11 +150,9 @@ class Ui_Player(QThread):
 			raise ConnectionError("ai port")
 	def GetHeroType(self,mapInfo):
 			self.emit(SIGNAL("getHeroType()"))
-			#print "emit hero"#for test
 			global WaitForHero
 			self.lock.lockForRead()
 			WaitForHero.wait(self.lock)
-			#print "rec hero",self.result#for test
 			self.lock.unlock()
 			return self.result
 
@@ -173,7 +166,7 @@ class Ui_Player(QThread):
 		#检查able_TO_comm全局变量,如果主线程已经准备好所有只待开始做命令则直接开始
 		try:
 			mutex.lock()
-			print "able to command?", Able_To_Comm
+
 			if Able_To_Comm:
 				flag1 = True
 				Able_To_Comm = False
@@ -188,11 +181,7 @@ class Ui_Player(QThread):
 						Already_Wait = True
 					finally:
 						mutex.unlock()
-#			self.emit(SIGNAL("waitforC()"))
-			# time for player to make a command here!!
-					print "~~~ani waiting"#for test
 					WaitForAni.wait(self.lock)
-#			self.lock.lockForRead()
 				else:
 					self.emit(SIGNAL("firstCmd()"))
 					#检查player是否是第一个开始做命令的,若是则要等待initialize(需要加强双向等待)
@@ -201,7 +190,7 @@ class Ui_Player(QThread):
 				self.lock.unlock()
 
 		self.func()
-		print "func called"#for test
+
 		WaitForCommand.wait(self.lock)
 		self.lock.unlock()
 		return self.command
@@ -220,12 +209,9 @@ class Ui_Player(QThread):
 				#pass
 				raise sio.ConnException
 			if self.isStopped():
-				print 'is also stopped!!!!!!!'
 				break
-			print 'rbInfo got'
 			if rBeginInfo != '|':
 				sio._sends(self.conn,self.AI(rBeginInfo))
-				print 'cmd sent'
 				self.cmdNum += 1
 			else:
 				break
@@ -391,11 +377,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	@pyqtSlot()
 	def on_helpButton_clicked(self):
-		print "lala"#for test
 		self.helpdlg = HelpDlg(self)
-		print "abc"#for test
 		self.helpdlg.exec_()
-		print "why"#for test
+
 
 	@pyqtSlot()
 	def on_returnButton_clicked(self):
@@ -501,7 +485,6 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.replayWindow.UpdateEndData(rCommand, reInfo)
 		#第一次接收直接开始播放
 		if len(self.replayWindow.gameEndInfo) == 1:
-			#print "for replayer debugging!:", self.replayWindow.gameBegInfo[0].base[1][1].kind#gameEndInfo[0][0].target#for test
 			self.Ani_Finished = False
 			self.replayWindow.Play()
 		#如果动画已结束则会设置abletoplay为False不然就设置abletoplay为假
@@ -512,17 +495,13 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	def on_aniFinished(self):
 		#判断是否更新到足够调转的回合开始信息
-		print "anifinished!!!!!!!!!!!!~~~~~~"#for test
 		self.replayWindow.GoToRound(self.nowRound , 1)
 		self.Ani_Finished = True
 		if len(self.replayWindow.gameBegInfo) <= self.nowRound + 1:
-			print "nani!!! you are here!!?now round:", self.nowRound, "total:", len(self.replayWindow.gameBegInfo) - 1#for test
-			print "nowRound:::", self.nowRound, "lastRondw",self.lastRound,"winner:::",self.winner
 			if self.nowRound == self.lastRound and self.winner != None:
 				self.on_gameEnd(self.winner)
 		else:
 			self.nowRound += 1
-			print "goto", self.nowRound
 			self.replayWindow.GoToRound(self.nowRound, 0)
 			self.roundLabel.setText("Round %d" %self.nowRound)
 			self.emit(SIGNAL("ableToPlay()"))
@@ -546,9 +525,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			if flag and self.replayWindow.gameBegInfo[self.replayWindow.nowRound].id[0] == 1:
 				#wake 动画
 				WaitForAni.wakeAll()
-			#	self.roundLabel.setText(_frUtf("开始操作吧!"))
-		#		self.labelAnimation()
-			#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
+			#以防命令还没有准备完.每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
 			else:
 				try:
 					mutex.lock()
