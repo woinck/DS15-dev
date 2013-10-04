@@ -45,7 +45,7 @@
     <file alias="pause.png">image/pause.png</file>
     <file alias="replay_back.png">image/replay_back.png</file>
     <file alias="replay_mapback.png">image/replay_mapback.png</file>
-    <file alias="humanai_back.jpg">image/humanai_back.jpg</file>
+    <file alias="humanai_back.png">image/humanai_back.png</file>
     <file alias="start0.png">image/start0.png</file>
     <file alias="return0.png">image/return0.png</file>
     <file alias="openMap0.png">image/openMap0.png</file>
