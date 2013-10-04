@@ -22,6 +22,7 @@ def available_spots(map_list, unit_list, source_num, move_target = (-1,-1)):
 			for j in range(len(map_list[i])):
 				if map_list[i][j].kind == basic.BARRIER and not (i, j) in u_block:
 					u_block += [(i, j)]
+
 	#计算单位阻挡的位置
 	s_block = []
 	for j in range(len(unit_list[1 - k])):
@@ -97,6 +98,8 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 	attack_1 = -1; attack_2 = -1
 	route = [base[j][i].position]
 	if move_position in move_range:
+		print "moverangeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee::::",move_range,"movepos:",move_position
+		print "position:::::::::::::::::::::::", base[1][1].position, base[1][2].position
 		sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
 		if not sc:
 			whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))

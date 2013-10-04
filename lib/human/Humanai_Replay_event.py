@@ -338,7 +338,7 @@ class HumanReplay(QGraphicsView):
 				#如果生命小于0
 				new_unit = SoldierUnit(units[i][j],(i,j))
 				self.UnitBase[i].append(new_unit)
-				if units[i][j].life < 0:
+				if units[i][j].life <= 0:
 					continue
 				self.scene.addItem(new_unit)
 				new_unit.setPos(new_unit.corX, new_unit.corY)
@@ -672,7 +672,7 @@ class HumanReplay(QGraphicsView):
 		ani = QPauseAnimation(300)
 		self.animation.addAnimation(ani)
 
-		#print "cmd move position:", cmd.move, " while end:", endInfo.base[unit_id[0]][unit_id[1]].position
+		print "cmd move position:", cmd.move#, " while end:", endInfo.base[unit_id[0]][unit_id[1]].position
 		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
 			#print "transition??????",cmd.move," --- ", endInfo.base[unit_id[0]][unit_id[1]].position#for test
 			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
