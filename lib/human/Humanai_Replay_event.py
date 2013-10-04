@@ -198,7 +198,7 @@ class HumanReplay(QGraphicsView):
 					if flag == True:
 						break
 					for it in self.UnitBase[i]:
-						if it.scene() == self.scene and it.obj.pos == self.transPoint:
+						if it.scene() == self.scene and it.obj.position == self.transPoint:
 							print "yes!!!!there is a soldier!"
 							self.transPoint = None
 							flag = True
@@ -218,7 +218,6 @@ class HumanReplay(QGraphicsView):
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Escape:
 			if self.now_state == self.State_Opr or self.State_Target:
-				#print "lastAgain"#for test
 				self.lastAgain.emit()
 		if self.now_state != self.State_Opr:
 			return
@@ -274,7 +273,7 @@ class HumanReplay(QGraphicsView):
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
 				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
-				print "move unit kind::::", self.nowMoveUnit.obj.kind, "mapkind:::::::::::"#,# self.iniMapInfo[tmp_poing[1]][tmp_point[0]]
+				print "move unit kind::::", self.nowMoveUnit.obj.kind, "mapkind:::::::::::", self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind
 				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
 				print "turet flag:::~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", turret_flag#for test
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
@@ -663,7 +662,7 @@ class HumanReplay(QGraphicsView):
 		#print "unit move id!!!!!!!!", unit_id#for test
 		cmd = self.gameEndInfo[self.nowRound][0]
 		endInfo = self.gameEndInfo[self.nowRound][1]
-		#print "begin to add animation"#for test
+		print "cmd 's target::::::::::::",cmd.target
 		self.animation = QSequentialAnimationGroup()
 
 		#移动动画
@@ -684,6 +683,7 @@ class HumanReplay(QGraphicsView):
 			ani, item = self.attackAnimation(unit_move, endInfo.base[unit_id[0]][unit_id[1]].position, cmd.target,
 											 self.UnitBase[cmd.target[0]][cmd.target[1]].obj.position,
 											 endInfo.effect[0])
+			print "target position:::::::::", self.UnitBase[cmd.target[0]][cmd.target[1]].obj.position
 			self.animationItem.extend(item)
 			self.animation.addAnimation(ani)
 			

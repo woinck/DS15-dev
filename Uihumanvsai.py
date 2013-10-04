@@ -246,10 +246,6 @@ class Ui_Player(QThread):
 
 ButtonPics = ["start0", "return0", "openMap0", "openAI0", "help0"]
 class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
-#styleSheet = """
-#QPushButton{ }
-#QPushButton:pressed{border-style: inset;}
-#"""
 	willReturn = pyqtSignal()
 	def __init__(self, parent = None):
 		super(HumanvsAi, self).__init__(parent)
@@ -263,7 +259,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		#															Qt.SmoothTransformation)))
 
 		#self.setPalette(palette)
-		self.setStyleSheet("#HumanvsAi{border-image:url(/lib/human/image/humanai_back.png) 3 7 3 7;}")
+		self.setStyleSheet("#backFrame{border-image:url(:humanai_back.jpg);}")
 		#画button图片
 		buttons = [self.startButton, self.returnButton, self.mapButton,
 				self.aiButton, self.helpButton]
