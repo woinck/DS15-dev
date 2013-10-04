@@ -36,6 +36,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.setAutoFillBackground(True)
 		palette = QPalette()
 
+		self.setFixedSize(self.size())
 		palette.setBrush(QPalette.Window,
 						 QBrush(QPixmap(":replay_back.png").scaled(self.size(),
 																	  Qt.IgnoreAspectRatio,
