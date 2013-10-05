@@ -58,6 +58,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.fileInfo = None
 		self.repFileName = ""
 		self.timer = None
+		self.forback_flag = False
 		self.scene = QGraphicsScene()
 		self.replayWindow = ReplayMap(self.scene)
 		self.replayLayout.addWidget(self.replayWindow)
@@ -105,6 +106,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.checkTimer()
 		if self.started:
 			self.replayWidget.GoToRound(0, 0)
+			self.roundLabel.setText("Round 0")
 			if not self.isPaused:
 				self.replayWidget.Play()
 		else:
@@ -114,9 +116,12 @@ class Replayer(QWidget, Ui_Replayer):
 			for roundInfo in self.fileInfo[2:]:
 				self.replayWidget.UpdateBeginData(roundInfo[0])
 				self.replayWidget.UpdateEndData(*roundInfo[1:])
+				lifes = [x.life for x in roundInfo[2].base[1]]
+
 			#开始播放
 			self.pauseButton.setChecked(False)
 			self.replayWidget.GoToRound(0, 0)
+			self.roundLabel.setText("Round 0")
 			self.replayWidget.Play()
 			self.updateUi()
 
@@ -142,6 +147,7 @@ class Replayer(QWidget, Ui_Replayer):
 			if self.replayWidget.nowStatus:
 				try:
 					self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
+					self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 				except:
 					self.emit(SIGNAL("toPause()"))
 					print "emit to pause"
@@ -154,6 +160,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.checkTimer()
 		try:
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
+			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 		except:
 			return
 		print self.isPaused
@@ -166,6 +173,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.checkTimer()
 		try:
 			self.replayWidget.GoToRound(self.replayWidget.nowRound -1 , 0)
+			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 		except:
 			return
 		if not self.isPaused:
@@ -175,8 +183,10 @@ class Replayer(QWidget, Ui_Replayer):
 	@pyqtSlot()
 	def on_playForwardButton_toggled(self, trigger):
 		print "playForwardbutton clicked triger:", trigger#for test
-		if self.playBackwardButton.isChecked():
+		if self.playBackwardButton.isChecked() and not self.forback_flag:
+			self.forback_flag = True
 			self.playBackwardButton.setChecked(False)
+			self.forback_flag = False
 		if trigger:
 			self.BorF = 'f'
 			self.timer = self.startTimer(500)
@@ -189,8 +199,10 @@ class Replayer(QWidget, Ui_Replayer):
 	@pyqtSlot()
 	def on_playBackwardButton_toggled(self, trigger):
 		print "playBackwardButton trigger:", trigger#for test
-		if self.playForwardButton.isChecked():
+		if self.playForwardButton.isChecked() and not self.forback_flag:
+			self.forback_flag = True
 			self.playForwardButton.setChecked(False)
+			self.forback_flag = False
 		if trigger:
 			self.BorF = 'b'
 			self.timer = self.startTimer(200)
@@ -208,6 +220,7 @@ class Replayer(QWidget, Ui_Replayer):
 			 change = 1 if self.BorF == 'f' else -1
 			 try:
 				 self.replayWidget.GoToRound(self.replayWidget.nowRound + change, 0)
+				 self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 			 except:
 				 if self.BorF == 'f':
 					 self.playForwardButton.setChecked(False)
@@ -221,6 +234,7 @@ class Replayer(QWidget, Ui_Replayer):
 		try:
 			#print "call go to round on animEnd::",self.replayWidget.nowRound#for test
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
+			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 		except:
 			self.pauseButton.setChecked(True)
 		else:
@@ -228,6 +242,7 @@ class Replayer(QWidget, Ui_Replayer):
 
 	def checkTimer(self):
 		if self.timer:
+			print "check timer!!!"
 			if self.BorF == 'b':
 				self.playBackwardButton.setChecked(False)
 			else:

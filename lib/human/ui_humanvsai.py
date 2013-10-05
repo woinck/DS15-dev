@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_humanvsai.ui'
 #
-# Created: Fri Oct 04 09:46:27 2013
+# Created: Sat Oct 05 19:10:06 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -121,7 +121,7 @@ class Ui_HumanvsAi(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.roundLabel = QtGui.QLabel(self.backFrame)
-        self.roundLabel.setGeometry(QtCore.QRect(470, 10, 100, 40))
+        self.roundLabel.setGeometry(QtCore.QRect(450, 10, 161, 40))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

@@ -235,7 +235,9 @@ class HumanReplay(QGraphicsView):
 		elif now_state == self.State_Opr:
 			if isinstance(self.nowMoveUnit, SoldierUnit):
 				self.route_ind_list = main.available_spots(self.getMap(self.latestRound, 0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id,self.moveToPos)#改成逻辑的函数
-				print "route_int_list:::::::::::", self.route_ind_list#for test
+				if not self.route_ind_list:
+					self.route_ind_list = [self.nowMoveUnit.obj.position]
+				#print "route_int_list:::::::::::", self.route_ind_list#for test
 				self.drawRoute(self.route_ind_list,self.tmp_route_list)
 				#镜子
 				if self.transPoint:
@@ -618,34 +620,36 @@ class HumanReplay(QGraphicsView):
 			self.animation.addAnimation(ani)
 			self.animationItem.extend(item)
 		#attack
+		if cmd.order:
+			unit_target = self.UnitBase[cmd.target[0]][cmd.target[1]]
 		if cmd.order == 1:
-			ani, item = self.attackAnimation(unit_move, endInfo.base[unit_id[0]][unit_id[1]].position, cmd.target,
-											 self.UnitBase[cmd.target[0]][cmd.target[1]].obj.position,
-											 endInfo.effect[0])
+			if self.UnitBase[cmd.target[0]][cmd.target[1]].obj.life > 0:
+				ani, item = self.attackAnimation(unit_move, endInfo.base[unit_id[0]][unit_id[1]].position, cmd.target,
+												unit_target.obj.position,
+												endInfo.effect[0])
 
-			self.animationItem.extend(item)
-			self.animation.addAnimation(ani)
-			
-			#target die
-			if endInfo.base[cmd.target[0]][cmd.target[1]].life <= 0:
-				anim, item = self.dieAnimation(cmd.target)
+				self.animationItem.extend(item)
+				self.animation.addAnimation(ani)
+				
+				#target die
+				if endInfo.base[cmd.target[0]][cmd.target[1]].life <= 0:
+					anim, item = self.dieAnimation(cmd.target)
+					self.animationItem.extend(item)
+					self.animation.addAnimation(anim)
+				
+				#fight back
+				anim, item = self.attackAnimation(unit_target, (unit_target.corX, unit_target.corY),
+												  unit_id ,endInfo.base[unit_id[0]][unit_id[1]].position, endInfo.effect[1])
 				self.animationItem.extend(item)
 				self.animation.addAnimation(anim)
-			
-			#fight back
-			anim, item = self.attackAnimation(self.UnitBase[cmd.target[0]][cmd.target[1]], (self.UnitBase[cmd.target[0]][cmd.target[1]].corX,\
-																								self.UnitBase[cmd.target[0]][cmd.target[1]].corY),
-											  unit_id ,endInfo.base[unit_id[0]][unit_id[1]].position, endInfo.effect[1])
-			self.animationItem.extend(item)
-			self.animation.addAnimation(anim)
-			if endInfo.base[unit_id[0]][unit_id[1]].life <= 0:
-				anim, item = self.dieAnimation(unit_id)
-				self.animation.extend(item)
-				self.animation.addAnimation(anim)
+				if endInfo.base[unit_id[0]][unit_id[1]].life <= 0:
+					anim, item = self.dieAnimation(unit_id)
+					self.animation.extend(item)
+					self.animation.addAnimation(anim)
 		#skill
 		elif cmd.order == 2:
 			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7:
-				anim, item = self.skillAnimation(unit_move, cmd.target, self.UnitBase[cmd.target[0]][cmd.target[1]].obj.position) 
+				anim, item = self.skillAnimation(unit_move, cmd.target, unit_target.obj.position) 
 				self.animation.addAnimation(anim)
 				self.animationItem.extend(item)
 
