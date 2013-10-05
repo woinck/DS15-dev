@@ -83,8 +83,11 @@ class AiThread(QThread):
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
 		frInfo = sio._recvs(self.conn)
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
-
-		rCommand, reInfo = sio._recvs(self.conn)
+		try:
+			rCommand, reInfo = sio._recvs(self.conn)
+		except sio.ConnException:
+			self.stop()
+			pass
 		self.emit(SIGNAL("reRecv"), rCommand, reInfo)
 		while not reInfo.over and not self.isStopped():
 			try:
@@ -216,8 +219,12 @@ class Ui_Player(QThread):
 			if self.isStopped():
 				break
 			if rBeginInfo != '|':
-				sio._sends(self.conn,self.AI(rBeginInfo))
-				self.cmdNum += 1
+				try:	
+					sio._sends(self.conn,self.AI(rBeginInfo))
+					self.cmdNum += 1
+				except sio.ConnException:
+					self.stop()
+					pass
 			else:
 				break
 		self.conn.close()

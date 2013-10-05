@@ -26,7 +26,8 @@ HOST = '127.0.0.1' # 主机地址
 LOGIC_PORT = 8801 # logic 连接端口
 UI_PORT = 8802 # UI 连接端口
 AI_PORT = 8803 # AI 连接端口
-
+#error
+devnull = open(os.devnull, 'w')
 if RELEASE_MODE:
 	SERV_FILE_NAME = '\\sserver.exe'
 	LOGIC_FILE_NAME = '\\sclientlogic.exe'
@@ -196,10 +197,9 @@ def Prog_Run(progPath):
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
 		if RELEASE_MODE:
-			#result = subprocess.Popen("%s 2> nul"%progPath)
-			result = subprocess.Popen(progPath)
+			result = subprocess.Popen(progPath, stderr = devnull)
 		else: 
-			result = subprocess.Popen('python ' +progPath + ' 2> nul')
+			result = subprocess.Popen('python ' +progPath)
 	else:
 		os.system('cmd /c start %s' %(progPath))
 		result = None
