@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 import lib.human.ui_humanvsai
 from lib.human.Humanai_Replay_event import HumanReplay
 from lib.human.info_widget import *
-import basic, sio, select, os, socket, time
+import basic, sio, select, os, socket, time, subprocess
 from lib.human.herotypedlg import GetHeroTypeDlg
 from lib.human.helpDlg import HelpDlg
 from functools import partial
@@ -33,7 +33,8 @@ mutex = QMutex()
 DEFAULT_MAP = os.getcwd() + "//new_map.map"
 DEFAULT_AI = os.getcwd() + "//sclientai.py"
 
-
+#for test
+#file_log = subprocess.Popen("python blabla.py", stdin = subprocess.PIPE)
 class ConnectionError(Exception):
 	def __init__(self, value = ""):
 		super(ConnectionError, self).__init__()
@@ -48,7 +49,7 @@ class AiThread(QThread):
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
 		if not sio.DEBUG_MODE:
-			serverProg = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			self.serverProg = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))
@@ -72,6 +73,7 @@ class AiThread(QThread):
 	@pyqtSlot()
 	def on_shut(self):
 		self.conn.shutdown(socket.SHUT_RDWR)
+		self.serverProg.kill()
 		self.exit(0)
 		
 	def run(self):
@@ -89,8 +91,9 @@ class AiThread(QThread):
 				rbInfo = sio._recvs(self.conn)
 			except sio.ConnException:
 				#self.quit()
-				#pass
-				raise sio.ConnException
+				self.stop()
+				pass
+				#raise sio.ConnException
 			if self.isStopped():
 				break
 			self.emit(SIGNAL("rbRecv"),rbInfo)
@@ -98,8 +101,9 @@ class AiThread(QThread):
 				rCommand,reInfo = sio._recvs(self.conn)
 			except sio.ConnException:
 				#self.quit()
-				#pass
-				raise sio.ConnException
+				self.stop()
+				pass
+				#raise sio.ConnException
 			
 			if self.isStopped():
 				break
@@ -206,8 +210,9 @@ class Ui_Player(QThread):
 				rBeginInfo = sio._recvs(self.conn)
 			except sio.ConnException:
 				#self.quit()
-				#pass
-				raise sio.ConnException
+				self.stop()
+				pass
+				#raise sio.ConnException
 			if self.isStopped():
 				break
 			if rBeginInfo != '|':
@@ -389,6 +394,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			if answer == QMessageBox.No:
 				return
 			#清理工作，停止游戏，关闭线程,强制结束游戏
+			self.replayWindow.reset()
 			if self.aiThread and self.aiThread.isRunning():
 				#self.aiThread.terminate()
 				#self.aiThread.conn.shutdown(socket.SHUT_RDWR)
@@ -407,7 +413,6 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				self.emit(SIGNAL("playShut()"))
 				#self.playThread.stop()
 				#self.playThread.wait()
-			self.replayWindow.reset()
 			self.reset()
 		self.updateUi()
 		self.willReturn.emit()

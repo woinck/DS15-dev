@@ -471,6 +471,7 @@ global rbInfo,reInfo,rCommand
 global winner,gameMode,timeoutSwitch
 global whole_map,base
 
+
 aiInfo=[]
 heroType=[]
 reInfo=None

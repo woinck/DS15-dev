@@ -106,6 +106,8 @@ class HumanReplay(QGraphicsView):
 
 	#begin to get command
 	def GetCommand(self):
+		if not self.run:
+			return
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
