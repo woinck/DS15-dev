@@ -17,8 +17,8 @@ py2exe_options = {
 setup(console=["Sample_AI.py","Uihumanvsai.py","sclientlogic.py","sserver.py","replayer.py"],
 	windows=[{"script":"Uihumanvsai.py"},{"script":"replayer.py"}],
 	options={'py2exe': py2exe_options},
-	data_files=[("lib\\human\\image",   
-				   glob.glob("lib\\human\\image\\*.*")),
+	data_files=[#("lib\\human\\image",   
+				  # glob.glob("lib\\human\\image\\*.*")),
 				   ("mapFiles",["mapwithturret.map"])])
 				   
 				   

@@ -158,8 +158,8 @@ class Replayer(QWidget, Ui_Replayer):
 			return
 		print self.isPaused
 		if not self.isPaused:
-			#self.replayWidget.Play()
-			self.pauseButton.setChecked(False)
+			self.replayWidget.Play()
+			#self.pauseButton.setChecked(False)
 
 	@pyqtSlot()
 	def on_preStepButton_clicked(self):
@@ -169,7 +169,8 @@ class Replayer(QWidget, Ui_Replayer):
 		except:
 			return
 		if not self.isPaused:
-			self.pauseButton.setChecked(False)
+			self.replayWidget.Play()
+			#self.pauseButton.setChecked(False)
 
 	@pyqtSlot()
 	def on_playForwardButton_toggled(self, trigger):

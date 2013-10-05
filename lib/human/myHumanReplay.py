@@ -231,17 +231,7 @@ class EffectIndUnit(QGraphicsTextItem):
             font.setBold(True)
         self.setFont(font)
         self.setDefaultTextColor(QColor(Qt.red).darker())
-#    def boundingRect(self):
-#        return QRectF(-EXTRA_WIDTH, 0, UNIT_WIDTH + EDGE_WIDTH + 2 * EXTRA_WIDTH, 30)
-#    def paint(self, painter, option, widget = None):
-#        painter.setPen(Qt.NoPen)
-#        painter.save()
-#        pen = QPen()
-#        pen.setColor(QColor(Qt.red).darker())
-#        pen.setWidth(6)
-#        painter.setPen(pen)
-#        painter.drawText(self.boundingRect(), self.text, QTextOption(Qt.AlignHCenter))
-#        painter.restore()
+
 class DieIndUnit(AbstractUnit):
     def __init__(self, x = 0, y = 0, parent = None):
         super(DieIndUnit, self).__init__(x, y, parent)

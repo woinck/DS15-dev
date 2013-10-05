@@ -62,7 +62,7 @@ class HumanReplay(QGraphicsView):
 		self.mapChangeInfo = []
 
 		#储存游戏信息
-		self.command_list = []
+
 		self.gameBegInfo = []
 		self.gameEndInfo = []
 		#鼠标选定单位
@@ -116,6 +116,7 @@ class HumanReplay(QGraphicsView):
 			QGraphicsView.mouseMoveEvent(self, event)
 			return
 		pos = event.pos()
+		#让move的时候保持显现状态
 		if not self.mouseUnit.isVisible():
 			self.mouseUnit.setVisible(True)
 		items = self.items(pos)
@@ -187,7 +188,7 @@ class HumanReplay(QGraphicsView):
 					self.command = basic.Command(self.Operation, self.moveToPos, item.idNum)
 					self.emit(SIGNAL("commandFinished"), self.command)
 					self.commandFinished.emit()
-					self.command_list.append(self.command)
+
 
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Escape:
@@ -210,7 +211,6 @@ class HumanReplay(QGraphicsView):
 		#待机
 		elif event.key() == Qt.Key_D:
 			self.command = basic.Command(0, self.moveToPos, None)
-			self.command_list.append(self.command)
 			self.emit(SIGNAL("commandFinished"), self.command)
 			self.commandFinished.emit()
 	#展示便于用户下达命令的信息
@@ -227,6 +227,7 @@ class HumanReplay(QGraphicsView):
 			if isinstance(self.nowMoveUnit, SoldierUnit):
 				self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 				self.transPoint = None
+				self.focusUnit.setVisible(True)
 				self.focusUnit.setPos(self.nowMoveUnit.corX, self.nowMoveUnit.corY)
 				self.move_range_list = self.gameBegInfo[self.latestRound].range
 				self.drawArrange(self.move_range_list,self.tmp_move_list)
@@ -234,6 +235,7 @@ class HumanReplay(QGraphicsView):
 		elif now_state == self.State_Opr:
 			if isinstance(self.nowMoveUnit, SoldierUnit):
 				self.route_ind_list = main.available_spots(self.getMap(self.latestRound, 0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id,self.moveToPos)#改成逻辑的函数
+				print "route_int_list:::::::::::", self.route_ind_list#for test
 				self.drawRoute(self.route_ind_list,self.tmp_route_list)
 				#镜子
 				if self.transPoint:
@@ -347,7 +349,7 @@ class HumanReplay(QGraphicsView):
 		TIME_PER_GRID = 800
 
 		steps = len(route)
-
+		print "route::::::::::::::::", route
 		movAnim = QPropertyAnimation(move_unit, "pos")
 		movAnim.setDuration(steps * TIME_PER_GRID)
 		movAnim.setStartValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))
@@ -625,7 +627,7 @@ class HumanReplay(QGraphicsView):
 			self.animation.addAnimation(ani)
 			
 			#target die
-			if endInfo.base[cmd.target[0]][cmd.target[1]].life == 0:
+			if endInfo.base[cmd.target[0]][cmd.target[1]].life <= 0:
 				anim, item = self.dieAnimation(cmd.target)
 				self.animationItem.extend(item)
 				self.animation.addAnimation(anim)
@@ -636,7 +638,7 @@ class HumanReplay(QGraphicsView):
 											  unit_id ,endInfo.base[unit_id[0]][unit_id[1]].position, endInfo.effect[1])
 			self.animationItem.extend(item)
 			self.animation.addAnimation(anim)
-			if endInfo.base[unit_id[0]][unit_id[1]].life == 0:
+			if endInfo.base[unit_id[0]][unit_id[1]].life <= 0:
 				anim, item = self.dieAnimation(unit_id)
 				self.animation.extend(item)
 				self.animation.addAnimation(anim)
@@ -715,7 +717,6 @@ class HumanReplay(QGraphicsView):
 		self.resetMap()
 		self.mapChangeInfo = []
 
-		self.command_list = []
 		self.gameBegInfo = []
 		self.gameEndInfo = []
 

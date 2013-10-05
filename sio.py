@@ -10,7 +10,7 @@ DEBUG_MODE = 0
 为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
 为1时需先手动运行logic,再运行sserver,再运行ui
 '''
-RELEASE_MODE = 1
+RELEASE_MODE = 0
 SINGLE_PROCESS = 1 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
 REPLAY_MODE = 0 #此常量为1时会生成回放文件,######废弃######
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
