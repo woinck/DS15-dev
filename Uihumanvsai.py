@@ -359,7 +359,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			#self.connect(self, SIGNAL("aiShut()"), self.aiThread, SLOT("quit()"))
 			self.connect(self, SIGNAL("aiShut()"), self.aiThread, SLOT("on_shut()"))
 			self.aiThread.start()
-		
+			
 		self.updateUi()
 	#打开player线程
 	def on_tmpRecv(self):

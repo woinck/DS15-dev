@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ #-*- coding: UTF-8 -*-
 import shelve
 import basic
 
@@ -20,6 +20,7 @@ def read_from(filename = default, change_path = 0):
 	if change_path:
 		pass # TODO!!!
 	try:
+		filename = filename.encode('gbk')
 		shelv_in = shelve.open(filename)
 		return (shelv_in[key[0]], shelv_in[key[1]])
 	except IOError as err:

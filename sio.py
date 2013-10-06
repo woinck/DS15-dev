@@ -1,6 +1,9 @@
-# -*- coding: UTF-8 -*-
+ #-*- coding:UTF-8 -*-
 
-import cPickle, basic, threading, os, time, subprocess, socket
+import cPickle, basic, threading, os, time, subprocess, socket, sys
+reload(sys)
+sys.setdefaultencoding('gb2312')
+
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 0
 #游戏运行参数
@@ -196,12 +199,14 @@ class Prog_Run(progPath):
 def Prog_Run(progPath):	
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
-		if RELEASE_MODE:
+		progPath=progPath.encode('gbk')
+		print progPath
+		if RELEASE_MODE:	
 			result = subprocess.Popen(progPath, stderr = devnull)
 		else: 
-			result = subprocess.Popen('python ' +progPath)
+			result = subprocess.Popen('python ' + progPath)
 	else:
-		os.system('cmd /c start %s' %(progPath))
+		os.system('cmd /c start %s' %unicode(progPath))
 		result = None
 	return result
 		

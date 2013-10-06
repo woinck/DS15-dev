@@ -6,8 +6,9 @@ import py2exe,glob
 includes = ["encodings", "encodings.*"]	 
 
 py2exe_options = {
-		"includes": ["sip"],
-		"dll_excludes": ["MSVCP90.dll",],
+		"includes": ["sip"],#pyqt
+		'dll_excludes': ['w9xpopen.exe', 'msvcp90.dll',  # 不使用popen，更不用需要支持win98
+            "mswsock.dll", "powrprof.dll", "MSVCP90.dll"],
 		"compressed": 1,
 		"optimize": 2,
 		"ascii": 0,
