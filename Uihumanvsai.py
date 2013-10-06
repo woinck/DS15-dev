@@ -292,6 +292,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.replayWindow, SIGNAL("unitSelected"), self.infoWidget.newUnitInfo)
 		self.connect(self.replayWindow, SIGNAL("mapSelected"), self.infoWidget.newMapInfo)
 		self.replayWindow.moveAnimEnd.connect(self.on_aniFinished)
+		self.connect(self.replayWindow, SIGNAL("errorOperation"), self.on_errOpr)
 		self.connect(self, SIGNAL("ableToPlay()"), self.on_ablePlay, Qt.QueuedConnection)
 
 		self.setWindowTitle("Human_Vs_Ai")
@@ -438,6 +439,13 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			WaitForCommand.wakeAll()
 		finally:
 			self.playThread.lock.unlock()
+
+	def on_errOpr(self, err_ind):
+		self.errorLabel.setText(err_ind)
+		QTimer.singleShot(2000, self.resetError)
+	
+	def resetError(self):
+		self.errorLabel.setText("")
 
 	def on_getHero(self):
 		dialog = GetHeroTypeDlg(self)

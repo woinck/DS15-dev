@@ -202,12 +202,14 @@ class HumanReplay(QGraphicsView):
 		#攻击
 		if event.key() == Qt.Key_A:
 			if self.nowMoveUnit.obj.kind == basic.WIZARD:
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("法师不能攻击,请选择其他命令s或d"))
 				return
 			self.Operation = 1
 			self.oprFinished.emit()
 		#skill
 		elif event.key() == Qt.Key_S:
 			if self.nowMoveUnit.obj.kind < 5 or self.nowMoveUnit.obj.kind == 7:
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("此单位不能使用技能，请选择其他命令a或d"))
 				return
 			self.Operation = 2
 			self.oprFinished.emit()
@@ -252,10 +254,14 @@ class HumanReplay(QGraphicsView):
 				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
+				if not self.attack_range_list:
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可攻击的对象,esc可返回上一阶段"))
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
 			elif self.Operation == 2:
 				self.setCursor(QCursor(QPixmap(":skill_cursor.png").scaled(30,30),0,0))
 				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
+				if not poses:
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可施用技能的对象,esc可返回上一阶段"))
 				self.attack_range_list = poses
 				self.drawArrange(poses, self.tmp_attack_list)
 
