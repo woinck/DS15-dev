@@ -137,11 +137,10 @@ class ConnException(Exception):
 		
 #将对象以字符串形式通过指定连接发送
 def _sends(conn,data):
-	try:
-		conn.send(cPickle.dumps(data))
-		conn.send('|')
-	except:
-		raise ConnException()
+	#try:
+	conn.send(cPickle.dumps(data))
+	conn.send('|')
+#	except:		raise ConnException()
 
 #接收字符串并将其转换为对象返回，空则返回'|'
 def _recvs(conn):

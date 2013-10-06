@@ -35,6 +35,7 @@ class HumanReplay(QGraphicsView):
 		self.run = False
 		self.animation = None
 		self.setMouseTracking(True)
+		#self.setDragMode(QGraphicsView.ScrollHandDrag)
 		#游戏记录变量
 		self.nowRound = 0
 		self.nowStatus = 0
