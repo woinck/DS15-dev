@@ -2,8 +2,8 @@
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 reload(sys)
-sys.setdefaultencoding('gb2312')
-
+sys.setdefaultencoding('gbk')
+#os.system("chcp 936")
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 0
 #游戏运行参数
