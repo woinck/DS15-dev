@@ -102,7 +102,7 @@ class HumanReplay(QGraphicsView):
 
 		for state in self.stateList:
 			self.connect(state, SIGNAL("entered()"), self.on_Entered)
-		self.connect(self.State_Target, SIGNAL("exited()"), self.on_Exited)
+		self.connect(self.State_Comm, SIGNAL("exited()"), self.on_Exited)
 
 	#begin to get command
 	def GetCommand(self):
@@ -111,6 +111,7 @@ class HumanReplay(QGraphicsView):
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
+		self.nowMoveUnit.setNowMove(True)
 
 	#event handlers
 	def mouseMoveEvent(self, event):
@@ -261,6 +262,7 @@ class HumanReplay(QGraphicsView):
 
 	def on_Exited(self):
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
+		self.nowMoveUnit.setNowMove(False)
 
 	def drawArrange(self, arrange_list,list_):
 		for pos in arrange_list:
@@ -314,7 +316,9 @@ class HumanReplay(QGraphicsView):
 				self.scene.addItem(new_unit)
 				new_unit.setPos(new_unit.corX, new_unit.corY)
 
-
+	def SetInitMap(self, mapInfo, baseInfo):
+		self.setMap(mapInfo)
+		self.setSoldier(baseInfo)
 
 	def Initialize(self, begInfo,frInfo):
 		self.setMap(begInfo.map)
@@ -453,7 +457,8 @@ class HumanReplay(QGraphicsView):
 		dieInd = DieIndUnit()
 		self.scene.addItem(dieInd)
 		dieInd.setPos(unit.corX, unit.corY)
-
+		dieInd.setOpacity(0)
+		
 		dieAnim = QParallelAnimationGroup()
 		dieAni = QPropertyAnimation(unit, "opacity")
 		dieAni.setDuration(TOTAL_TIME)
@@ -462,7 +467,8 @@ class HumanReplay(QGraphicsView):
 		dieAnim.addAnimation(dieAni)
 		dieAni1 = QPropertyAnimation(dieInd, "opacity")
 		dieAni1.setDuration(TOTAL_TIME)
-		dieAni1.setStartValue(1)
+		dieAni1.setStartValue(0)
+		dieAni1.setKeyValueAt(0.1 ,1)
 		dieAni1.setKeyValueAt(0.2, 0.3)
 		dieAni1.setKeyValueAt(0.4, 0.8)
 		dieAni1.setKeyValueAt(0.7, 0.2)
@@ -646,7 +652,7 @@ class HumanReplay(QGraphicsView):
 				self.animation.addAnimation(anim)
 				if endInfo.base[unit_id[0]][unit_id[1]].life <= 0:
 					anim, item = self.dieAnimation(unit_id)
-					self.animation.extend(item)
+					self.animationItem.extend(item)
 					self.animation.addAnimation(anim)
 		#skill
 		elif cmd.order == 2:

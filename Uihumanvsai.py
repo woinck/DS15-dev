@@ -205,7 +205,7 @@ class Ui_Player(QThread):
 	def run(self):
 		mapInfo,base = sio._recvs(self.conn)
 	#	mapInfo = mapReverse(mapInfo)#debugging
-		self.emit(SIGNAL("mapRecv"), mapInfo)
+		self.emit(SIGNAL("mapRecv"), mapInfo, base)
 		result = self.GetHeroType(mapInfo)
 		sio._sends(self.conn, (result[0],result[1][0]))
 		while True and not self.isStopped():
@@ -350,7 +350,6 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.connect(self.aiThread, SIGNAL("firstRecv"), self.on_firstRecv)
 			self.connect(self.aiThread, SIGNAL("rbRecv"), self.on_rbRecv)
 			self.connect(self.aiThread, SIGNAL("reRecv"), self.on_reRecv)
-			self.connect(self.aiThread, SIGNAL("mapRecv"), self.on_mapRecv)
 			self.connect(self.aiThread, SIGNAL("gameWinner"), self.on_gameWinner)
 			self.connect(self.aiThread, SIGNAL("finished()"), self.aiThread,
 							 SLOT("deleteLater()"))
@@ -379,6 +378,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		else:
 			self.connect(self.playThread, SIGNAL("getHeroType()"), self.on_getHero)
 			self.connect(self.playThread, SIGNAL("firstCmd()"), self.on_firstCmd)
+			self.connect(self.playThread, SIGNAL("mapRecv"), self.on_mapRecv)
 			self.connect(self.playThread, SIGNAL("finished()"), self.playThread,
 							 SLOT("deleteLater()"))
 			self.connect(self.playThread, SIGNAL("finished()"), partial(self.on_threadF,1))
@@ -569,8 +569,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	def on_firstCmd(self):
 		pass
 
-	def on_mapRecv(self, mapInfo):
-		self.replayWindow.SetInitMap(mapInfo)
+	def on_mapRecv(self, mapInfo, baseInfo):
+		print "hi map recv"#for test
+		self.replayWindow.SetInitMap(mapInfo,baseInfo)
 
 	def on_gameWinner(self, winner):
 		if not (self.nowRound == self.replayWindow.latestRound and self.Ani_Finished):
