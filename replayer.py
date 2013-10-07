@@ -19,7 +19,6 @@ class ReplayMap(QWidget, Ui_Replaymap):
 		self.setupUi(self)
 		self.setAutoFillBackground(True)
 		palette = QPalette()
-		#print "size..............:",self.size().width(),self.size().height()#for test
 		palette.setBrush(QPalette.Window,
                                  QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
                                                                               Qt.IgnoreAspectRatio,
@@ -46,12 +45,33 @@ class Replayer(QWidget, Ui_Replayer):
 						self.pauseButton, self.endPlayButton,
 						self.rePlayButton, self.playForwardButton, self.playBackwardButton,
 						self.preStepButton, self.nextStepButton]
-		for i in range(len(self.buttons)):
-			pixmap = QPixmap(":" + BUTTONPIC[i] + ".png")
-			self.buttons[i].setIcon(QIcon(pixmap))
-			self.buttons[i].setIconSize(self.buttons[i].size())
-			self.buttons[i].setStyleSheet("border-radius: 20px")
+		#for i in range(len(self.buttons)):
+		#	pixmap = QPixmap(":" + BUTTONPIC[i] + ".png")
+		#	self.buttons[i].setIcon(QIcon(pixmap))
+		#	self.buttons[i].setIconSize(self.buttons[i].size())
+		#	self.buttons[i].setStyleSheet("QPushButton{border-radius: 20px;}"
+		#									"QPushButton:pressed{border-style:inset;}"
+		#									"QPushButton:checked{border-style:inset;}")
 
+		self.noSoundButton.setStyleSheet("*{border-image: url(:noSound0.png);border:0;}")
+		self.soundButton.setStyleSheet("*{border-image: url(:playSound0.png);border:0;}")
+										#"*:checked
+		self.loadFileButton.setStyleSheet("*{border-image: url(:open0.png);border:0;}"
+											"*:pressed{border-image:url(:open1.png);border:0;}")
+		self.pauseButton.setStyleSheet("*{border-image: url(:pause0.png);border:0;}"
+											"*:checked{border-image:url(:pause1.png);border:0;}")
+		self.endPlayButton.setStyleSheet("*{border-image: url(:endPlay0.png);border:0;}"
+										"*:pressed{border-image: url(:endPlay1.png);border:0;}")
+		self.rePlayButton.setStyleSheet("*{border-image:url(:rePlay0.png);border:0;}"
+										"*:pressed{border-image:url(:rePlay1.png);border:0;}")
+		self.playForwardButton.setStyleSheet("*{border-image:url(:playForward0.png);border:0;}"
+										"*:checked{border-image:url(:playForward1.png);border:0;}")
+		self.playBackwardButton.setStyleSheet("*{border-image:url(:playBackward0.png);border:0;}"
+										"*:checked{border-image:url(:playBackward1.png);border:0;}")
+		self.preStepButton.setStyleSheet("*{border-image:url(:preStep0.png);border:0;}"
+										"*:pressed{border-image:url(:preStep1.png);border:0;}")
+		self.nextStepButton.setStyleSheet("*{border-image:url(:nextStep0.png); border:0;}"
+										"*:pressed{border-image:url(:nextStep1.png);border:0;}")
 		#信息变量
 		self.isPaused = False
 		self.started = False
