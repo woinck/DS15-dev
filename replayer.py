@@ -59,7 +59,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.loadFileButton.setStyleSheet("*{border-image: url(:open0.png);border:0;}"
 											"*:pressed{border-image:url(:open1.png);border:0;}")
 		self.pauseButton.setStyleSheet("*{border-image: url(:pause0.png);border:0;}"
-											"*:checked{border-image:url(:pause1.png);border:0;}")
+											"*:checked{border-image:url(:start1.png);border:0;}")
 		self.endPlayButton.setStyleSheet("*{border-image: url(:endPlay0.png);border:0;}"
 										"*:pressed{border-image: url(:endPlay1.png);border:0;}")
 		self.rePlayButton.setStyleSheet("*{border-image:url(:rePlay0.png);border:0;}"

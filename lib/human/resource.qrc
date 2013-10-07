@@ -43,6 +43,7 @@
     <file alias="playForward0.png">image/playForward0.png</file>
     <file alias="pause0.png">image/pause0.png</file>
 
+	<file alias="start1.png">image/start1.png</file>
     <file alias="rePlay1.png">image/rePlay1.png</file>
     <file alias="endPlay1.png">image/endPlay1.png</file>
     <file alias="preStep1.png">image/preStep1.png</file>
