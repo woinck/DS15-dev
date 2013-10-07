@@ -92,7 +92,7 @@ class SoldierUnit(AbstractUnit):
 																		   Qt.IgnoreAspectRatio))
 		if self.nowMove:
 			brush = QBrush(Qt.SolidPattern)
-			brush.setColor(QColor(200,250,0,70))
+			brush.setColor(QColor(0,250,255,80))
 			painter.setBrush(brush)
 			painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
 #		

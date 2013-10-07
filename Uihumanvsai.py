@@ -148,7 +148,7 @@ class Ui_Player(QThread):
 		self.exit(0)
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-		self.conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)#debugging
 		for i in range(5):
 			try:
 				self.conn.connect((sio.HOST,sio.AI_PORT))

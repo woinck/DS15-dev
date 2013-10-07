@@ -249,6 +249,8 @@ class HumanReplay(QGraphicsView):
 				if self.transPoint:
 					#self.moveToPos = self.transPoint
 					self.drawRoute([self.transPoint], self.tmp_route_list)
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("A：攻击，S：技能，D：待机，esc:撤销"))
+
 		elif now_state == self.State_Target:
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
@@ -310,6 +312,14 @@ class HumanReplay(QGraphicsView):
 				self.scene.addItem(new_map)
 				new_map.setPos(i,j)
 				self.MapList.append(new_map)
+		# lindex set scene rect
+		#MARGIN_WIDTH = 20
+		#rect = QRectF(0-MARGIN_WIDTH, 0-MARGIN_WIDTH, self.width*(UNIT_WIDTH + EDGE_WIDTH)+MARGIN_WIDTH, self.height*(UNIT_HEIGHT+EDGE_WIDTH)+MARGIN_WIDTH )
+		#self.scene.setSceneRect(rect)
+		#brush = QBrush()
+		#brush.setColor(QColor(0, 0, 0, 0))
+		#self.scene.setBackgroundBrush(brush)
+		# lindex ok
 
 	def setSoldier(self, units):
 		self.resetUnit()

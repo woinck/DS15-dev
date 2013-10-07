@@ -346,9 +346,9 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>60</y>
-      <width>400</width>
-      <height>30</height>
+      <y>49</y>
+      <width>401</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="palette">
@@ -387,6 +387,11 @@
        </colorrole>
       </disabled>
      </palette>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
     </property>
     <property name="text">
      <string/>

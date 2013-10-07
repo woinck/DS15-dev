@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_humanvsai.ui'
 #
-# Created: Sun Oct 06 17:35:51 2013
+# Created: Mon Oct 07 14:29:51 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -149,7 +149,7 @@ class Ui_HumanvsAi(object):
         self.roundLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.roundLabel.setObjectName(_fromUtf8("roundLabel"))
         self.errorLabel = QtGui.QLabel(self.backFrame)
-        self.errorLabel.setGeometry(QtCore.QRect(330, 60, 400, 30))
+        self.errorLabel.setGeometry(QtCore.QRect(330, 49, 401, 41))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -161,6 +161,9 @@ class Ui_HumanvsAi(object):
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
         self.errorLabel.setPalette(palette)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.errorLabel.setFont(font)
         self.errorLabel.setText(_fromUtf8(""))
         self.errorLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.errorLabel.setObjectName(_fromUtf8("errorLabel"))
