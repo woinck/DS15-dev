@@ -5,10 +5,10 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import basic
 import qrc_resource
-UNIT_WIDTH = 50
-UNIT_HEIGHT = 50
-EDGE_WIDTH = 4
-EXTRA_WIDTH = 4
+UNIT_WIDTH = 40
+UNIT_HEIGHT = 40
+EDGE_WIDTH = 3
+EXTRA_WIDTH = 3
 MAX_OPACITY = 0.8
 
 FILE_UNIT = ["saber", "lancer", "archer", "dragon_rider", "warrior",
@@ -231,17 +231,7 @@ class EffectIndUnit(QGraphicsTextItem):
             font.setBold(True)
         self.setFont(font)
         self.setDefaultTextColor(QColor(Qt.red).darker())
-#    def boundingRect(self):
-#        return QRectF(-EXTRA_WIDTH, 0, UNIT_WIDTH + EDGE_WIDTH + 2 * EXTRA_WIDTH, 30)
-#    def paint(self, painter, option, widget = None):
-#        painter.setPen(Qt.NoPen)
-#        painter.save()
-#        pen = QPen()
-#        pen.setColor(QColor(Qt.red).darker())
-#        pen.setWidth(6)
-#        painter.setPen(pen)
-#        painter.drawText(self.boundingRect(), self.text, QTextOption(Qt.AlignHCenter))
-#        painter.restore()
+
 class DieIndUnit(AbstractUnit):
     def __init__(self, x = 0, y = 0, parent = None):
         super(DieIndUnit, self).__init__(x, y, parent)

@@ -7,7 +7,7 @@ from PyQt4.QtCore import *
 import lib.human.ui_humanvsai
 from lib.human.Humanai_Replay_event import HumanReplay
 from lib.human.info_widget import *
-import basic, sio, select, os, socket, time
+import basic, sio, select, os, socket, time, subprocess
 from lib.human.herotypedlg import GetHeroTypeDlg
 from lib.human.helpDlg import HelpDlg
 from functools import partial
@@ -33,7 +33,8 @@ mutex = QMutex()
 DEFAULT_MAP = os.getcwd() + "//new_map.map"
 DEFAULT_AI = os.getcwd() + "//sclientai.py"
 
-
+#for test
+#file_log = subprocess.Popen("python blabla.py", stdin = subprocess.PIPE)
 class ConnectionError(Exception):
 	def __init__(self, value = ""):
 		super(ConnectionError, self).__init__()
@@ -48,7 +49,7 @@ class AiThread(QThread):
 	#每次开始游戏时，用ai路径和地图路径调用initialize以开始一个新的游戏
 	def initialize(self, gameAIPath, gameMapPath):
 		if not sio.DEBUG_MODE:
-			serverProg = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
+			self.serverProg = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))
@@ -71,9 +72,8 @@ class AiThread(QThread):
 			self.mutex.unlock()
 	@pyqtSlot()
 	def on_shut(self):
-		print 'in shut!!!!!!!!!'
 		self.conn.shutdown(socket.SHUT_RDWR)
-		#self.quit()
+		self.serverProg.kill()
 		self.exit(0)
 		
 	def run(self):
@@ -83,16 +83,20 @@ class AiThread(QThread):
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
 		frInfo = sio._recvs(self.conn)
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
-
-		rCommand, reInfo = sio._recvs(self.conn)
+		try:
+			rCommand, reInfo = sio._recvs(self.conn)
+		except sio.ConnException:
+			self.stop()
+			pass
 		self.emit(SIGNAL("reRecv"), rCommand, reInfo)
 		while not reInfo.over and not self.isStopped():
 			try:
 				rbInfo = sio._recvs(self.conn)
 			except sio.ConnException:
 				#self.quit()
-				#pass
-				raise sio.ConnException
+				self.stop()
+				pass
+				#raise sio.ConnException
 			if self.isStopped():
 				break
 			self.emit(SIGNAL("rbRecv"),rbInfo)
@@ -100,11 +104,11 @@ class AiThread(QThread):
 				rCommand,reInfo = sio._recvs(self.conn)
 			except sio.ConnException:
 				#self.quit()
-				#pass
-				raise sio.ConnException
+				self.stop()
+				pass
+				#raise sio.ConnException
 			
 			if self.isStopped():
-				print 'stopped!!!!!!!!!!!!'
 				break
 
 			self.emit(SIGNAL("reRecv"),rCommand, reInfo)
@@ -137,9 +141,7 @@ class Ui_Player(QThread):
 		self.result = ("Player", (6,6))
 	@pyqtSlot()
 	def on_shut(self):
-		print 'in shut!!!!!!alse'
 		self.conn.shutdown(socket.SHUT_RDWR)
-		#self.quit()
 		self.exit(0)
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -155,11 +157,9 @@ class Ui_Player(QThread):
 			raise ConnectionError("ai port")
 	def GetHeroType(self,mapInfo):
 			self.emit(SIGNAL("getHeroType()"))
-			#print "emit hero"#for test
 			global WaitForHero
 			self.lock.lockForRead()
 			WaitForHero.wait(self.lock)
-			#print "rec hero",self.result#for test
 			self.lock.unlock()
 			return self.result
 
@@ -173,7 +173,7 @@ class Ui_Player(QThread):
 		#检查able_TO_comm全局变量,如果主线程已经准备好所有只待开始做命令则直接开始
 		try:
 			mutex.lock()
-			print "able to command?", Able_To_Comm
+
 			if Able_To_Comm:
 				flag1 = True
 				Able_To_Comm = False
@@ -188,11 +188,7 @@ class Ui_Player(QThread):
 						Already_Wait = True
 					finally:
 						mutex.unlock()
-#			self.emit(SIGNAL("waitforC()"))
-			# time for player to make a command here!!
-					print "~~~ani waiting"#for test
 					WaitForAni.wait(self.lock)
-#			self.lock.lockForRead()
 				else:
 					self.emit(SIGNAL("firstCmd()"))
 					#检查player是否是第一个开始做命令的,若是则要等待initialize(需要加强双向等待)
@@ -201,7 +197,7 @@ class Ui_Player(QThread):
 				self.lock.unlock()
 
 		self.func()
-		print "func called"#for test
+
 		WaitForCommand.wait(self.lock)
 		self.lock.unlock()
 		return self.command
@@ -217,16 +213,18 @@ class Ui_Player(QThread):
 				rBeginInfo = sio._recvs(self.conn)
 			except sio.ConnException:
 				#self.quit()
-				#pass
-				raise sio.ConnException
+				self.stop()
+				pass
+				#raise sio.ConnException
 			if self.isStopped():
-				print 'is also stopped!!!!!!!'
 				break
-			print 'rbInfo got'
 			if rBeginInfo != '|':
-				sio._sends(self.conn,self.AI(rBeginInfo))
-				print 'cmd sent'
-				self.cmdNum += 1
+				try:	
+					sio._sends(self.conn,self.AI(rBeginInfo))
+					self.cmdNum += 1
+				except sio.ConnException:
+					self.stop()
+					pass
 			else:
 				break
 		self.conn.close()
@@ -246,10 +244,6 @@ class Ui_Player(QThread):
 
 ButtonPics = ["start0", "return0", "openMap0", "openAI0", "help0"]
 class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
-#styleSheet = """
-#QPushButton{ }
-#QPushButton:pressed{border-style: inset;}
-#"""
 	willReturn = pyqtSignal()
 	def __init__(self, parent = None):
 		super(HumanvsAi, self).__init__(parent)
@@ -258,11 +252,12 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.setFixedSize(self.size())
 		palette = self.palette()
 		palette.setBrush(QPalette.Window,
-						QBrush(QPixmap(":humanai_back.jpg").scaled(self.size(),
+						QBrush(QPixmap(":humanai_back.png").scaled(self.size(),
 																	Qt.IgnoreAspectRatio,
 																	Qt.SmoothTransformation)))
 
 		self.setPalette(palette)
+		#self.setStyleSheet("#backFrame{border-image:url(:humanai_back.png);}")
 		#画button图片
 		buttons = [self.startButton, self.returnButton, self.mapButton,
 				self.aiButton, self.helpButton]
@@ -270,6 +265,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png")))
 			buttons[i].setIconSize(buttons[i].size())
 			buttons[i].setStyleSheet("border-radius: 30px;")
+		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 		self.aiPath = ""
 		self.mapPath = ""
 		self.started = False
@@ -363,7 +359,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			#self.connect(self, SIGNAL("aiShut()"), self.aiThread, SLOT("quit()"))
 			self.connect(self, SIGNAL("aiShut()"), self.aiThread, SLOT("on_shut()"))
 			self.aiThread.start()
-		
+			
 		self.updateUi()
 	#打开player线程
 	def on_tmpRecv(self):
@@ -393,11 +389,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	@pyqtSlot()
 	def on_helpButton_clicked(self):
-		print "lala"#for test
 		self.helpdlg = HelpDlg(self)
-		print "abc"#for test
 		self.helpdlg.exec_()
-		print "why"#for test
+
 
 	@pyqtSlot()
 	def on_returnButton_clicked(self):
@@ -407,6 +401,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			if answer == QMessageBox.No:
 				return
 			#清理工作，停止游戏，关闭线程,强制结束游戏
+			self.replayWindow.reset()
 			if self.aiThread and self.aiThread.isRunning():
 				#self.aiThread.terminate()
 				#self.aiThread.conn.shutdown(socket.SHUT_RDWR)
@@ -425,7 +420,6 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				self.emit(SIGNAL("playShut()"))
 				#self.playThread.stop()
 				#self.playThread.wait()
-			self.replayWindow.reset()
 			self.reset()
 		self.updateUi()
 		self.willReturn.emit()
@@ -503,7 +497,6 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.replayWindow.UpdateEndData(rCommand, reInfo)
 		#第一次接收直接开始播放
 		if len(self.replayWindow.gameEndInfo) == 1:
-			#print "for replayer debugging!:", self.replayWindow.gameBegInfo[0].base[1][1].kind#gameEndInfo[0][0].target#for test
 			self.Ani_Finished = False
 			self.replayWindow.Play()
 		#如果动画已结束则会设置abletoplay为False不然就设置abletoplay为假
@@ -514,17 +507,13 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	def on_aniFinished(self):
 		#判断是否更新到足够调转的回合开始信息
-		print "anifinished!!!!!!!!!!!!~~~~~~"#for test
 		self.replayWindow.GoToRound(self.nowRound , 1)
 		self.Ani_Finished = True
 		if len(self.replayWindow.gameBegInfo) <= self.nowRound + 1:
-			print "nani!!! you are here!!?now round:", self.nowRound, "total:", len(self.replayWindow.gameBegInfo) - 1#for test
-			print "nowRound:::", self.nowRound, "lastRondw",self.lastRound,"winner:::",self.winner
 			if self.nowRound == self.lastRound and self.winner != None:
 				self.on_gameEnd(self.winner)
 		else:
 			self.nowRound += 1
-			print "goto", self.nowRound
 			self.replayWindow.GoToRound(self.nowRound, 0)
 			self.roundLabel.setText("Round %d" %self.nowRound)
 			self.emit(SIGNAL("ableToPlay()"))
@@ -548,9 +537,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			if flag and self.replayWindow.gameBegInfo[self.replayWindow.nowRound].id[0] == 1:
 				#wake 动画
 				WaitForAni.wakeAll()
-			#	self.roundLabel.setText(_frUtf("开始操作吧!"))
-		#		self.labelAnimation()
-			#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
+			#以防命令还没有准备完.每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
 			else:
 				try:
 					mutex.lock()

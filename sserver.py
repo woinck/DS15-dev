@@ -98,8 +98,8 @@ class Sui(threading.Thread):
 			logic_thread.start()
 		
 		#读取地图文件
-		print 'gameAIPath: ',gameAIPath#for test
-		print 'gameMapPath: ',gameMapPath#for test
+		#print 'gameAIPath: ',gameAIPath#for test
+		#print 'gameMapPath: ',gameMapPath#for test
 		#(mapInfo,base)=read_from(gameMapPath)		
 		(mapInfo,base)=sio._ReadFile(gameMapPath)
 		#运行AI线程及文件
@@ -470,6 +470,7 @@ global mapInfo,heroType,aiInfo,aiConnErr
 global rbInfo,reInfo,rCommand
 global winner,gameMode,timeoutSwitch
 global whole_map,base
+
 
 aiInfo=[]
 heroType=[]

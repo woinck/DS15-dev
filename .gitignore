@@ -9,3 +9,8 @@
 ReplayFiles/
 *.map
 log.txt
+
+#releas
+dist/
+build/
+*.zip

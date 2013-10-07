@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 import basic
 
 def distance(i,j):
@@ -13,17 +13,19 @@ def available_spots(map_list, unit_list, source_num, move_target = (-1,-1)):
     s_unit = unit_list[source_num[0]][source_num[1]] # 目标单位
     s_position = s_unit.position # 源点坐标
     k = 1 - source_num[0]
-    u_block = []
-    if s_unit.kind != basic.DRAGON_RIDER:
-        for j in range(len(unit_list[k])):
-            if unit_list[k][j].life > 0:
+    u_block = []; s_block = []
+    for j in range(len(unit_list[k])):
+        if unit_list[k][j].life > 0:
+            if s_unit.kind == basic.DRAGON_RIDER:
+                s_block += [unit_list[k][j].position]
+            else:
                 u_block += [unit_list[k][j].position]
+    if s_unit.kind != basic.DRAGON_RIDER:
         for i in range(len(map_list)):
             for j in range(len(map_list[i])):
-                if map_list[i][j].kind == basic.BARRIER and not (i, j) in u_block:
+                if map_list[i][j].kind == basic.BARRIER:
                     u_block += [(i, j)]
     #计算单位阻挡的位置
-    s_block = []
     for j in range(len(unit_list[1 - k])):
         if unit_list[1 - k][j].life > 0 and j != source_num[1]:
             s_block += [unit_list[1 - k][j].position]

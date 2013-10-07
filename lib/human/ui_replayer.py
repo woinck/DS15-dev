@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'part_replayer.ui'
 #
-# Created: Wed Sep 25 19:07:54 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Sat Oct 05 19:12:33 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Replayer(object):
     def setupUi(self, Replayer):
@@ -35,7 +44,7 @@ class Ui_Replayer(object):
         self.loadFileButton.setCheckable(False)
         self.loadFileButton.setObjectName(_fromUtf8("loadFileButton"))
         self.horizontalLayoutWidget = QtGui.QWidget(Replayer)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(170, 150, 831, 501))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(180, 170, 821, 481))
         self.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
         self.replayLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
         self.replayLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -148,10 +157,34 @@ class Ui_Replayer(object):
         self.nextStepButton.setText(_fromUtf8(""))
         self.nextStepButton.setObjectName(_fromUtf8("nextStepButton"))
         self.horizontalLayout.addWidget(self.nextStepButton)
+        self.roundLabel = QtGui.QLabel(Replayer)
+        self.roundLabel.setGeometry(QtCore.QRect(530, 110, 141, 40))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.roundLabel.sizePolicy().hasHeightForWidth())
+        self.roundLabel.setSizePolicy(sizePolicy)
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        self.roundLabel.setPalette(palette)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.roundLabel.setFont(font)
+        self.roundLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.roundLabel.setObjectName(_fromUtf8("roundLabel"))
 
         self.retranslateUi(Replayer)
         QtCore.QMetaObject.connectSlotsByName(Replayer)
 
     def retranslateUi(self, Replayer):
-        Replayer.setWindowTitle(QtGui.QApplication.translate("Replayer", "Replayer", None, QtGui.QApplication.UnicodeUTF8))
+        Replayer.setWindowTitle(_translate("Replayer", "Replayer", None))
+        self.roundLabel.setText(_translate("Replayer", "Round 0", None))
 
