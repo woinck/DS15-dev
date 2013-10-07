@@ -1,6 +1,8 @@
 #ifndef basic_ai_1
 #define basic_ai_1
 
+#include <stdlib.h>
+
 #define TURN_MAX 20
 #define COORDINATE_X_MAX 20
 #define COORDINATE_Y_MAX 20
@@ -206,5 +208,5 @@ int* attack_range(int team_number, int move_id, Position* move_range)
  result[j] = -1; j++;
  result = (int*)(realloc(result, j * sizeof(int)));
  return result;}
-//搜索单位可攻击对象，以-1结束
+
 #endif

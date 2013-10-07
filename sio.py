@@ -68,35 +68,45 @@ class MapInfo:
 		self.mapInfo = whole_map
 
 #向cpp客户端AI传输游戏初始信息
-def _cpp_sends_begin(conn, team_number, whole_map, mirror_number, mirror, soldier_number, soldier):
+def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
         conn.send(str(team_number))
         conn.recv(3)
         for i in range(COORDINATE_X_MAX):
                 for j in range(COORDINATE_Y_MAX):
+						if j.kind == basic.MIRROR:
+							mirror_number += 1
                         conn.send(str(whole_map[i][j]))
                         conn.recv(3)
         conn.send(str(mirror_number))
         conn.recv(3)
+		
+		for i in range(COORDINATE_X_MAX):
+                for j in range(COORDINATE_Y_MAX):
+					if whole_map[i][j].kind == basic.MIRROR:
+						conn.send(str(i)+' '+str(j)+' '+str(whole_map[i][j].out[0]) + ' '+str(whole_map[i][j].out[1])
+		conn.recv(3)
+		'''
         for i in range(mirror_number):
                 conn.send(str(mirror[i][0][0])+' '+str(mirror[i][0][1])+' '+str(mirror[i][1][0])+' '+str(mirror[i][1][1]))
                 conn.recv(3)
+				'''
         conn.send(str(soldier_number[0])+' '+str(solder_number[1]))
         conn.recv(3)
-        for i in range(soldier_number):
-                conn.send( str(soldier[i][0].kind)+' '+str(soldier[i][0].life)+' '
-                           +str(soldier[i][0].attack)+' '+str(soldier[i][0].agility)+' '
-                           +str(soldier[i][0].defence)+' '+str(soldier[i][0].move_range)+' '
-                           +str(soldier[i][0].move_speed)+' '+str(soldier[i][0].attack_range[0])+' '
-                           +str(soldier[i][0].attack_range[1])+' '+str(soldier[i][0].up)+' '
-                           +str(soldier[i][0].p[0])+' '+str(soldier[i][0].p[1]) )
+        for i in range(soldier_number[0]):
+                conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
+                           +str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '
+                           +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
+                           +str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '
+                           +str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '
+                           +str(soldier[0][i].position[0])+' '+str(soldier[0][i].position[1]) )
                 conn.recv(3)
-        for i in range(soldier_number):
-                conn.send( str(soldier[i][1].kind)+' '+str(soldier[i][1].life)+' '
-                           +str(soldier[i][1].attack)+' '+str(soldier[i][1].agility)+' '
-                           +str(soldier[i][1].defence)+' '+str(soldier[i][1].move_range)+' '
-                           +str(soldier[i][1].move_speed)+' '+str(soldier[i][1].attack_range[0])+' '
-                           +str(soldier[i][1].attack_range[1])+' '+str(soldier[i][1].up)+' '
-                           +str(soldier[i][1].p[0])+' '+str(soldier[i][1].p[1]) )
+        for i in range(soldier_number[1]):
+                conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
+                           +str(soldier[1][i].attack)+' '+str(soldier[1][i].agility)+' '
+                           +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
+                           +str(soldier[1][i].move_speed)+' '+str(soldier[1][i].attack_range[0])+' '
+                           +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
+                           +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
                 conn.recv(3)
 #向cpp客户端AI传输每回合信息
 def _cpp_sends(conn, move_id, temple_number, temple, turn, score):
@@ -105,21 +115,21 @@ def _cpp_sends(conn, move_id, temple_number, temple, turn, score):
         for i in range(temple_number):
                 conn.send(str(temple[i].pos[0])+' '+str(temple[i].pos[1])+' '+str(temple[i].state))
                 conn.recv(3)
-        for i in range(soldier_number):
-                conn.send( str(soldier[i][0].kind)+' '+str(soldier[i][0].life)+' '
-                           +str(soldier[i][0].attack)+' '+str(soldier[i][0].agility)+' '
-                           +str(soldier[i][0].defence)+' '+str(soldier[i][0].move_range)+' '
-                           +str(soldier[i][0].move_speed)+' '+str(soldier[i][0].attack_range[0])+' '
-                           +str(soldier[i][0].attack_range[1])+' '+str(soldier[i][0].up)+' '
-                           +str(soldier[i][0].p[0])+' '+str(soldier[i][0].p[1]) )
+        for i in range(soldier_number[0]):
+                conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
+                           +str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '
+                           +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
+                           +str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '
+                           +str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '
+                           +str(soldier[0][i].position[0])+' '+str(soldier[0][i].position[1]) )
                 conn.recv(3)
-        for i in range(soldier_number):
-                conn.send( str(soldier[i][1].kind)+' '+str(soldier[i][1].life)+' '
-                           +str(soldier[i][1].attack)+' '+str(soldier[i][1].agility)+' '
-                           +str(soldier[i][1].defence)+' '+str(soldier[i][1].move_range)+' '
-                           +str(soldier[i][1].move_speed)+' '+str(soldier[i][1].attack_range[0])+' '
-                           +str(soldier[i][1].attack_range[1])+' '+str(soldier[i][1].up)+' '
-                           +str(soldier[i][1].p[0])+' '+str(soldier[i][1].p[1]) )
+        for i in range(soldier_number[1]):
+                conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
+                           +str(soldier[1][i].attack)+' '+str(soldier[1][i].agility)+' '
+                           +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
+                           +str(soldier[1][i].move_speed)+' '+str(soldier[1][i].attack_range[0])+' '
+                           +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
+                           +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
                 conn.recv(3)       
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn, cmd):

@@ -371,7 +371,10 @@ class Sai(threading.Thread):
 			else:
 				for i in range(2):
 					try:
-						sio._sends(connAI[i],(mapInfo,base))
+						if sio.USE_CPP_AI:
+							sio._cpp_sends_begin(connAI[i],i,mapInfo,(len(base[0]),len(base[1])),base)
+						else:
+							sio._sends(connAI[i],(mapInfo,base))
 					except sio.ConnException:
 						aiConnErr[i] = True
 						
