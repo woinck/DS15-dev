@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_humanvsai.ui'
 #
-# Created: Sat Oct 05 19:10:06 2013
+# Created: Mon Oct 07 14:29:51 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,6 +29,9 @@ class Ui_HumanvsAi(object):
         HumanvsAi.resize(1024, 684)
         self.backFrame = QtGui.QFrame(HumanvsAi)
         self.backFrame.setGeometry(QtCore.QRect(0, 0, 1021, 681))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.backFrame.setFont(font)
         self.backFrame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.backFrame.setFrameShadow(QtGui.QFrame.Raised)
         self.backFrame.setObjectName(_fromUtf8("backFrame"))
@@ -71,7 +74,7 @@ class Ui_HumanvsAi(object):
         self.startButton.setText(_fromUtf8(""))
         self.startButton.setObjectName(_fromUtf8("startButton"))
         self.verticalLayoutWidget_3 = QtGui.QWidget(self.backFrame)
-        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(220, 70, 591, 531))
+        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(220, 90, 591, 511))
         self.verticalLayoutWidget_3.setObjectName(_fromUtf8("verticalLayoutWidget_3"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.verticalLayoutWidget_3)
         self.verticalLayout_3.setMargin(0)
@@ -121,7 +124,7 @@ class Ui_HumanvsAi(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.roundLabel = QtGui.QLabel(self.backFrame)
-        self.roundLabel.setGeometry(QtCore.QRect(450, 10, 161, 40))
+        self.roundLabel.setGeometry(QtCore.QRect(430, 10, 161, 40))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -145,6 +148,25 @@ class Ui_HumanvsAi(object):
         self.roundLabel.setFont(font)
         self.roundLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.roundLabel.setObjectName(_fromUtf8("roundLabel"))
+        self.errorLabel = QtGui.QLabel(self.backFrame)
+        self.errorLabel.setGeometry(QtCore.QRect(330, 49, 401, 41))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        self.errorLabel.setPalette(palette)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.errorLabel.setFont(font)
+        self.errorLabel.setText(_fromUtf8(""))
+        self.errorLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.errorLabel.setObjectName(_fromUtf8("errorLabel"))
 
         self.retranslateUi(HumanvsAi)
         QtCore.QMetaObject.connectSlotsByName(HumanvsAi)

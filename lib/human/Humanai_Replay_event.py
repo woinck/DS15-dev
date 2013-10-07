@@ -35,6 +35,7 @@ class HumanReplay(QGraphicsView):
 		self.run = False
 		self.animation = None
 		self.setMouseTracking(True)
+		#self.setDragMode(QGraphicsView.ScrollHandDrag)
 		#游戏记录变量
 		self.nowRound = 0
 		self.nowStatus = 0
@@ -102,7 +103,7 @@ class HumanReplay(QGraphicsView):
 
 		for state in self.stateList:
 			self.connect(state, SIGNAL("entered()"), self.on_Entered)
-		self.connect(self.State_Target, SIGNAL("exited()"), self.on_Exited)
+		self.connect(self.State_Comm, SIGNAL("exited()"), self.on_Exited)
 
 	#begin to get command
 	def GetCommand(self):
@@ -111,6 +112,7 @@ class HumanReplay(QGraphicsView):
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
+		self.nowMoveUnit.setNowMove(True)
 
 	#event handlers
 	def mouseMoveEvent(self, event):
@@ -201,12 +203,14 @@ class HumanReplay(QGraphicsView):
 		#攻击
 		if event.key() == Qt.Key_A:
 			if self.nowMoveUnit.obj.kind == basic.WIZARD:
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("法师不能攻击,请选择其他命令s或d"))
 				return
 			self.Operation = 1
 			self.oprFinished.emit()
 		#skill
 		elif event.key() == Qt.Key_S:
 			if self.nowMoveUnit.obj.kind < 5 or self.nowMoveUnit.obj.kind == 7:
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("此单位不能使用技能，请选择其他命令a或d"))
 				return
 			self.Operation = 2
 			self.oprFinished.emit()
@@ -245,22 +249,29 @@ class HumanReplay(QGraphicsView):
 				if self.transPoint:
 					#self.moveToPos = self.transPoint
 					self.drawRoute([self.transPoint], self.tmp_route_list)
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("A：攻击，S：技能，D：待机，esc:撤销"))
+
 		elif now_state == self.State_Target:
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
 				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
+				if not self.attack_range_list:
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可攻击的对象,esc可返回上一阶段"))
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
 			elif self.Operation == 2:
 				self.setCursor(QCursor(QPixmap(":skill_cursor.png").scaled(30,30),0,0))
 				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
+				if not poses:
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可施用技能的对象,esc可返回上一阶段"))
 				self.attack_range_list = poses
 				self.drawArrange(poses, self.tmp_attack_list)
 
 
 	def on_Exited(self):
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
+		self.nowMoveUnit.setNowMove(False)
 
 	def drawArrange(self, arrange_list,list_):
 		for pos in arrange_list:
@@ -301,6 +312,14 @@ class HumanReplay(QGraphicsView):
 				self.scene.addItem(new_map)
 				new_map.setPos(i,j)
 				self.MapList.append(new_map)
+		# lindex set scene rect
+		#MARGIN_WIDTH = 20
+		#rect = QRectF(0-MARGIN_WIDTH, 0-MARGIN_WIDTH, self.width*(UNIT_WIDTH + EDGE_WIDTH)+MARGIN_WIDTH, self.height*(UNIT_HEIGHT+EDGE_WIDTH)+MARGIN_WIDTH )
+		#self.scene.setSceneRect(rect)
+		#brush = QBrush()
+		#brush.setColor(QColor(0, 0, 0, 0))
+		#self.scene.setBackgroundBrush(brush)
+		# lindex ok
 
 	def setSoldier(self, units):
 		self.resetUnit()
@@ -314,7 +333,9 @@ class HumanReplay(QGraphicsView):
 				self.scene.addItem(new_unit)
 				new_unit.setPos(new_unit.corX, new_unit.corY)
 
-
+	def SetInitMap(self, mapInfo, baseInfo):
+		self.setMap(mapInfo)
+		self.setSoldier(baseInfo)
 
 	def Initialize(self, begInfo,frInfo):
 		self.setMap(begInfo.map)
@@ -453,7 +474,8 @@ class HumanReplay(QGraphicsView):
 		dieInd = DieIndUnit()
 		self.scene.addItem(dieInd)
 		dieInd.setPos(unit.corX, unit.corY)
-
+		dieInd.setOpacity(0)
+		
 		dieAnim = QParallelAnimationGroup()
 		dieAni = QPropertyAnimation(unit, "opacity")
 		dieAni.setDuration(TOTAL_TIME)
@@ -462,7 +484,8 @@ class HumanReplay(QGraphicsView):
 		dieAnim.addAnimation(dieAni)
 		dieAni1 = QPropertyAnimation(dieInd, "opacity")
 		dieAni1.setDuration(TOTAL_TIME)
-		dieAni1.setStartValue(1)
+		dieAni1.setStartValue(0)
+		dieAni1.setKeyValueAt(0.1 ,1)
 		dieAni1.setKeyValueAt(0.2, 0.3)
 		dieAni1.setKeyValueAt(0.4, 0.8)
 		dieAni1.setKeyValueAt(0.7, 0.2)
@@ -646,7 +669,7 @@ class HumanReplay(QGraphicsView):
 				self.animation.addAnimation(anim)
 				if endInfo.base[unit_id[0]][unit_id[1]].life <= 0:
 					anim, item = self.dieAnimation(unit_id)
-					self.animation.extend(item)
+					self.animationItem.extend(item)
 					self.animation.addAnimation(anim)
 		#skill
 		elif cmd.order == 2:

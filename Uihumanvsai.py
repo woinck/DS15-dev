@@ -73,6 +73,7 @@ class AiThread(QThread):
 	@pyqtSlot()
 	def on_shut(self):
 		self.conn.shutdown(socket.SHUT_RDWR)
+		self.conn.close()
 		self.serverProg.kill()
 		self.exit(0)
 		
@@ -142,9 +143,12 @@ class Ui_Player(QThread):
 	@pyqtSlot()
 	def on_shut(self):
 		self.conn.shutdown(socket.SHUT_RDWR)
+		self.conn.close()
+		#self.conn.closesocket()
 		self.exit(0)
 	def initialize(self):
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		self.conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)#debugging
 		for i in range(5):
 			try:
 				self.conn.connect((sio.HOST,sio.AI_PORT))
@@ -205,12 +209,14 @@ class Ui_Player(QThread):
 	def run(self):
 		mapInfo,base = sio._recvs(self.conn)
 	#	mapInfo = mapReverse(mapInfo)#debugging
-		self.emit(SIGNAL("mapRecv"), mapInfo)
+		self.emit(SIGNAL("mapRecv"), mapInfo, base)
 		result = self.GetHeroType(mapInfo)
 		sio._sends(self.conn, (result[0],result[1][0]))
+		#time.sleep(5)
 		while True and not self.isStopped():
 			try:
 				rBeginInfo = sio._recvs(self.conn)
+				#time.sleep(4)
 			except sio.ConnException:
 				#self.quit()
 				self.stop()
@@ -218,13 +224,14 @@ class Ui_Player(QThread):
 				#raise sio.ConnException
 			if self.isStopped():
 				break
+			self.AI(rBeginInfo)
 			if rBeginInfo != '|':
-				try:	
-					sio._sends(self.conn,self.AI(rBeginInfo))
-					self.cmdNum += 1
-				except sio.ConnException:
-					self.stop()
-					pass
+			#	try:	
+				sio._sends(self.conn,self.command)
+				self.cmdNum += 1
+		#		except sio.ConnException:
+		#			self.stop()
+		#			pass
 			else:
 				break
 		self.conn.close()
@@ -292,6 +299,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.replayWindow, SIGNAL("unitSelected"), self.infoWidget.newUnitInfo)
 		self.connect(self.replayWindow, SIGNAL("mapSelected"), self.infoWidget.newMapInfo)
 		self.replayWindow.moveAnimEnd.connect(self.on_aniFinished)
+		self.connect(self.replayWindow, SIGNAL("errorOperation"), self.on_errOpr)
 		self.connect(self, SIGNAL("ableToPlay()"), self.on_ablePlay, Qt.QueuedConnection)
 
 		self.setWindowTitle("Human_Vs_Ai")
@@ -350,10 +358,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.connect(self.aiThread, SIGNAL("firstRecv"), self.on_firstRecv)
 			self.connect(self.aiThread, SIGNAL("rbRecv"), self.on_rbRecv)
 			self.connect(self.aiThread, SIGNAL("reRecv"), self.on_reRecv)
-			self.connect(self.aiThread, SIGNAL("mapRecv"), self.on_mapRecv)
 			self.connect(self.aiThread, SIGNAL("gameWinner"), self.on_gameWinner)
-			self.connect(self.aiThread, SIGNAL("finished()"), self.aiThread,
-							 SLOT("deleteLater()"))
+			#self.connect(self.aiThread, SIGNAL("finished()"), self.aiThread,
+			#				 SLOT("deleteLater()"))
 			self.connect(self.aiThread, SIGNAL("finished()"), partial(self.on_threadF,0))
 			self.connect(self.aiThread, SIGNAL("tmpRecv()"), self.on_tmpRecv)
 			#self.connect(self, SIGNAL("aiShut()"), self.aiThread, SLOT("quit()"))
@@ -379,8 +386,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		else:
 			self.connect(self.playThread, SIGNAL("getHeroType()"), self.on_getHero)
 			self.connect(self.playThread, SIGNAL("firstCmd()"), self.on_firstCmd)
-			self.connect(self.playThread, SIGNAL("finished()"), self.playThread,
-							 SLOT("deleteLater()"))
+			self.connect(self.playThread, SIGNAL("mapRecv"), self.on_mapRecv)
+			#self.connect(self.playThread, SIGNAL("finished()"), self.playThread,
+			#				 SLOT("deleteLater()"))
 			self.connect(self.playThread, SIGNAL("finished()"), partial(self.on_threadF,1))
 			#self.connect(self, SIGNAL("playShut()"), self.playThread, SLOT("quit()"))
 			self.connect(self, SIGNAL("playShut()"), self.playThread, SLOT("on_shut()"))
@@ -426,8 +434,11 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	def on_threadF(self, arg):
 		if arg:
+			print "thread finished???????????"
+			self.playThread.deleteLater()
 			self.playThread = None
 		else:
+			self.aiThread.deleteLater()
 			self.aiThread = None
 
 	def on_recvC(self, cmd):
@@ -438,6 +449,13 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			WaitForCommand.wakeAll()
 		finally:
 			self.playThread.lock.unlock()
+
+	def on_errOpr(self, err_ind):
+		self.errorLabel.setText(err_ind)
+		QTimer.singleShot(2000, self.resetError)
+	
+	def resetError(self):
+		self.errorLabel.setText("")
 
 	def on_getHero(self):
 		dialog = GetHeroTypeDlg(self)
@@ -569,8 +587,9 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	def on_firstCmd(self):
 		pass
 
-	def on_mapRecv(self, mapInfo):
-		self.replayWindow.SetInitMap(mapInfo)
+	def on_mapRecv(self, mapInfo, baseInfo):
+		print "hi map recv"#for test
+		self.replayWindow.SetInitMap(mapInfo,baseInfo)
 
 	def on_gameWinner(self, winner):
 		if not (self.nowRound == self.replayWindow.latestRound and self.Ani_Finished):
