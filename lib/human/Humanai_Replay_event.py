@@ -15,8 +15,7 @@ NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
 NumToUnitType = {0:"剑士",1:"突击手",2:"狙击手",3:"战斗机",
 				4:"肉搏者", 5:"治疗师", 6:"HERO_1", 7:"HERO_2",
 				8:"HERO_3"}
-HUMAN_REPLAY = 1
-
+NumToTempleType = {1:"力量神符", 2:"敏捷神符", 3:"防御神符"}
 class REPLAYERROR(Exception):
 	def __init__(self, value = ""):
 		self.value = value
@@ -44,14 +43,15 @@ class HumanReplay(QGraphicsView):
 		self.setMouseTracking(True)
 
 		self.InfoLabel = QLabel(self)
-		pal = self.InfoLabel.palette()
-		pal.setBrush(QPalette.WindowText, QBrush(QColor(255,255,255)))
-		pal.setBrush(QPalette.Window, QBrush(QColor(138,43,226, 180)))
-		self.InfoLabel.setPalette(pal)
-		self.InfoLabel.setStyleSheet("border-radius:5;")
+		#pal = self.InfoLabel.palette()
+		#pal.setBrush(QPalette.WindowText, QBrush(QColor(255,255,255)))
+		#pal.setBrush(QPalette.Window, QBrush(QColor(138,43,226, 180)))
+		#self.InfoLabel.setPalette(pal)
+		self.InfoLabel.setStyleSheet("*{color:white; background-color: #8a2be2;border-radius:3;}")
 		self.InfoLabel.setVisible(False)
 		#self.setDragMode(QGraphicsView.ScrollHandDrag)
 		#游戏记录变量
+		self.HUMAN_REPLAY = 1
 		self.nowRound = 0
 		self.nowStatus = 0
 		self.iniMapInfo = None
@@ -70,7 +70,7 @@ class HumanReplay(QGraphicsView):
 		self.tmp_route_list = []
 		self.tmp_move_list = []
 		self.tmp_attack_list = []
-
+		self.tmpMouseUnit = None
 		self.animationItem = []
 		#储存展示信息
 		self.UnitBase = [[],[]]
@@ -145,13 +145,23 @@ class HumanReplay(QGraphicsView):
 		if isinstance(item, EffectIndUnit):
 			if len(items) == 1:
 				return
-			item = items[0]
 		if self.mouseUnit.corX == item.corX and self.mouseUnit.corY == item.corY:
 			return
+		if self.tmpMouseUnit:
+			self.tmpMouseUnit.setVisible(False)
+			self.scene.removeItem(self.tmpMouseUnit)
+			self.tmpMouseUnit = None	
 		self.mouseUnit.setPos(item.corX, item.corY)
-		global HUMAN_REPLAY
-		if not HUMAN_REPLAY:
+		if isinstance(item.obj, basic.Map_Mirror):
+			print "hdsafadfasdf"#for test
+			self.tmpMouseUnit = MirrorIndUnit(0,0)
+			self.scene.addItem(self.tmpMouseUnit)
+			self.tmpMouseUnit.setPos(item.obj.out)
+			self.tmpMouseUnit.setVisible(True)
+
+		if not self.HUMAN_REPLAY:
 			self.InfoLabel.setVisible(False)
+			self.InfoLabel.setText("")
 			flag = False
 			for it in items:
 				if flag:
@@ -160,7 +170,7 @@ class HumanReplay(QGraphicsView):
 					self.showLabelInfo(it.obj, pos)
 					flag = True
 					#self.emit(SIGNAL("unitSelected"),it.obj)
-				elif isinstance(it, MapUnit):
+				elif isinstance(it, MapUnit) and hasattr(it.obj, "time"):
 					self.showLabelInfo(it.obj, pos, 0)
 
 	def mousePressEvent(self, event):
@@ -399,7 +409,7 @@ class HumanReplay(QGraphicsView):
 			self.scene.removeItem(item)
 		self.animationItem = []
 
-	def moveAnimation(self, move_unit, move_pos,route):
+	def moveAnimation(self, move_unit, route):
 		TIME_PER_GRID = 500
 
 		steps = len(route)
@@ -495,14 +505,12 @@ class HumanReplay(QGraphicsView):
 	def dieAnimation(self, die_unit):
 		TOTAL_TIME = 1000
 
+		unit_obj = self.gameEndInfo[self.nowRound][-1].base[die_unit[0]][die_unit[1]]
 		unit = self.UnitBase[die_unit[0]][die_unit[1]]
-		die_e = QGraphicsBlurEffect(self)
-		die_e.setBlurRadius(0.2)
-		unit.setGraphicsEffect(die_e)
 
 		dieInd = DieIndUnit()
 		self.scene.addItem(dieInd)
-		dieInd.setPos(unit.corX, unit.corY)
+		dieInd.setPos(unit_obj.position)
 		dieInd.setOpacity(0)
 		
 		dieAnim = QParallelAnimationGroup()
@@ -518,7 +526,7 @@ class HumanReplay(QGraphicsView):
 		dieAni1.setKeyValueAt(0.2, 0.3)
 		dieAni1.setKeyValueAt(0.4, 0.8)
 		dieAni1.setKeyValueAt(0.7, 0.2)
-		dieAni1.setKeyValueAt(0.9, 0.6)
+		dieAni1.setKeyValueAt(0.9, 0.5)
 		dieAni1.setEndValue(0)
 		dieAnim.addAnimation(dieAni1)
 
@@ -663,7 +671,7 @@ class HumanReplay(QGraphicsView):
 		self.animation = QSequentialAnimationGroup()
 
 		#移动动画
-		ani, item = self.moveAnimation(unit_move, cmd.move, endInfo.route)
+		ani, item = self.moveAnimation(unit_move, endInfo.route)
 		self.animation.addAnimation(ani)
 		self.animationItem.extend(item)
 		ani = QPauseAnimation(200)
@@ -735,20 +743,28 @@ class HumanReplay(QGraphicsView):
 
 	def showLabelInfo(self, item, pos, type = 1):
 		if type:
-			self.InfoLabel.setText(QString.fromUtf8("类型:%1\n生命:%2\n攻击:%3\n敏捷:%4\n防御:%5\n加成CD:%6")\
-													.arg(NumToUnitType[item.kind])
+			self.InfoLabel.setText(QString.fromUtf8("  类型:%1 \n  生命:%2 \n  攻击:%3 \n  敏捷:%4 \n  防御:%5 \n  加成CD:%6 ")\
+													.arg(QString.fromUtf8(NumToUnitType[item.kind]))
 													.arg(item.life)
 													.arg(item.strength)
 													.arg(item.agility)
 													.arg(item.defence)
-													.arg(item.time))
+													.arg(basic.HERO_3_UP_TIME - item.time))
 			
 		else:
-			if hasattr(item, "time"):
-				self.InfoLabel.setText(QString.fromUtf8("类型:%1\n分值:%2\n冷却:%3")
-										.arg(QString.fromUtf8(NumToMapType[item.kind]))
+			if isinstance(item, basic.Map_Turret):
+				self.InfoLabel.setText(QString.fromUtf8("  类型:%1 \n  分值:%2 \n  冷却:%3 ")
+										#.arg(QString.fromUtf8(NumToMapType[item.kind]))
+										.arg(QString.fromUtf8("炮塔"))
 										.arg(item.score)
 										.arg(item.time))
+			else:
+				cd = basic.TEMPLE_UP_TIME - item.time if (basic.TEMPLE_UP_TIME - item.time) > 0 else 0
+				self.InfoLabel.setText(QString.fromUtf8("  类型:神庙 \n  分值:%1 \n  冷却:%2 \n  神符种类：%3 \n ")
+										.arg(item.score)
+										.arg(cd)
+										.arg(QString.fromUtf8(NumToTempleType[item.up])))
+										
 
 		self.InfoLabel.move(pos)
 		self.InfoLabel.setVisible(True)
@@ -802,6 +818,10 @@ class HumanReplay(QGraphicsView):
 		self.latestStatus = 1
 		self.latestRound = 0
 		self.run = False
+		if self.tmpMouseUnit:
+			self.tmpMouseUnit.setVisible(False)
+			self.scene.removeItem(self.tmpMouseUnit)
+			self.tmpMouseUnit = None
 		self.mouseUnit.setVis(False)
 		self.mouseUnit.setVisible(False)
 		self.focusUnit.setVisible(False)

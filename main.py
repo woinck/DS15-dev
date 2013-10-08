@@ -106,10 +106,11 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 		base[j][i].move(move_position)
 		if not sc:
 			whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
-		for i in map_temple:
-			if i[0] == move_position:
-				i[1] = 0
+		for tp in map_temple:
+			if tp[0] == move_position:
+				tp[1] = 0
 	if order == 1 and w[0] == 1 - j:
+		print "dfdsafasf",i,j,w[1]
 		if distance(base[j][i].position, base[1 - j][w[1]].position) in base[j][i].attack_range:
 			attack_1 = base[j][i].attack(base, (1 - j, w[1]))
 		if base[1 - j][w[1]].life > 0 and distance(base[j][i].position, base[1 - j][w[1]].position) in base[1 - j][w[1]].attack_range:

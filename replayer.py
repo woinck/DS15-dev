@@ -95,8 +95,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.connect(self.playForwardButton, SIGNAL("toggled(bool)"), self.on_playForwardButton_toggled)#for test
 		#self.connect(se
 		self.replayWidget.moveAnimEnd.connect(self.on_animEnd)
-		global HUMAN_REPLAY
-		HUMAN_REPLAY = 0
+		self.replayWidget.HUMAN_REPLAY = 0
 		self.updateUi()
 
 	def updateUi(self):

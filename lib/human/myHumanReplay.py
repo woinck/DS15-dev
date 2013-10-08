@@ -14,7 +14,7 @@ MAX_OPACITY = 0.8
 FILE_UNIT = ["saber", "lancer", "archer", "dragon_rider", "warrior",
 			 "wizard", "hero_1", "hero_2", "hero_3"]
 FILE_MAP = ["plain", "mountain", "forest", "barrier", "turret",
-					 "trap", "temple", "gear","mirror"]
+					"temple","mirror"]
 
 
 def GetPos(x, y, flag = True):
@@ -165,6 +165,23 @@ class MouseFocusUnit(AbstractUnit):
 		pen.setColor(QColor(Qt.blue).darker())
 		painter.setPen(pen)
 		painter.setCompositionMode(QPainter.CompositionMode_Multiply)
+		painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
+		painter.restore()
+
+class MirrorIndUnit(AbstractUnit):
+	def __init__(self, x, y, parent = None):
+		super(MirrorIndUnit, self).__init__(x, y, parent)
+		self.setZValue(0.8)
+
+	def paint(self, painter, option, widget = None):
+		painter.save()
+		pen = QPen()
+		pen.setWidth(EDGE_WIDTH)
+		pen.setCapStyle(Qt.RoundCap)
+		pen.setJoinStyle(Qt.RoundJoin)
+		pen.setColor(QColor(199,97,20))
+		painter.setPen(pen)
+		#painter.setCompositionMode(QPainter.CompositionMode_Multiply)
 		painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
 		painter.restore()
 
