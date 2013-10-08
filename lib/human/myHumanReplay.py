@@ -7,7 +7,7 @@ import basic
 import qrc_resource
 UNIT_WIDTH = 26
 UNIT_HEIGHT = 26
-EDGE_WIDTH = 3
+EDGE_WIDTH = 4
 EXTRA_WIDTH = 3
 MAX_OPACITY = 0.8
 
@@ -92,7 +92,7 @@ class SoldierUnit(AbstractUnit):
 																		   Qt.IgnoreAspectRatio))
 		if self.nowMove:
 			brush = QBrush(Qt.SolidPattern)
-			brush.setColor(QColor(0,250,255,80))
+			brush.setColor(QColor(180,250,0,120))
 			painter.setBrush(brush)
 			painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
 #		
@@ -177,7 +177,7 @@ class ArrangeIndUnit(AbstractUnit):
 	def paint(self, painter, option, widget = None):
 		painter.save()
 		brush = QBrush(Qt.SolidPattern)
-		brush.setColor(QColor(0,0,100,30))
+		brush.setColor(QColor(0,200,200,80))
 		painter.setBrush(brush)
 		painter.drawRect(QRect(EDGE_WIDTH/2, EDGE_WIDTH/2, UNIT_WIDTH + EDGE_WIDTH/2, UNIT_HEIGHT + EDGE_WIDTH/2))
 		painter.restore()
@@ -241,7 +241,7 @@ class EffectIndUnit(QGraphicsTextItem):
 			font.setPointSize(font.pointSize() * 2)
 			font.setBold(True)
 		self.setFont(font)
-		self.setDefaultTextColor(QColor(Qt.red).darker())
+		self.setDefaultTextColor(QColor(Qt.red).lighter())
 
 class DieIndUnit(AbstractUnit):
 	def __init__(self, x = 0, y = 0, parent = None):
@@ -251,7 +251,7 @@ class DieIndUnit(AbstractUnit):
 		painter.save()
 #		painter.begin(self.scene().views()[0])
 		brush = QBrush(Qt.SolidPattern)
-		brush.setColor(QColor(200,0,0,70))
+		brush.setColor(QColor(200,0,0,80))
 		painter.setBrush(brush)
 		painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
 #		

@@ -268,10 +268,21 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		#画button图片
 		buttons = [self.startButton, self.returnButton, self.mapButton,
 				self.aiButton, self.helpButton]
-		for i in range(len(buttons)):
-			buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png")))
-			buttons[i].setIconSize(buttons[i].size())
-			buttons[i].setStyleSheet("border-radius: 30px;")
+		#for i in range(len(buttons)):
+		#	buttons[i].setIcon(QIcon(QPixmap(":" + ButtonPics[i] + ".png")))
+		#	buttons[i].setIconSize(buttons[i].size())
+		#	buttons[i].setStyleSheet("border-radius: 30px;")
+		self.startButton.setIcon(QIcon(QPixmap(":start0.png")))
+		self.startButton.setIconSize(self.startButton.size())
+		self.startButton.setStyleSheet("border:0;")
+		self.returnButton.setStyleSheet("*{border-image: url(:return0.png);border:0;}"
+										"*:hover{border-image: url(:return1.png);border:0;}")
+		self.mapButton.setStyleSheet("*{border-image: url(:openMap0.png);border:0;}"
+									"*:hover{border-image: url(:openMap1.png);border:0;}")
+		self.aiButton.setStyleSheet("*{border-image: url(:openAI0.png);border:0;}"
+									"*:hover{border-image: url(:openAI1.png);border:0;}")
+		self.helpButton.setStyleSheet("*{border-image: url(:help0.png);border:0;}"
+									"*:hover {border-image: url(:help1.png);border:0;}")
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 		self.aiPath = ""
 		self.mapPath = ""
@@ -452,7 +463,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 	def on_errOpr(self, err_ind):
 		self.errorLabel.setText(err_ind)
-		QTimer.singleShot(2000, self.resetError)
+		QTimer.singleShot(4000, self.resetError)
 	
 	def resetError(self):
 		self.errorLabel.setText("")
@@ -597,8 +608,15 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.winner = winner
 
 	def on_gameEnd(self, winner):
-		info = "Player %d win the game" %winner if winner != -1 else "DRAW!"
-		QMessageBox.information(self, "Game Winner", info)
+		if winner == 0:
+			Winner = QString.fromUtf8("电脑")
+		elif winner == 1:
+			Winner = QString.fromUtf8("%s"%self.playerLabel.text())
+		text_a = QString.fromUtf8("赢得胜利。")
+		text_b = QString.fromUtf8("平局!")
+		info = QString.fromUtf8("%s  %s\n%d : %d" %(Winner,text_a,self.replayWindow.gameEndInfo[-1][1].score[0], self.replayWindow.gameEndInfo[-1][1].score[1]))\
+			if winner != -1 else QString.fromUtf8("%s\n%d : %d"%(text_b,self.replayWindow.gameEndInfo[-1][1].score[0], self.replayWindow.gameEndInfo[-1][1].score[1]))
+		QMessageBox.information(self, QString.fromUtf8("游戏结果"), info)
 		#需要其他特效再加
 		answer = QMessageBox.question(self, _frUtf("保存"), _frUtf("是否保存回放文件?"),
 											  QMessageBox.Yes, QMessageBox.No)

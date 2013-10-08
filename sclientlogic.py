@@ -37,6 +37,7 @@ while not over and turn < basic.TURN_MAX:
 				break
 			if base[j][i].life > 0:
 				move_range = main.available_spots(whole_map, base, (j, i))
+				print 'ccccccc',move_range
 				roundBeginInfo = basic.Round_Begin_Info((j,i), move_range, base, map_temple)
 				#发送每回合的开始信息：
 				sio._sends(conn, roundBeginInfo)

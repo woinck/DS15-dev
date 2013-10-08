@@ -316,6 +316,8 @@ class HumanReplay(QGraphicsView):
 		MARGIN_WIDTH = 20
 		rect = QRectF(0, 0-MARGIN_WIDTH, self.height*(UNIT_WIDTH + EDGE_WIDTH), self.width*(UNIT_HEIGHT+EDGE_WIDTH)+2*MARGIN_WIDTH )
 		self.scene.setSceneRect(rect)
+		#需不需要。
+		self.fitInView(self.scene.sceneRect())
 		#lindex ok
 
 	def setSoldier(self, units):
@@ -368,7 +370,7 @@ class HumanReplay(QGraphicsView):
 		self.animationItem = []
 
 	def moveAnimation(self, move_unit, move_pos,route):
-		TIME_PER_GRID = 800
+		TIME_PER_GRID = 500
 
 		steps = len(route)
 		print "route::::::::::::::::", route
@@ -386,8 +388,8 @@ class HumanReplay(QGraphicsView):
 		return movAnim, []
 
 	def attackAnimation(self, move_unit,move_pos, attack_target, target_pos, effect):
-		ATTACK_TIME = 1500
-		TOTAL_TIME = 2000
+		ATTACK_TIME = 1000
+		TOTAL_TIME = 1500
 
 		if effect == -1:#超出范围或未攻击(已死亡)
 			#可以增加逻辑展示超出范围等信息(not nessasary)
@@ -461,7 +463,7 @@ class HumanReplay(QGraphicsView):
 
 
 	def dieAnimation(self, die_unit):
-		TOTAL_TIME = 2000
+		TOTAL_TIME = 1000
 
 		unit = self.UnitBase[die_unit[0]][die_unit[1]]
 		die_e = QGraphicsBlurEffect(self)
@@ -502,7 +504,7 @@ class HumanReplay(QGraphicsView):
 		item.setOpacity(0)
 		items.append(item)
 		anim = QPropertyAnimation(item, "opacity")
-		anim.setDuration(1500)
+		anim.setDuration(1200)
 		anim.setStartValue(0)
 		anim.setKeyValueAt(0.1, 1)
 		anim.setKeyValueAt(0.9, 0.8)
@@ -515,7 +517,7 @@ class HumanReplay(QGraphicsView):
 		item.setOpacity(0)
 		items.append(item)
 		anim = QPropertyAnimation(item, "opacity")
-		anim.setDuration(1500)
+		anim.setDuration(1200)
 		anim.setStartValue(0)
 		anim.setKeyValueAt(0.3, 1)
 		anim.setKeyValueAt(0.95, 0.8)
@@ -525,7 +527,7 @@ class HumanReplay(QGraphicsView):
 		pos1 = GetPos(pos1[0], pos1[1])
 		pos2 = GetPos(pos2[0], pos2[1])
 		anim = QPropertyAnimation(move_unit, "pos")
-		anim.setDuration(1500)
+		anim.setDuration(1200)
 		anim.setStartValue(pos1)
 		anim.setKeyValueAt(0.4, pos1)
 		anim.setKeyValueAt(0.5,pos2)
@@ -533,7 +535,7 @@ class HumanReplay(QGraphicsView):
 		ani.addAnimation(anim)
 
 		anim = QPropertyAnimation(move_unit, "opacity")
-		anim.setDuration(1500)
+		anim.setDuration(1200)
 		anim.setStartValue(1)
 		anim.setKeyValueAt(0.1, 0.5)
 		anim.setKeyValueAt(0.2, 1)
@@ -634,7 +636,7 @@ class HumanReplay(QGraphicsView):
 		ani, item = self.moveAnimation(unit_move, cmd.move, endInfo.route)
 		self.animation.addAnimation(ani)
 		self.animationItem.extend(item)
-		ani = QPauseAnimation(300)
+		ani = QPauseAnimation(200)
 		self.animation.addAnimation(ani)
 
 		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
@@ -675,8 +677,8 @@ class HumanReplay(QGraphicsView):
 				self.animation.addAnimation(anim)
 				self.animationItem.extend(item)
 
-		#待机只暂停1秒
-		self.animation.addAnimation(QPauseAnimation(1000))
+		#待机只暂停0.2秒
+		self.animation.addAnimation(QPauseAnimation(200))
 		self.connect(self.animation, SIGNAL("finished()"), self.moveAnimEnd)
 		self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
 		#self.connect(self.animation, SIGNAL("finished()"), self.__test)

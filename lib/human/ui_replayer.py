@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_replayer.ui'
 #
-# Created: Sat Oct 05 19:12:33 2013
+# Created: Mon Oct 07 20:25:32 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -44,14 +44,14 @@ class Ui_Replayer(object):
         self.loadFileButton.setCheckable(False)
         self.loadFileButton.setObjectName(_fromUtf8("loadFileButton"))
         self.horizontalLayoutWidget = QtGui.QWidget(Replayer)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(180, 170, 821, 481))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(330, 130, 661, 521))
         self.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
         self.replayLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
         self.replayLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.replayLayout.setMargin(0)
         self.replayLayout.setObjectName(_fromUtf8("replayLayout"))
         self.horizontalLayoutWidget_2 = QtGui.QWidget(Replayer)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(370, 660, 491, 42))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(420, 670, 491, 42))
         self.horizontalLayoutWidget_2.setObjectName(_fromUtf8("horizontalLayoutWidget_2"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout.setSpacing(0)
@@ -158,7 +158,7 @@ class Ui_Replayer(object):
         self.nextStepButton.setObjectName(_fromUtf8("nextStepButton"))
         self.horizontalLayout.addWidget(self.nextStepButton)
         self.roundLabel = QtGui.QLabel(Replayer)
-        self.roundLabel.setGeometry(QtCore.QRect(530, 110, 141, 40))
+        self.roundLabel.setGeometry(QtCore.QRect(560, 90, 141, 40))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -180,6 +180,12 @@ class Ui_Replayer(object):
         self.roundLabel.setFont(font)
         self.roundLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.roundLabel.setObjectName(_fromUtf8("roundLabel"))
+        self.verticalLayoutWidget = QtGui.QWidget(Replayer)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(50, 150, 221, 451))
+        self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
+        self.infoLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
+        self.infoLayout.setMargin(0)
+        self.infoLayout.setObjectName(_fromUtf8("infoLayout"))
 
         self.retranslateUi(Replayer)
         QtCore.QMetaObject.connectSlotsByName(Replayer)
