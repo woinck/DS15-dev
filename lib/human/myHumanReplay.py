@@ -125,7 +125,7 @@ class MouseIndUnit(AbstractUnit):
 
 	def paint(self, painter, option, widget = None):
 		painter.save()
-		RLINE = 0.4 #rate of line
+		RLINE = 0.3 #rate of line
 		pen = QPen()
 		pen.setWidth(EDGE_WIDTH)
 		pen.setCapStyle(Qt.RoundCap)
@@ -241,7 +241,7 @@ class EffectIndUnit(QGraphicsTextItem):
 			font.setPointSize(font.pointSize() * 2)
 			font.setBold(True)
 		self.setFont(font)
-		self.setDefaultTextColor(QColor(Qt.red).lighter())
+		self.setDefaultTextColor(QColor(Qt.red))
 
 class DieIndUnit(AbstractUnit):
 	def __init__(self, x = 0, y = 0, parent = None):

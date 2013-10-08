@@ -10,6 +10,13 @@ import sys,copy,time
 import main
 from functools import partial
 from myGetRoute import getAttackRange
+NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
+				 5:"遗迹",6:"传送门"}
+NumToUnitType = {0:"剑士",1:"突击手",2:"狙击手",3:"战斗机",
+				4:"肉搏者", 5:"治疗师", 6:"HERO_1", 7:"HERO_2",
+				8:"HERO_3"}
+HUMAN_REPLAY = 1
+
 class REPLAYERROR(Exception):
 	def __init__(self, value = ""):
 		self.value = value
@@ -35,6 +42,14 @@ class HumanReplay(QGraphicsView):
 		self.run = False
 		self.animation = None
 		self.setMouseTracking(True)
+
+		self.InfoLabel = QLabel(self)
+		pal = self.InfoLabel.palette()
+		pal.setBrush(QPalette.WindowText, QBrush(QColor(255,255,255)))
+		pal.setBrush(QPalette.Window, QBrush(QColor(138,43,226, 180)))
+		self.InfoLabel.setPalette(pal)
+		self.InfoLabel.setStyleSheet("border-radius:5;")
+		self.InfoLabel.setVisible(False)
 		#self.setDragMode(QGraphicsView.ScrollHandDrag)
 		#游戏记录变量
 		self.nowRound = 0
@@ -134,6 +149,19 @@ class HumanReplay(QGraphicsView):
 		if self.mouseUnit.corX == item.corX and self.mouseUnit.corY == item.corY:
 			return
 		self.mouseUnit.setPos(item.corX, item.corY)
+		global HUMAN_REPLAY
+		if not HUMAN_REPLAY:
+			self.InfoLabel.setVisible(False)
+			flag = False
+			for it in items:
+				if flag:
+					break
+				if isinstance(it, SoldierUnit):
+					self.showLabelInfo(it.obj, pos)
+					flag = True
+					#self.emit(SIGNAL("unitSelected"),it.obj)
+				elif isinstance(it, MapUnit):
+					self.showLabelInfo(it.obj, pos, 0)
 
 	def mousePressEvent(self, event):
 		if not self.run:
@@ -312,13 +340,7 @@ class HumanReplay(QGraphicsView):
 				self.scene.addItem(new_map)
 				new_map.setPos(i,j)
 				self.MapList.append(new_map)
-		#lindex set scene rect
-		MARGIN_WIDTH = 20
-		rect = QRectF(0, 0-MARGIN_WIDTH, self.height*(UNIT_WIDTH + EDGE_WIDTH), self.width*(UNIT_HEIGHT+EDGE_WIDTH)+2*MARGIN_WIDTH )
-		self.scene.setSceneRect(rect)
-		#需不需要。
-		self.fitInView(self.scene.sceneRect())
-		#lindex ok
+
 
 	def setSoldier(self, units):
 		self.resetUnit()
@@ -335,6 +357,10 @@ class HumanReplay(QGraphicsView):
 	def SetInitMap(self, mapInfo, baseInfo):
 		self.setMap(mapInfo)
 		self.setSoldier(baseInfo)
+		MARGIN_WIDTH = 20
+		rect = QRectF(0, 0-MARGIN_WIDTH, self.height*(UNIT_WIDTH + EDGE_WIDTH), self.width*(UNIT_HEIGHT+EDGE_WIDTH)+2*MARGIN_WIDTH )
+		self.scene.setSceneRect(rect)
+		self.fitInView(self.scene.sceneRect())
 
 	def Initialize(self, begInfo,frInfo):
 		self.setMap(begInfo.map)
@@ -343,6 +369,10 @@ class HumanReplay(QGraphicsView):
 		self.latestStatus = self.latestRound = 0
 		self.gameBegInfo.append(frInfo)
 		self.run = True
+		MARGIN_WIDTH = 20
+		rect = QRectF(0, 0-MARGIN_WIDTH, self.height*(UNIT_WIDTH + EDGE_WIDTH), self.width*(UNIT_HEIGHT+EDGE_WIDTH)+2*MARGIN_WIDTH )
+		self.scene.setSceneRect(rect)
+		self.fitInView(self.scene.sceneRect())
 
 		self.mouseUnit.setVis(True)
 		if not self.stateMachine.isRunning():
@@ -695,7 +725,7 @@ class HumanReplay(QGraphicsView):
 		self.nowRound = round_
 		self.nowStatus = status
 
-		self.setMap(self.getMap(round_, status))
+		#self.setMap(self.getMap(round_, status))
 
 		if status:
 			self.setSoldier(self.gameEndInfo[round_][1].base)
@@ -703,6 +733,26 @@ class HumanReplay(QGraphicsView):
 
 			self.setSoldier(self.gameBegInfo[round_].base)
 
+	def showLabelInfo(self, item, pos, type = 1):
+		if type:
+			self.InfoLabel.setText(QString.fromUtf8("类型:%1\n生命:%2\n攻击:%3\n敏捷:%4\n防御:%5\n加成CD:%6")\
+													.arg(NumToUnitType[item.kind])
+													.arg(item.life)
+													.arg(item.strength)
+													.arg(item.agility)
+													.arg(item.defence)
+													.arg(item.time))
+			
+		else:
+			if hasattr(item, "time"):
+				self.InfoLabel.setText(QString.fromUtf8("类型:%1\n分值:%2\n冷却:%3")
+										.arg(QString.fromUtf8(NumToMapType[item.kind]))
+										.arg(item.score)
+										.arg(item.time))
+
+		self.InfoLabel.move(pos)
+		self.InfoLabel.setVisible(True)
+		
 	def resetMap(self):
 		for item in self.MapList:
 			self.scene.removeItem(item)
