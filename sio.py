@@ -6,13 +6,15 @@ sys.setdefaultencoding('gb2312')
 
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 1
+AI_DEBUG = 1
+
 #游戏运行参数
-DEBUG_MODE = 0
 '''
 关于DEGUB_MODE:
 为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
-为1时需先手动运行logic,再运行sserver,再运行ui
+为1时需先手动运行logic,再运行sserver,再运行ui,再运行ai
 '''
+DEBUG_MODE = 0
 RELEASE_MODE = 0
 SINGLE_PROCESS = 0 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
 REPLAY_MODE = 0 #此常量为1时会生成回放文件,######废弃######
@@ -96,13 +98,6 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
 		conn.recv(3)
 		for i in range(soldier_number[0]):
-				print soldier[0][i].position
-				print str(soldier[0][i].attack_range[1])
-				print str(soldier[0][i].kind)+' '
-				print str(soldier[0][i].life)+' '
-				print str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '+str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '+str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '+str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '+str(soldier[0][i].position[0])+' '+str(soldier[0][i].position[1])
-						   
-						   
 				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
 						   +str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '
 						   +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
@@ -143,7 +138,9 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 				conn.recv(3)	   
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
+		print '111'
 		recvbuf = conn.recv(10)
+		print '222'
 		rbuf = recvbuf.split()
 		order = int(rbuf[0])
 		target_id = int(rbuf[1])
@@ -221,7 +218,6 @@ def Prog_Run(progPath,isAI=False):
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
 		progPath=progPath.encode('gbk')
-		print progPath
 		if RELEASE_MODE or (isAI and USE_CPP_AI):	
 			result = subprocess.Popen(progPath, stderr = devnull)
 		else: 

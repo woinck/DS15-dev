@@ -18,10 +18,10 @@ def _SocketConnect(host,port,connName,list = 1):
 	#设定AI连接最大时间
 	if connName == 'AI':
 		print 'waiting ai'
-		if not sio.DEBUG_MODE:
-			serv.settimeout(sio.AI_CONNECT_TIMEOUT)
-		else:
+		if sio.DEBUG_MODE or sio.AI_DEBUG:
 			serv.settimeout(None)
+		else:
+			serv.settimeout(sio.AI_CONNECT_TIMEOUT)
 		print '\n',
 	else:
 		serv.settimeout(None)
@@ -63,14 +63,14 @@ class Sui(threading.Thread):
 				conn.shutdown(socket.SHUT_RDWR)
 				exit(1)
 		else:
-			if sio.DEBUG_MODE:
+			if sio.DEBUG_MODE or sio.AI_DEBUG:
 				return None
 			else:
 				print 'ai running'
 				return sio.Prog_Run(AIPath,True)
 	def run(self):
 		global gProcess,rProcess
-		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch,aiConnErr
+		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch,aiConnErr,gameAIPath
 		global rbInfo,reInfo,rCommand
 		global ai_thread,logic_thread
 		
@@ -86,7 +86,7 @@ class Sui(threading.Thread):
 		
 		#设置AI超时开关
 		for i in range(2):
-			if gameAIPath[i]==None:
+			if gameAIPath[i]==None or sio.AI_DEBUG:
 				timeoutSwitch[i]=0
 			else:
 				timeoutSwitch[i]=1
@@ -301,6 +301,8 @@ class Slogic(threading.Thread):
 				if rProcess != sio.RCOMMAND_SET:
 					rProc.wait()
 				else:	
+					print 'cmd sending:'
+					sio.cmdDisplay(rCommand)
 					sio._sends(connLogic,rCommand)
 					reInfo = sio._recvs(connLogic)
 					if aiConnErr[rbInfo.id[0]]:
@@ -348,7 +350,7 @@ class Sai(threading.Thread):
 		self.connErr = False
 	
 	def run(self):
-		global gProcess,rProcess,mapInfo,heroType,aiInfo,base, aiConnErr
+		global gProcess,rProcess,mapInfo,heroType,aiInfo,base, aiConnErr, gameAIPath
 		global rbInfo,reInfo,rCommand
 		global gameMode,timeoutSwitch
 		
@@ -371,19 +373,17 @@ class Sai(threading.Thread):
 			else:
 				for i in range(2):
 					try:
-						if sio.USE_CPP_AI:
+						if sio.USE_CPP_AI and gameAIPath[i] != None:
 							sio._cpp_sends_begin(connAI[i],i,mapInfo,(len(base[0]),len(base[1])),base)
 						else:
 							sio._sends(connAI[i],(mapInfo,base))
 					except sio.ConnException:
 						aiConnErr[i] = True
-						
 					try:
 						aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
 						print 'ai',i,'\'s Info received'
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
-					
 					except socket.timeout:
 						print 'fail to receive AI',i,'\'s information, default settings will be used...'
 						aiInfo.append('Player'+str(i))
@@ -400,7 +400,7 @@ class Sai(threading.Thread):
 			gProc.release()
 
 		#初始化完毕，进入回合==============================================================
-		#print 'ai in game'#for test 
+		print 'ai in game'#for test 
 		
 		#游戏回合阶段
 		roundNum = 0
@@ -425,10 +425,16 @@ class Sai(threading.Thread):
 					else:
 						connAI[rbInfo.id[0]].settimeout(None)
 					
+					#计分，用于传输
+					if roundNum <= 2:
+						tempScore = [0,0]
+					else:
+						tempScore = reInfo.score
+					
 					#发送回合信息
 					try:
-						if sio.USE_CPP_AI:
-							sio._cpp_sends(connAI[rbInfo.id[0]],rbInfo.id[1],len(rbInfo.temple),rbInfo.temple,(len(base[0]),len(base[1])),base,roundNum,reInfo.score)
+						if sio.USE_CPP_AI and gameAIPath != None:
+							sio._cpp_sends(connAI[rbInfo.id[0]],rbInfo.id[1],len(rbInfo.temple),rbInfo.temple,(len(base[0]),len(base[1])),base,roundNum,tempScore)
 						else:
 							sio._sends(connAI[rbInfo.id[0]],rbInfo)
 					except sio.ConnException:
@@ -441,7 +447,7 @@ class Sai(threading.Thread):
 					else:
 						try:
 							print 'prepare to receive cmd'
-							if sio.USE_CPP_AI:
+							if sio.USE_CPP_AI and gameAIPath != None:
 								rCommand = sio._cpp_recvs(connAI[rbInfo.id[0]])
 							else:
 								rCommand = sio._recvs(connAI[rbInfo.id[0]])
@@ -449,6 +455,7 @@ class Sai(threading.Thread):
 							sio.cmdDisplay(rCommand)
 							print 'command end'
 						except socket.timeout:
+							print 'fail to receive cmd, default will be used..'
 							rCommand = basic.Command()
 						except sio.ConnException:
 							print 'in aiConnErr!!!!!!!!!!!!'
@@ -477,7 +484,7 @@ class Sai(threading.Thread):
 				connAI[i].shutdown(socket.SHUT_RDWR)
 
 
-global mapInfo,heroType,aiInfo,aiConnErr
+global mapInfo,heroType,aiInfo,aiConnErr,gameAIPath
 global rbInfo,reInfo,rCommand
 global winner,gameMode,timeoutSwitch
 global whole_map,base
