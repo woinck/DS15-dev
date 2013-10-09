@@ -3,23 +3,31 @@
 #include"basic.h"
 #pragma comment(lib,"WS2_32.lib")
 
-command AI_main(); //选手编写的AI主函数
+extern game_info info;
+
+Command cmd;  //选手操作,每回合传给逻辑
+char recvbuf[128] = {}; //从平台接收信息
+char sendbuf[128] = {}; //向平台发送信息
 
 SOCKET client; //声明client，用于下面的get_soldier_info()的调用
+
+
+command AI_main();
+
 void get_soldier_info()
 {
-	for(int i = 0; i < initial.soldier_number[0]; i++)
+	for(int i = 0; i < info.soldier_number[0]; i++)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
-		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d %d %d", &initial.soldier[i][0].kind, &initial.soldier[i][0].life, &initial.soldier[i][0].attack,  &initial.soldier[i][0].agility,  &initial.soldier[i][0].defence,  &initial.soldier[i][0].move_range,  &initial.soldier[i][0].move_speed,  &initial.soldier[i][0].attack_range[0], &initial.soldier[i][0].attack_range[1], &initial.soldier[i][0].up,  &initial.soldier[i][0].p.x,  &initial.soldier[i][0].p.y);
+		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d %d %d", &info.soldier[i][0].kind, &info.soldier[i][0].life, &info.soldier[i][0].attack,  &info.soldier[i][0].agility,  &info.soldier[i][0].defence,  &info.soldier[i][0].move_range,  &info.soldier[i][0].move_speed,  &info.soldier[i][0].attack_range[0], &info.soldier[i][0].attack_range[1], &info.soldier[i][0].duration,  &info.soldier[i][0].pos.x,  &info.soldier[i][0].pos.y);
 		send(client, "ok", 2, 0);
 	}
-	for(int i = 0; i < initial.soldier_number[1]; i++)
+	for(int i = 0; i < info.soldier_number[1]; i++)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
-		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d %d %D", &initial.soldier[i][1].kind, &initial.soldier[i][1].life, &initial.soldier[i][1].attack,  &initial.soldier[i][1].agility,  &initial.soldier[i][1].defence,  &initial.soldier[i][1].move_range,  &initial.soldier[i][1].move_speed,  &initial.soldier[i][1].attack_range[0], &initial.soldier[i][1].attack_range[1],&initial.soldier[i][1].up,  &initial.soldier[i][1].p.x,  &initial.soldier[i][1].p.y);
+		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d %d %D", &info.soldier[i][1].kind, &info.soldier[i][1].life, &info.soldier[i][1].attack,  &info.soldier[i][1].agility,  &info.soldier[i][1].defence,  &info.soldier[i][1].move_range,  &info.soldier[i][1].move_speed,  &info.soldier[i][1].attack_range[0], &info.soldier[i][1].attack_range[1],&info.soldier[i][1].duration,  &info.soldier[i][1].pos.x,  &info.soldier[i][1].pos.y);
 		send(client, "ok", 2, 0);
 	}
 } //用于每回合更新双方单位信息
@@ -38,36 +46,36 @@ void main()
 	SOCKADDR_IN cliaddr;
 	cliaddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 	cliaddr.sin_family = AF_INET;
-	cliaddr.sin_port = htons(8818);
+	cliaddr.sin_port = htons(8803);
 	connect(client, (sockaddr*)&cliaddr, sizeof(sockaddr));
 	send(client, "AI has connected.", 17, 0);
 	//建立socket连接
 	
 	recv(client, recvbuf, 127, 0);
-	sscanf(recvbuf, "%d", &initial.team_number);
+	sscanf(recvbuf, "%d", &info.team_number);
 	send(client, "ok", 2, 0);
 	for(int i = 0; i < COORDINATE_X_MAX; i++)
 		for(int j = 0; j < COORDINATE_Y_MAX; j++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);
 			recv(client, recvbuf, 127, 0);
-			sscanf(recvbuf, "%d", &initial.map[i][j]);
+			sscanf(recvbuf, "%d", &info.map[i][j]);
 			send(client, "ok", 2, 0);
 		}
 	memset(recvbuf, 0, sizeof(char)*128);
 	recv(client, recvbuf, 127, 0);
-	sscanf(recvbuf, "%d", &initial.mirror_number);
+	sscanf(recvbuf, "%d", &info.mirror_number);
 	send(client, "ok", 2, 0);
-	for(int i = 0; i < initial.mirror_number; i++)
+	for(int i = 0; i < info.mirror_number; i++)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
-		sscanf(recvbuf, "%d %d %d %d", &initial.mir[i].self.x, &initial.mir[i].self.y, &initial.mir[i].out.x, &initial.mir[i].out.y);
+		sscanf(recvbuf, "%d %d %d %d", &info.mir[i].inPos.x, &info.mir[i].inPos.y, &info.mir[i].outPos.x, &info.mir[i].outPos.y);
 		send(client, "ok", 2, 0);
 	}
 	memset(recvbuf, 0, sizeof(char)*128);
 	recv(client, recvbuf, 127, 0);
-	sscanf(recvbuf, "%d %d", &initial.soldier_number[0], &initial.soldier_number[1]);
+	sscanf(recvbuf, "%d %d", &info.soldier_number[0], &info.soldier_number[1]);
 	send(client, "ok", 2, 0);
 	get_soldier_info();
 	//读取初始信息

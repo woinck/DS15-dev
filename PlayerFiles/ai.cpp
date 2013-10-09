@@ -1,10 +1,16 @@
-#include"basic.h"
-command AI_main()
+#include "basic.h"
+
+game_info info;
+
+
+
+
+Command AI_main()
 {
-	command cmd;
+	Command cmd;
 	//选手在这里写自己的AI主函数
-	cmd.order = 1;
+	cmd.order = 0;
+	cmd.destination = info.soldier[info.move_id][info.team_number].pos;
 	cmd.target_id = 0;
-	cmd.destination.x = initial.soldier[0][1 - initial.team_number].p.x + 1 ; cmd.destination.y = initial.soldier[0][1 - initial.team_number].p.y + 1;
 	return cmd;
 }
