@@ -403,8 +403,9 @@ class Sai(threading.Thread):
 		#print 'ai in game'#for test 
 		
 		#游戏回合阶段
+		roundNum = 0
 		while gProcess < sio.OVER:
-
+			roundNum =  roundNum + 1
 			#将回合开始信息发送至AI，并接收AI的命令
 			while rProc.acquire():
 				if rProcess != sio.RBINFO_SENT_TO_UI:
@@ -427,7 +428,7 @@ class Sai(threading.Thread):
 					#发送回合信息
 					try:
 						if sio.USE_CPP_AI:
-							sio._cpp_sends(connAI[rbInfo.id[0]],rbInfo.id[1],len(rbInfo.temple),rbInfo.temple,(len(base[0]),len(base[1])),base,未完成)
+							sio._cpp_sends(connAI[rbInfo.id[0]],rbInfo.id[1],len(rbInfo.temple),rbInfo.temple,(len(base[0]),len(base[1])),base,roundNum,reInfo.score)
 						else:
 							sio._sends(connAI[rbInfo.id[0]],rbInfo)
 					except sio.ConnException:
@@ -440,7 +441,10 @@ class Sai(threading.Thread):
 					else:
 						try:
 							print 'prepare to receive cmd'
-							rCommand = sio._recvs(connAI[rbInfo.id[0]])
+							if sio.USE_CPP_AI:
+								rCommand = sio._cpp_recvs(connAI[rbInfo.id[0]])
+							else:
+								rCommand = sio._recvs(connAI[rbInfo.id[0]])
 							print 'AI',rbInfo.id[0],'\'s command:',
 							sio.cmdDisplay(rCommand)
 							print 'command end'
