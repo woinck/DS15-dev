@@ -67,7 +67,7 @@ class Sui(threading.Thread):
 				return None
 			else:
 				print 'ai running'
-				return sio.Prog_Run(AIPath)
+				return sio.Prog_Run(AIPath,True)
 	def run(self):
 		global gProcess,rProcess
 		global mapInfo,base,heroType,aiInfo,gameMode,timeoutSwitch,aiConnErr

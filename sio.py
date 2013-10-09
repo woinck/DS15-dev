@@ -63,6 +63,8 @@ CONTINUE = 0
 NORMAL_OVER = 1
 AI_BREAKDOWN = 2
 
+
+
 class MapInfo:
 	def __init__(self,whole_map):
 		self.mapInfo = whole_map
@@ -71,17 +73,18 @@ class MapInfo:
 def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		conn.send(str(team_number))
 		conn.recv(3)
-		for i in range(COORDINATE_X_MAX):
-				for j in range(COORDINATE_Y_MAX):
-						if j.kind == basic.MIRROR:
+		mirror_number = 0
+		for i in range(basic.COORDINATE_X_MAX):
+				for j in range(basic.COORDINATE_Y_MAX):
+						if whole_map[i][j].kind == basic.MIRROR:
 							mirror_number = mirror_number + 1
 						conn.send(str(whole_map[i][j]))
 						conn.recv(3)
 		conn.send(str(mirror_number))
 		conn.recv(3)
 		
-		for i in range(COORDINATE_X_MAX):
-				for j in range(COORDINATE_Y_MAX):
+		for i in range(basic.COORDINATE_X_MAX):
+				for j in range(basic.COORDINATE_Y_MAX):
 					if whole_map[i][j].kind == basic.MIRROR:
 						conn.send(str(i)+' '+str(j)+' '+str(whole_map[i][j].out[0]) + ' '+str(whole_map[i][j].out[1]))
 		conn.recv(3)
@@ -90,9 +93,16 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 				conn.send(str(mirror[i][0][0])+' '+str(mirror[i][0][1])+' '+str(mirror[i][1][0])+' '+str(mirror[i][1][1]))
 				conn.recv(3)
 				'''
-		conn.send(str(soldier_number[0])+' '+str(solder_number[1]))
+		conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
 		conn.recv(3)
 		for i in range(soldier_number[0]):
+				print soldier[0][i].position
+				print str(soldier[0][i].attack_range[1])
+				print str(soldier[0][i].kind)+' '
+				print str(soldier[0][i].life)+' '
+				print str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '+str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '+str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '+str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '+str(soldier[0][i].position[0])+' '+str(soldier[0][i].position[1])
+						   
+						   
 				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
 						   +str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '
 						   +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
@@ -207,12 +217,12 @@ class Prog_Run(progPath):
 		os.system('cmd /c start %s' %(self.progPath))
 		#subprocess.Popen('python ' + progPath,shell = True)
 '''
-def Prog_Run(progPath):	
+def Prog_Run(progPath,isAI=False):	
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
 		progPath=progPath.encode('gbk')
 		print progPath
-		if RELEASE_MODE:	
+		if RELEASE_MODE or (isAI and USE_CPP_AI):	
 			result = subprocess.Popen(progPath, stderr = devnull)
 		else: 
 			result = subprocess.Popen('python ' + progPath)
