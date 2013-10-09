@@ -47,7 +47,7 @@ class HumanReplay(QGraphicsView):
 		#pal.setBrush(QPalette.WindowText, QBrush(QColor(255,255,255)))
 		#pal.setBrush(QPalette.Window, QBrush(QColor(138,43,226, 180)))
 		#self.InfoLabel.setPalette(pal)
-		self.InfoLabel.setStyleSheet("*{color:white; background-color: #8a2be2;border-radius:3;}")
+		self.InfoLabel.setStyleSheet("*{color:white; background-color: rgba(160, 32, 240, 150);border-radius:3;}")
 		self.InfoLabel.setVisible(False)
 		#self.setDragMode(QGraphicsView.ScrollHandDrag)
 		#游戏记录变量
@@ -743,13 +743,14 @@ class HumanReplay(QGraphicsView):
 
 	def showLabelInfo(self, item, pos, type = 1):
 		if type:
+			cd = basic.HERO_3_UP_TIME - item.time if item.time != 0 else QString.fromUtf8("无加成")
 			self.InfoLabel.setText(QString.fromUtf8("  类型:%1 \n  生命:%2 \n  攻击:%3 \n  敏捷:%4 \n  防御:%5 \n  加成CD:%6 ")\
 													.arg(QString.fromUtf8(NumToUnitType[item.kind]))
 													.arg(item.life)
 													.arg(item.strength)
 													.arg(item.agility)
 													.arg(item.defence)
-													.arg(basic.HERO_3_UP_TIME - item.time))
+													.arg(cd))
 			
 		else:
 			if isinstance(item, basic.Map_Turret):
@@ -760,7 +761,7 @@ class HumanReplay(QGraphicsView):
 										.arg(item.time))
 			else:
 				cd = basic.TEMPLE_UP_TIME - item.time if (basic.TEMPLE_UP_TIME - item.time) > 0 else 0
-				self.InfoLabel.setText(QString.fromUtf8("  类型:神庙 \n  分值:%1 \n  冷却:%2 \n  神符种类：%3 \n ")
+				self.InfoLabel.setText(QString.fromUtf8("  类型:神庙 \n  分值:%1 \n  冷却:%2 \n  神符种类：%3")
 										.arg(item.score)
 										.arg(cd)
 										.arg(QString.fromUtf8(NumToTempleType[item.up])))
