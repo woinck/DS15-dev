@@ -364,7 +364,7 @@ class Sai(threading.Thread):
 			else:
 				connAI[i].settimeout(None)
 
-		#向AI传输地图信息并接收AI的反馈
+		#向AI传输游戏初始信息并接收AI的反馈
 		while gProc.acquire():
 			if gProcess != sio.MAP_SET:
 				gProc.wait()
@@ -400,7 +400,7 @@ class Sai(threading.Thread):
 			gProc.release()
 
 		#初始化完毕，进入回合==============================================================
-		#print 'ai in game'#for test
+		#print 'ai in game'#for test 
 		
 		#游戏回合阶段
 		while gProcess < sio.OVER:
@@ -424,8 +424,12 @@ class Sai(threading.Thread):
 					else:
 						connAI[rbInfo.id[0]].settimeout(None)
 					
+					#发送回合信息
 					try:
-						sio._sends(connAI[rbInfo.id[0]],rbInfo)
+						if sio.USE_CPP_AI:
+							sio._cpp_sends(connAI[rbInfo.id[0]],rbInfo.id[1],len(rbInfo.temple),rbInfo.temple,(len(base[0]),len(base[1])),base,未完成)
+						else:
+							sio._sends(connAI[rbInfo.id[0]],rbInfo)
 					except sio.ConnException:
 						#AI连接错误，标记至connErr中
 						aiConnErr[rbInfo.id[0]] = True

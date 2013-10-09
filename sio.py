@@ -109,7 +109,7 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
                            +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
                 conn.recv(3)
 #向cpp客户端AI传输每回合信息
-def _cpp_sends(conn, move_id, temple_number, temple, turn, score):
+def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, turn, score,):
         conn.send(str(move_id)+' '+str(temple_number)+' '+str(turn)+' '+str(score[0])+' '+str(score[1]))
         conn.recv(3)
         for i in range(temple_number):
