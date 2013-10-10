@@ -6,7 +6,7 @@ sys.setdefaultencoding('gb2312')
 
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 1
-AI_DEBUG = 1
+AI_DEBUG =1
 
 #游戏运行参数
 '''
@@ -74,32 +74,31 @@ class MapInfo:
 #向cpp客户端AI传输游戏初始信息
 def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		conn.send(str(team_number))
-		conn.recv(3)
+		temp = conn.recv(3)
 		mirror_number = 0
+		mirror = []
 		for i in range(basic.COORDINATE_X_MAX):
 				for j in range(basic.COORDINATE_Y_MAX):
 						if whole_map[i][j].kind == basic.MIRROR:
 							mirror_number = mirror_number + 1
-						conn.send(str(whole_map[i][j]))
+							mirror.append(whole_map[i][j])
+						conn.send(str(whole_map[i][j].kind))
 						conn.recv(3)
 		conn.send(str(mirror_number))
 		conn.recv(3)
-		
+
 		for i in range(basic.COORDINATE_X_MAX):
 				for j in range(basic.COORDINATE_Y_MAX):
 					if whole_map[i][j].kind == basic.MIRROR:
 						conn.send(str(i)+' '+str(j)+' '+str(whole_map[i][j].out[0]) + ' '+str(whole_map[i][j].out[1]))
-		conn.recv(3)
-		'''
-		for i in range(mirror_number):
-				conn.send(str(mirror[i][0][0])+' '+str(mirror[i][0][1])+' '+str(mirror[i][1][0])+' '+str(mirror[i][1][1]))
-				conn.recv(3)
-				'''
+						conn.recv(3)
+		
 		conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
 		conn.recv(3)
+		
 		for i in range(soldier_number[0]):
 				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
-						   +str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '
+						   +str(soldier[0][i].strength)+' '+str(soldier[0][i].agility)+' '
 						   +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
 						   +str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '
 						   +str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '
@@ -107,7 +106,7 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 				conn.recv(3)
 		for i in range(soldier_number[1]):
 				conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
-						   +str(soldier[1][i].attack)+' '+str(soldier[1][i].agility)+' '
+						   +str(soldier[1][i].strength)+' '+str(soldier[1][i].agility)+' '
 						   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
 						   +str(soldier[1][i].move_speed)+' '+str(soldier[1][i].attack_range[0])+' '
 						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
@@ -122,7 +121,7 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 				conn.recv(3)
 		for i in range(soldier_number[0]):
 				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
-						   +str(soldier[0][i].attack)+' '+str(soldier[0][i].agility)+' '
+						   +str(soldier[0][i].strength)+' '+str(soldier[0][i].agility)+' '
 						   +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
 						   +str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '
 						   +str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '
@@ -130,22 +129,32 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 				conn.recv(3)
 		for i in range(soldier_number[1]):
 				conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
-						   +str(soldier[1][i].attack)+' '+str(soldier[1][i].agility)+' '
+						   +str(soldier[1][i].strength)+' '+str(soldier[1][i].agility)+' '
 						   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
 						   +str(soldier[1][i].move_speed)+' '+str(soldier[1][i].attack_range[0])+' '
 						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
 						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
-				conn.recv(3)	   
+				conn.recv(3)
+
+def _cpp_recvs_begin(conn):
+	result = []
+	recvbuf = conn.recv(20)
+	conn.send('ok')
+	result.append(recvbuf)
+	recvbuf = conn.recv(1)
+	result.append(int(recvbuf))
+	return result
+				
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
-		print '111'
-		recvbuf = conn.recv(10)
-		print '222'
-		rbuf = recvbuf.split()
-		order = int(rbuf[0])
-		target_id = int(rbuf[1])
-		move = (int(rbuf[2]), int(rbuf[3]))
-		return basic.Command(order,move,target_id)
+	recvbuf = conn.recv(100)
+	print recvbuf
+	rbuf = recvbuf.split()
+	print rbuf
+	order = int(rbuf[0])
+	target_id = int(rbuf[1])
+	move = (int(rbuf[2]), int(rbuf[3]))
+	return basic.Command(order,move,target_id)
 
 		
 class ConnException(Exception):

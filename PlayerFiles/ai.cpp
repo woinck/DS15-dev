@@ -2,9 +2,12 @@
 #include <stdio.h>
 
 game_info info;
+char teamName[20]="player";
 
-
-
+int GetHeroType()
+{
+	return GENERAL;
+}
 
 Command AI_main()
 {

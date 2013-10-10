@@ -301,8 +301,6 @@ class Slogic(threading.Thread):
 				if rProcess != sio.RCOMMAND_SET:
 					rProc.wait()
 				else:	
-					print 'cmd sending:'
-					sio.cmdDisplay(rCommand)
 					sio._sends(connLogic,rCommand)
 					reInfo = sio._recvs(connLogic)
 					if aiConnErr[rbInfo.id[0]]:
@@ -373,14 +371,17 @@ class Sai(threading.Thread):
 			else:
 				for i in range(2):
 					try:
-						if sio.USE_CPP_AI and gameAIPath[i] != None:
+						if sio.USE_CPP_AI and (gameAIPath[i] != None):
 							sio._cpp_sends_begin(connAI[i],i,mapInfo,(len(base[0]),len(base[1])),base)
 						else:
 							sio._sends(connAI[i],(mapInfo,base))
 					except sio.ConnException:
 						aiConnErr[i] = True
 					try:
-						aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
+						if sio.USE_CPP_AI and (gameAIPath[i] != None):
+							aiInfoTemp,heroTypeTemp = sio._cpp_recvs_begin(connAI[i])
+						else:
+							aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
 						print 'ai',i,'\'s Info received'
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
@@ -394,6 +395,7 @@ class Sai(threading.Thread):
 				#调节游戏进度标记
 				gProcess = sio.HERO_TYPE_SET
 				#print 'heroType set'#for test
+				
 				gProc.notifyAll()
 				gProc.release()
 				break
@@ -412,19 +414,19 @@ class Sai(threading.Thread):
 					rProc.wait()
 				else:
 					#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
-			
+					print 'start!!!!!!!'
 					connAI[rbInfo.id[0]].settimeout(0)
 				
 					try:
 						connAI[rbInfo.id[0]].recv(1024)
 					except:
 						pass
-					
+						
 					if timeoutSwitch[rbInfo.id[0]]==1:
 						connAI[rbInfo.id[0]].settimeout(sio.AI_CMD_TIMEOUT)
 					else:
 						connAI[rbInfo.id[0]].settimeout(None)
-					
+						
 					#计分，用于传输
 					if roundNum <= 2:
 						tempScore = [0,0]
@@ -433,7 +435,7 @@ class Sai(threading.Thread):
 					
 					#发送回合信息
 					try:
-						if sio.USE_CPP_AI and gameAIPath != None:
+						if sio.USE_CPP_AI and gameAIPath[rbInfo.id[0]] != None:
 							sio._cpp_sends(connAI[rbInfo.id[0]],rbInfo.id[1],len(rbInfo.temple),rbInfo.temple,(len(base[0]),len(base[1])),base,roundNum,tempScore)
 						else:
 							sio._sends(connAI[rbInfo.id[0]],rbInfo)
@@ -441,19 +443,18 @@ class Sai(threading.Thread):
 						#AI连接错误，标记至connErr中
 						aiConnErr[rbInfo.id[0]] = True
 						
-					#print 'rbInfo sent to AI'
+					print 'rbInfo sent to AI'
 					if aiConnErr[rbInfo.id[0]] == True:
 						rCommand = basic.Command()
 					else:
 						try:
 							print 'prepare to receive cmd'
-							if sio.USE_CPP_AI and gameAIPath != None:
+							if sio.USE_CPP_AI and gameAIPath[rbInfo.id[0]] != None:
 								rCommand = sio._cpp_recvs(connAI[rbInfo.id[0]])
 							else:
 								rCommand = sio._recvs(connAI[rbInfo.id[0]])
-							print 'AI',rbInfo.id[0],'\'s command:',
+							print 'AI',rbInfo.id[0],'\'s command:'
 							sio.cmdDisplay(rCommand)
-							print 'command end'
 						except socket.timeout:
 							print 'fail to receive cmd, default will be used..'
 							rCommand = basic.Command()

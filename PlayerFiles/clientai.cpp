@@ -4,6 +4,8 @@
 #pragma comment(lib,"WS2_32.lib")
 
 extern game_info info;
+extern char teamName[20];
+extern int GetHeroType();
 
 Command cmd;  //选手操作,每回合传给逻辑
 char recvbuf[128] = {}; //从平台接收信息
@@ -48,7 +50,7 @@ void main()
 	cliaddr.sin_family = AF_INET;
 	cliaddr.sin_port = htons(8803);
 	connect(client, (sockaddr*)&cliaddr, sizeof(sockaddr));
-	send(client, "AI has connected.", 17, 0);
+	//send(client, "AI has connected.", 17, 0);
 	//建立socket连接
 	
 	printf("111\n");
@@ -86,11 +88,18 @@ void main()
 	//读取初始信息
 	printf("333\n");
 
+	send(client, teamName, 20, 0);
+	recv(client, recvbuf, 3, 0);
+	int heroType = GetHeroType();
+	memset(sendbuf,0,sizeof(char)*128);
+	sprintf(sendbuf,"%d",heroType);
+	send(client,sendbuf,1,0);
+
 	while(1)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
-		if(recvbuf[0] == '#') break; //以#作为游戏结束标志
+		if(recvbuf[0] == '|') break; //以|作为游戏结束标志
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
 		send(client, "ok", 2, 0);
 		printf("444\n");
@@ -105,7 +114,7 @@ void main()
 		get_soldier_info();
   		cmd = AI_main();
 		memset(sendbuf, 0, sizeof(char)*128);
-		sprintf(sendbuf, "%d %d %d %d", cmd.order, cmd.target_id, cmd.destination.x, cmd.destination.y);
+		sprintf(sendbuf, "%d %d %d %d", (int)cmd.order, cmd.target_id, cmd.destination.x, cmd.destination.y);
 		send(client, sendbuf, strlen(sendbuf), 0); 
 	} //游戏按回合进行，直到分出胜负
 
