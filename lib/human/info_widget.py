@@ -6,10 +6,10 @@ from PyQt4.QtCore import *
 
 
 #Three dictionaries for show types of map or unit
-NumToMapType = {0:"PLAIN",1:"MOUNTAIN",2:"FOREST",3:"BARRIER",4:"TURRET",
-				 5:"TRAP",6:"TEMPLE",7:"GEAR",8:"MIRROR"}
-NumToUnitType = {0:"SABER",1:"LANCER",2:"ARCHER",3:"DRAGON RIDER",
-				4:"WARRIOR", 5:"WIZARD", 6:"HERO_1", 7:"HERO_2",
+NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
+				 5:"遗迹",6:"传送门"}
+NumToUnitType = {0:"剑士",1:"突击手",2:"狙击手",3:"战斗机",
+				4:"肉搏者", 5:"治疗师", 6:"HERO_1", 7:"HERO_2",
 				8:"HERO_3"}
 NumToActionType = {0:"待机", 1:"攻击", 2:"技能"}
 #QTabWidget{
@@ -43,12 +43,12 @@ class InfoWidget(QTabWidget):
 		self.infoWidget_Map = InfoWidget3()
 		self.addTab(self.infoWidget_Unit, "Unit info")
 		self.addTab(self.infoWidget_Map, "Map info")
-		self.setTabToolTip(1, "the right-button-pressed unit's infos")
-		self.setTabToolTip(2, "the right-button-pressed map-grid's infos")
+		self.setTabToolTip(1, "the button-pressed unit's infos")
+		self.setTabToolTip(2, "the button-pressed map-grid's infos")
 
 	#展现单位,地形信息
 	def newUnitInfo(self, base_unit):
-		self.infoWidget_Unit.info_type.setText(NumToUnitType[base_unit.kind])
+		self.infoWidget_Unit.info_type.setText(QString.fromUtf8(NumToUnitType[base_unit.kind]))
 		self.infoWidget_Unit.info_life.setText("%d" %base_unit.life)
 		self.infoWidget_Unit.info_attack.setText("%d" %base_unit.strength)
 		self.infoWidget_Unit.info_defence.setText("%d" %base_unit.defence)
@@ -57,7 +57,7 @@ class InfoWidget(QTabWidget):
 		self.infoWidget_Unit.info_attackrange.setText("%s" %base_unit.attack_range)
 
 	def newMapInfo(self, map_basic):
-		self.infoWidget_Map.info_type.setText(NumToMapType[map_basic.kind])
+		self.infoWidget_Map.info_type.setText(QString.fromUtf8(NumToMapType[map_basic.kind]))
 		self.infoWidget_Map.info_score.setText("%d" %map_basic.score)
 		self.infoWidget_Map.info_consumption.setText("%d" %map_basic.move_consumption)
 
@@ -68,25 +68,25 @@ class InfoWidget2(QWidget):
 		self.infos = []
 
 
-		self.label_type = QLabel("unit type:")
+		self.label_type = QLabel(QString.fromUtf8("类型:"))
 		self.info_type = QLabel("")
 		self.infos.append(self.info_type)
-		self.label_life = QLabel("unit life:")
+		self.label_life = QLabel(QString.fromUtf8("生命:"))
 		self.info_life= QLabel("")
 		self.infos.append(self.info_life)
-		self.label_attack = QLabel("attack:")
+		self.label_attack = QLabel(QString.fromUtf8("攻击:"))
 		self.info_attack = QLabel("")
 		self.infos.append(self.info_attack)
-		self.label_speed = QLabel("agility:")
+		self.label_speed = QLabel(QString.fromUtf8("敏捷:"))
 		self.info_speed = QLabel("")
 		self.infos.append(self.info_speed)
-		self.label_defence = QLabel("defence:")
+		self.label_defence = QLabel(QString.fromUtf8("防御:"))
 		self.info_defence = QLabel("")
 		self.infos.append(self.info_defence)
-		self.label_moverange = QLabel("move range:")
+		self.label_moverange = QLabel(QString.fromUtf8("移动力:"))
 		self.info_moverange = QLabel("")
 		self.infos.append(self.info_moverange)
-		self.label_attackrange = QLabel("attack range:")
+		self.label_attackrange = QLabel(QString.fromUtf8("攻击范围:"))
 		self.info_attackrange = QLabel("")
 		self.infos.append(self.info_attackrange)
 
@@ -135,13 +135,13 @@ class InfoWidget3(QWidget):
 	def __init__(self, parent = None):
 		super(InfoWidget3, self).__init__(parent)
 		self.infos = []
-		self.label_type = QLabel("map type:")
+		self.label_type = QLabel(QString.fromUtf8("类型:"))
 		self.info_type = QLabel("")
 		self.infos.append(self.info_type)
-		self.label_score = QLabel("map score:")
+		self.label_score = QLabel(QString.fromUtf8("分值:"))
 		self.info_score= QLabel("")
 		self.infos.append(self.info_score)
-		self.label_consumption = QLabel("move consumption:")
+		self.label_consumption = QLabel(QString.fromUtf8("移动消耗:"))
 		self.info_consumption = QLabel("")
 		self.infos.append(self.info_consumption)
 

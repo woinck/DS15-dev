@@ -2,8 +2,8 @@
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 reload(sys)
-sys.setdefaultencoding('gb2312')
-
+sys.setdefaultencoding('gbk')
+#os.system("chcp 936")
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 1
 AI_DEBUG =1
@@ -14,10 +14,11 @@ AI_DEBUG =1
 为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
 为1时需先手动运行logic,再运行sserver,再运行ui,再运行ai
 '''
+
 DEBUG_MODE = 0
 RELEASE_MODE = 0
 SINGLE_PROCESS = 0 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
-REPLAY_MODE = 0 #此常量为1时会生成回放文件,######废弃######
+
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
 AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
 
@@ -164,11 +165,10 @@ class ConnException(Exception):
 		
 #将对象以字符串形式通过指定连接发送
 def _sends(conn,data):
-	try:
-		conn.send(cPickle.dumps(data))
-		conn.send('|')
-	except:
-		raise ConnException()
+	#try:
+	conn.send(cPickle.dumps(data))
+	conn.send('|')
+#	except:		raise ConnException()
 
 #接收字符串并将其转换为对象返回，空则返回'|'
 def _recvs(conn):

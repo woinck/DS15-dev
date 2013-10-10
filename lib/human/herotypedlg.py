@@ -21,6 +21,9 @@ class GetHeroTypeDlg(QDialog, ui_herotypedlg.Ui_HeroTypeDlg):
 			button.setIcon(QIcon(pixmap))
 			button.setIconSize(button.size())
 			self.connect(button, SIGNAL("toggled(bool)"), self.updateUi,Qt.QueuedConnection)
+		self.vali = QRegExpValidator()
+		self.vali.setRegExp(QRegExp("[^|]*"))
+		self.nameEdit.setValidator(self.vali)
 
 	def updateUi(self, checked):
 		button = self.sender()

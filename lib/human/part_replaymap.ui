@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
-    <height>501</height>
+    <width>660</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,10 +19,10 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>19</x>
-     <y>19</y>
-     <width>791</width>
-     <height>471</height>
+     <x>20</x>
+     <y>20</y>
+     <width>621</width>
+     <height>481</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="replayLayout"/>

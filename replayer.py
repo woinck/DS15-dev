@@ -5,13 +5,14 @@
 from lib.human.ui_replayer import Ui_Replayer
 from lib.human.ui_replaymap import Ui_Replaymap
 from lib.human.Humanai_Replay_event import *
+from lib.human import info_widget
 
 import sio,basic
 #import testdata#for test
 REPLAY_FILE_DIR = "."
 
-BUTTONPIC = ["noSound", "playSound", "open", "pause", "endPlay", "rePlay",
-			 "playForward0", "playBackward0", "preStep", "nextStep"]
+BUTTONPIC = ["noSound0", "playSound0", "open0", "pause0", "endPlay0", "rePlay0",
+			 "playForward0", "playBackward0", "preStep0", "nextStep0"]
 
 class ReplayMap(QWidget, Ui_Replaymap):
 	def __init__(self, scene, parent = None):
@@ -19,7 +20,6 @@ class ReplayMap(QWidget, Ui_Replaymap):
 		self.setupUi(self)
 		self.setAutoFillBackground(True)
 		palette = QPalette()
-		#print "size..............:",self.size().width(),self.size().height()#for test
 		palette.setBrush(QPalette.Window,
                                  QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
                                                                               Qt.IgnoreAspectRatio,
@@ -46,12 +46,33 @@ class Replayer(QWidget, Ui_Replayer):
 						self.pauseButton, self.endPlayButton,
 						self.rePlayButton, self.playForwardButton, self.playBackwardButton,
 						self.preStepButton, self.nextStepButton]
-		for i in range(len(self.buttons)):
-			pixmap = QPixmap(":" + BUTTONPIC[i] + ".png")
-			self.buttons[i].setIcon(QIcon(pixmap))
-			self.buttons[i].setIconSize(self.buttons[i].size())
-			self.buttons[i].setStyleSheet("border-radius: 20px")
+		#for i in range(len(self.buttons)):
+		#	pixmap = QPixmap(":" + BUTTONPIC[i] + ".png")
+		#	self.buttons[i].setIcon(QIcon(pixmap))
+		#	self.buttons[i].setIconSize(self.buttons[i].size())
+		#	self.buttons[i].setStyleSheet("QPushButton{border-radius: 20px;}"
+		#									"QPushButton:pressed{border-style:inset;}"
+		#									"QPushButton:checked{border-style:inset;}")
 
+		self.noSoundButton.setStyleSheet("*{border-image: url(:noSound0.png);border:0;}")
+		self.soundButton.setStyleSheet("*{border-image: url(:playSound0.png);border:0;}")
+										#"*:checked
+		self.loadFileButton.setStyleSheet("*{border-image: url(:open0.png);border:0;}"
+											"*:hover{border-image:url(:open1.png);border:0;}")
+		self.pauseButton.setStyleSheet("*{border-image: url(:pause0.png);border:0;}"
+											"*:checked{border-image:url(:start1.png);border:0;}")
+		self.endPlayButton.setStyleSheet("*{border-image: url(:endPlay0.png);border:0;}"
+										"*:hover{border-image: url(:endPlay1.png);border:0;}")
+		self.rePlayButton.setStyleSheet("*{border-image:url(:rePlay0.png);border:0;}"
+										"*:hover{border-image:url(:rePlay1.png);border:0;}")
+		self.playForwardButton.setStyleSheet("*{border-image:url(:playForward0.png);border:0;}"
+										"*:checked{border-image:url(:playForward1.png);border:0;}")
+		self.playBackwardButton.setStyleSheet("*{border-image:url(:playBackward0.png);border:0;}"
+										"*:checked{border-image:url(:playBackward1.png);border:0;}")
+		self.preStepButton.setStyleSheet("*{border-image:url(:preStep0.png);border:0;}"
+										"*:hover{border-image:url(:preStep1.png);border:0;}")
+		self.nextStepButton.setStyleSheet("*{border-image:url(:nextStep0.png); border:0;}"
+										"*:hover{border-image:url(:nextStep1.png);border:0;}")
 		#信息变量
 		self.isPaused = False
 		self.started = False
@@ -63,14 +84,18 @@ class Replayer(QWidget, Ui_Replayer):
 		self.replayWindow = ReplayMap(self.scene)
 		self.replayLayout.addWidget(self.replayWindow)
 		self.replayWidget = self.replayWindow.replayWidget
-
+		self.infoWidget = info_widget.InfoWidget()
+		self.infoLayout.addWidget(self.infoWidget)
 		#connect signals
+		self.connect(self.replayWidget, SIGNAL("unitSelected"), self.infoWidget.newUnitInfo)
+		self.connect(self.replayWidget, SIGNAL("mapSelected"), self.infoWidget.newMapInfo)
 		self.connect(self, SIGNAL("toPause()"),  partial(self.pauseButton.setChecked, True), Qt.QueuedConnection)
 		self.connect(self.pauseButton, SIGNAL("toggled(bool)"), self.on_pauseButton_toggled)#for test
 		self.connect(self.playBackwardButton, SIGNAL("toggled(bool)"), self.on_playBackwardButton_toggled)#for test
 		self.connect(self.playForwardButton, SIGNAL("toggled(bool)"), self.on_playForwardButton_toggled)#for test
 		#self.connect(se
 		self.replayWidget.moveAnimEnd.connect(self.on_animEnd)
+		self.replayWidget.HUMAN_REPLAY = 0
 		self.updateUi()
 
 	def updateUi(self):
