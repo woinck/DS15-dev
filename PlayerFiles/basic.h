@@ -63,16 +63,16 @@ const int LIFE_COST = 5;          // 英雄1在释放技能时消耗的生命值
 const int CRITICAL_HIT_RATE = 10; // 英雄2的暴击率 
 const int UP_DURANCE = 5;         // 英雄3的技能加成的时间限制   
 
-// 单位属性参数：生命值、攻击力、防御、移动力和移动顺序
-const int ABILITY[][6] = {{25, 18, 12, 6, 1},
-                          {25, 17, 13, 7, 2},
-                          {25, 17, 12, 6, 3},
-                          {21, 15, 12, 8, 4},
-                          {30, 17, 14, 5, 5},
-                          {21, 10, 12, 6, 6},
-                          {55, 20, 14, 5, 0},
-                          {40, 20, 13, 6, 0},
-                          {45, 18, 14, 7, 0}};
+// 单位属性参数：生命值、攻击力、防御、移动力
+const int ABILITY[][6] = {{25, 18, 12, 6},
+                          {25, 17, 13, 7},
+                          {25, 17, 12, 6},
+                          {21, 15, 12, 8},
+                          {30, 17, 14, 5},
+                          {21, 10, 12, 6},
+                          {55, 20, 14, 5},
+                          {40, 20, 13, 6},
+                          {45, 18, 14, 7}};
 
 // 攻击的相克性效果
 const float ATTACK_EFFECT[][9] = {{1,   0.5, 1, 0.5, 1.5, 1, 1, 1, 1},
@@ -91,12 +91,10 @@ const float ATTACK_EFFECT[][9] = {{1,   0.5, 1, 0.5, 1.5, 1, 1, 1, 1},
 
 typedef struct position { // 位置结构体，包含xy坐标
     int x, y;
-    bool operator==(Position pos) { return (x == pos.x) && (y == pos.y); }
-    bool operator!=(const Position pos) { return !(*this == pos); }
 }Position;
 
 typedef struct soldier_basic { // 基本单位结构体，包含所有基本的属性
-    int kind, life, attack, defence, move_range, move_order;
+    int kind, life, strength, defence, move_range;
     int attack_range[2]; // attack_range[1][0]表示攻击范围上下限
     int duration; // 单位被英雄3的技能强化的时间
     Position pos;
@@ -126,9 +124,14 @@ typedef struct game_info { // 游戏信息结构体，每回合选手从中获取必要的信息
     Soldier_Basic soldier[SOLDIERS_NUMBER][2];    // 双方单位的信息
 }Game_Info;
 
+typedef enum cmd_order
+{
+	wait, attack, skill
+}Cmd_Order;
+
 typedef struct command {  // 选手操作,每回合传给逻辑
     Position destination; // 要移动的目的地
-    int order;            // 0:待机，1:攻击，2:技能
+    Cmd_Order order;            // 0:待机，1:攻击，2:技能
     int target_id;        // 目标单位
 } Command;
 #endif

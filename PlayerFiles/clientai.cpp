@@ -22,14 +22,14 @@ void get_soldier_info()
 	{
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
-		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d %d %d", &info.soldier[i][0].kind, &info.soldier[i][0].life, &info.soldier[i][0].attack,  &info.soldier[i][0].agility,  &info.soldier[i][0].defence,  &info.soldier[i][0].move_range,  &info.soldier[i][0].move_speed,  &info.soldier[i][0].attack_range[0], &info.soldier[i][0].attack_range[1], &info.soldier[i][0].duration,  &info.soldier[i][0].pos.x,  &info.soldier[i][0].pos.y);
+		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d", &info.soldier[i][0].kind, &info.soldier[i][0].life, &info.soldier[i][0].strength,    &info.soldier[i][0].defence,  &info.soldier[i][0].move_range,    &info.soldier[i][0].attack_range[0], &info.soldier[i][0].attack_range[1], &info.soldier[i][0].duration,  &info.soldier[i][0].pos.x,  &info.soldier[i][0].pos.y);
 		send(client, "ok", 2, 0);
 	}
 	for(int i = 0; i < info.soldier_number[1]; i++)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
-		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d %d %D", &info.soldier[i][1].kind, &info.soldier[i][1].life, &info.soldier[i][1].attack,  &info.soldier[i][1].agility,  &info.soldier[i][1].defence,  &info.soldier[i][1].move_range,  &info.soldier[i][1].move_speed,  &info.soldier[i][1].attack_range[0], &info.soldier[i][1].attack_range[1],&info.soldier[i][1].duration,  &info.soldier[i][1].pos.x,  &info.soldier[i][1].pos.y);
+		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d", &info.soldier[i][1].kind, &info.soldier[i][1].life, &info.soldier[i][1].strength,    &info.soldier[i][1].defence,  &info.soldier[i][1].move_range,    &info.soldier[i][1].attack_range[0], &info.soldier[i][1].attack_range[1],&info.soldier[i][1].duration,  &info.soldier[i][1].pos.x,  &info.soldier[i][1].pos.y);
 		send(client, "ok", 2, 0);
 	}
 } //用于每回合更新双方单位信息
