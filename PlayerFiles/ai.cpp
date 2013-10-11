@@ -6,7 +6,7 @@ char teamName[20]="player";
 
 int GetHeroType()
 {
-	return GENERAL;
+	return ASSASSIN;
 }
 
 Command AI_main()

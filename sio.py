@@ -5,8 +5,8 @@ reload(sys)
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 #AI模式 0：py 1：cpp
-USE_CPP_AI = 1
-AI_DEBUG =1
+USE_CPP_AI = 0
+AI_DEBUG = 0
 
 #游戏运行参数
 '''
@@ -15,7 +15,7 @@ AI_DEBUG =1
 为1时需先手动运行logic,再运行sserver,再运行ui,再运行ai
 '''
 
-DEBUG_MODE = 0
+DEBUG_MODE = 1
 RELEASE_MODE = 0
 SINGLE_PROCESS = 0 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
 

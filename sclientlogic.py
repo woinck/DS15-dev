@@ -20,9 +20,9 @@ base = begin_Info.base
 whole_map = begin_Info.map
 hero_type = begin_Info.hero_type
 turn = 0; score = [0,0]; map_temple=[]; over = False
+base[0].sort(); base[1].sort()
 base[0] = [basic.Hero(hero_type[0], base[0][0].position)] + base[0][1:]
 base[1] = [basic.Hero(hero_type[1], base[1][0].position)] + base[1][1:]
-base[0].sort(); base[1].sort()
 for i in range(0,len(whole_map)):
 	for j in range(0,len(whole_map[i])):
 		if whole_map[i][j].kind == basic.TEMPLE:

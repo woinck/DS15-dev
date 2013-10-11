@@ -1,16 +1,16 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 import random
 import time
 #常量采用全字母大写，变量及函数全字母小写，类名首字母大写，单词用‘—‘隔开
 random.seed(time.time())
-TURN_MAX = 30
+TURN_MAX = 20
 COORDINATE_X_MAX = 20
 COORDINATE_Y_MAX = 20
 SOLDIERS_NUMBER = 10
 
 TURRET_RANGE = range(2,11)
 TEMPLE_UP_TIME = 10
-TURRET_SCORE_TIME = 5
+TURRET_SCORE_TIME = 1
 
 PLAIN = 0#平原
 MOUNTAIN = 1#山地
@@ -21,16 +21,16 @@ TEMPLE = 5#神庙
 MIRROR = 6#传送门
 FIELD_EFFECT = {PLAIN:(1,0,0,0,0),
                 MOUNTAIN:(2,0,0,0,1),
-                FOREST:(2,0,0,1,0),
+                FOREST:(3,0,0,10,0),
                 BARRIER:(1,0,0,0,0),
                 TURRET:(1,2,0,0,0),
                 TEMPLE:(1,3,0,0,0),
-                MIRROR:(1,0,0,0,0)}
+                MIRROR:(1,1,0,0,0)}
 #(move_consumption, score, strength_up, agility_up, defence_up)
 HERO_UP_LIMIT = 5
 BASE_UP_LIMIT = 3
-HERO_SCORE = 3
-BASE_SCORE = 1
+HERO_SCORE = 5
+BASE_SCORE = 3
 HERO_1_REPAIR_COST = 5
 HERO_2_KILL_RATE = 10
 HERO_3_UP_TIME = 5
@@ -44,20 +44,20 @@ WIZARD = 5#法师
 HERO_1 = 6
 HERO_2 = 7
 HERO_3 = 8
-ABILITY = {SABER:(25,18,95,12,6,[1,1],5),
-           LANCER:(25,17,90,13,7,[1,1],4),
-           ARCHER:(25,17,90,12,6,[2,2],3),
-           DRAGON_RIDER:(21,15,95,10,8,[1,1],2),
-           WARRIOR:(30,20,85,15,5,[1,1],1),
-           WIZARD:(21,10,90,12,6,[1,COORDINATE_X_MAX],0),
-           HERO_1:(55,17,90,15,5,[1,1],6),
-           HERO_2:(40,20,100,13,6,[1,1],6),
-           HERO_3:(45,20,95,14,7,[1,2],6)}
-#(LIFE, STRENGTH, AGILITY, DEFENCE, MOVE_RANGE, ATTACK_RANGE, MOVE_SPEED)
+ABILITY = {SABER:(25,18,0,12,6,[1,1],1),
+           LANCER:(25,17,0,13,7,[1,1],2),
+           ARCHER:(25,17,0,12,6,[2,2],3),
+           DRAGON_RIDER:(21,15,0,12,8,[1,1],4),
+           WARRIOR:(30,17,0,14,5,[1,1],5),
+           WIZARD:(21,10,0,12,6,[0,0],6),
+           HERO_1:(55,20,0,14,5,[1,1],0),
+           HERO_2:(40,20,0,13,6,[1,1],0),
+           HERO_3:(45,18,0,14,7,[1,2],0)}
+#(LIFE, STRENGTH, AGILITY, DEFENCE, MOVE_RANGE, ATTACK_RANGE)
 #WIZARD:不可攻击，STRENGTH表示回复生命数
 ATTACK_EFFECT = {SABER:{SABER:1, LANCER:0.5, ARCHER:1, DRAGON_RIDER:0.5, WARRIOR:1.5, WIZARD:1, HERO_1:1, HERO_2:1, HERO_3:1},
                  LANCER:{SABER:1.5, LANCER:1, ARCHER:1, DRAGON_RIDER:1, WARRIOR:0.5, WIZARD:1, HERO_1:1, HERO_2:1, HERO_3:1},
-                 ARCHER:{SABER:1, LANCER:1, ARCHER:1, DRAGON_RIDER:2, WARRIOR:1, WIZARD:1, HERO_1:1, HERO_2:1, HERO_3:1},
+                 ARCHER:{SABER:1, LANCER:1, ARCHER:1, DRAGON_RIDER:2, WARRIOR:2, WIZARD:1, HERO_1:1, HERO_2:1, HERO_3:1},
                  DRAGON_RIDER:{SABER:1.5, LANCER:1, ARCHER:1, DRAGON_RIDER:1, WARRIOR:0.5, WIZARD:1, HERO_1:1, HERO_2:1, HERO_3:1},
                  WARRIOR:{SABER:0.5, LANCER:1.5, ARCHER:1, DRAGON_RIDER:1.5, WARRIOR:1, WIZARD:1, HERO_1:1, HERO_2:1, HERO_3:1},
                  HERO_1:{SABER:1, LANCER:1, ARCHER:1, DRAGON_RIDER:1, WARRIOR:1, WIZARD:1, HERO_1:1, HERO_2:1, HERO_3:1},
@@ -113,7 +113,7 @@ class Map_Temple(Map_Basic):
             if self.up == 1:
                 base[unit_id[0]][unit_id[1]].strength += 1
             elif self.up == 2:
-                base[unit_id[0]][unit_id[1]].agility += 1
+                base[unit_id[0]][unit_id[1]].move_range += 1
             elif self.up == 3:
                 base[unit_id[0]][unit_id[1]].defence += 1
             self.time = 0
@@ -135,6 +135,7 @@ class Map_Mirror(Map_Basic):
                     r = False
         if r:
             base[unit_id[0]][unit_id[1]].move(self.out)
+            score[unit_id[0]] += self.score
 class Base_Unit:
     '''一般士兵
     (LIFE, STRENGTH, AGILITY, DEFENCE, MOVE_RANGE, ATTACK_RANGE, MOVE_SPEED)'''
@@ -157,7 +158,7 @@ class Base_Unit:
         '''攻击 enemy'''
         enemy = base[enemy_id[0]][enemy_id[1]]
         r = random.uniform(0,100)
-        s = (r <= (self.agility*3 - enemy.agility*2))
+        s = (r >= (enemy.agility))
         if self.strength > enemy.defence:
             base[enemy_id[0]][enemy_id[1]].life -= int((self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind])
         return s
@@ -170,7 +171,7 @@ class Base_Unit:
                 base[other_id[0]][other_id[1]].life = ABILITY[other.kind][0]   
     def __lt__(self, orther):
         '''比较攻击顺序'''
-        return self.move_speed > orther.move_speed
+        return self.move_speed < orther.move_speed
 class Hero(Base_Unit):
     def skill(self, base, other_id):
         '''英雄技能'''
@@ -183,17 +184,16 @@ class Hero(Base_Unit):
         if self.kind == HERO_3 and other.time == 0:
             base[other_id[0]][other_id[1]].time = 1
             base[other_id[0]][other_id[1]].defence += 1
-            base[other_id[0]][other_id[1]].agility += 1
             base[other_id[0]][other_id[1]].strength += 1
     def attack(self, base, enemy_id):
         enemy = base[enemy_id[0]][enemy_id[1]]
-        if self.kind == HERO_2:
-            d = enemy.defence * (random.uniform(0,100) > HERO_2_KILL_RATE)
+        if self.kind == HERO_2 and random.uniform(0,100) < HERO_2_KILL_RATE:
+            d = 2
         else:
-            d = enemy.defence
+            d = 1
         r = random.uniform(0,100)
-        s = (r <= (self.agility*3 - enemy.agility*2))
-        base[enemy_id[0]][enemy_id[1]].life -= (self.strength - d) * s * ATTACK_EFFECT[self.kind][enemy.kind]
+        s = (r >= (enemy.agility))
+        base[enemy_id[0]][enemy_id[1]].life -= (self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind] * d
         return s        
 class Begin_Info:
     def __init__(self, whole_map, base, hero_type = [6,6]):

@@ -214,9 +214,7 @@ class Sui(threading.Thread):
 					connUI.shutdown(socket.SHUT_RDWR)
 					exit(1)
 				connUI.settimeout(None)
-				print 'receiving rep mode'
 				replay_mode = sio._recvs(connUI)
-				print 'replay_mode::::::::::::',replay_mode
 				gProc.notifyAll()
 				gProc.release()
 				break
@@ -323,7 +321,6 @@ class Slogic(threading.Thread):
 				rProc.notifyAll()
 				rProc.release()
 				break	
-			print '333'
 		
 		if reInfo.over == sio.NORMAL_OVER:
 			winner = sio._recvs(connLogic)
@@ -382,7 +379,6 @@ class Sai(threading.Thread):
 							aiInfoTemp,heroTypeTemp = sio._cpp_recvs_begin(connAI[i])
 						else:
 							aiInfoTemp,heroTypeTemp = sio._recvs(connAI[i])
-						print 'ai',i,'\'s Info received'
 						aiInfo.append(aiInfoTemp)
 						heroType.append(heroTypeTemp)
 					except socket.timeout:
@@ -414,7 +410,6 @@ class Sai(threading.Thread):
 					rProc.wait()
 				else:
 					#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
-					print 'start!!!!!!!'
 					connAI[rbInfo.id[0]].settimeout(0)
 				
 					try:
@@ -516,6 +511,5 @@ logic_thread.daemon = True
 
 ui_thread.start()
 ui_thread.join()
-print 'UI is over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
 #time.sleep(10)
 #raw_input('')
