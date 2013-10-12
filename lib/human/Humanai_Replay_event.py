@@ -13,8 +13,8 @@ from myGetRoute import getAttackRange,attackDis
 NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
 				 5:"遗迹",6:"传送门"}
 NumToUnitType = {0:"剑士",1:"突击手",2:"狙击手",3:"战斗机",
-				4:"肉搏者", 5:"治疗师", 6:"HERO_1", 7:"HERO_2",
-				8:"HERO_3"}
+				4:"肉搏者", 5:"治疗师", 6:"狂战士", 7:"暗杀者",
+				8:"大法师"}
 NumToTempleType = {0:"无神符", 1:"力量神符", 2:"敏捷神符", 3:"防御神符"}
 class REPLAYERROR(Exception):
 	def __init__(self, value = ""):
@@ -637,7 +637,7 @@ class HumanReplay(QGraphicsView):
 		ani.setEndValue(0)
 		anim.addAnimation(ani)
 
-		text = "某某光环" if kind == 8 else "回复技能"
+		text = "光环" if kind == 8 else "治疗"
 		kind_ind = EffectIndUnit(QString.fromUtf8(text))
 		self.scene.addItem(kind_ind)
 		kind_ind.setOpacity(0)
