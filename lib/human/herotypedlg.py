@@ -17,7 +17,7 @@ class GetHeroTypeDlg(QDialog, ui_herotypedlg.Ui_HeroTypeDlg):
 		self.buttons = [self.heroButton1, self.heroButton2, self.heroButton3]
 		#pal = self.heroButton1.palette()
 		for button in self.buttons:
-			pixmap = QPixmap(":hero_%d0.png"%(self.buttons.index(button)+1))
+			pixmap = QPixmap(":hero_%d3.png"%(self.buttons.index(button)+1))
 			button.setIcon(QIcon(pixmap))
 			button.setIconSize(button.size())
 			self.connect(button, SIGNAL("toggled(bool)"), self.updateUi,Qt.QueuedConnection)

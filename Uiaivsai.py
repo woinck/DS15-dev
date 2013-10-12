@@ -93,7 +93,7 @@ class AivsAi(QWidget, ui_aivsai.Ui_AIvsAI):
 		self.setupUi(self)
 		
 		self.roundLCD.display(0)
-		self.setStyleSheet("#frame{border-image: url(:singleWindow.jpg);}"
+		self.setStyleSheet("#frame{border-image: url(:singleWindow.png);}"
 							"QPushButton{border-style:flat;border:0;}")
 		#self.returnButton.setIcon(QIcon(QPixmap(":return0.png")))
 		#self.returnButton.setIconSize(self.returnButton.size())

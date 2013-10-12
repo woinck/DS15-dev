@@ -9,6 +9,9 @@
     <file alias="hero_11.png">image/hero_11.png</file>
     <file alias="hero_21.png">image/hero_21.png</file>
     <file alias="hero_31.png">image/hero_31.png</file>
+    <file alias="hero_13.png">image/hero_13.png</file>
+    <file alias="hero_23.png">image/hero_23.png</file>
+    <file alias="hero_33.png">image/hero_33.png</file>
     <file alias="saber0.png">image/saber0.png</file>
     <file alias="lancer0.png">image/lancer0.png</file>
     <file alias="archer0.png">image/archer0.png</file>

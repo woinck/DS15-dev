@@ -10,5 +10,5 @@ class BackWidget(QWidget):
 		self.resize(1024, 768)
 		palette = QPalette()
 		palette.setBrush(QPalette.Window,
-						 QBrush(QPixmap(":mainWindow.jpg").scaled(self.size(), Qt.KeepAspectRatio)))
+						 QBrush(QPixmap(":mainWindow.png").scaled(self.size(), Qt.KeepAspectRatio)))
 		self.setPalette(palette)

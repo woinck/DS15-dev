@@ -2,8 +2,8 @@
   <qresource>
 	<file alias="cursor.png">image/ui/cursor.png</file>
 	
-    <file alias="mainWindow.jpg">image/ui/mainWindow.jpg</file>
-    <file alias="singleWindow.jpg">image/ui/singleWindow.jpg</file>
+    <file alias="mainWindow.png">image/ui/mainWindow.png</file>
+    <file alias="singleWindow.png">image/ui/singleWindow.png</file>
 
     <file alias="singleGameButton0.png">image/singleGameButton0.png</file>
 	<file alias="singleGameButton1.png">image/singleGameButton1.png</file>

@@ -696,7 +696,8 @@ class HumanReplay(QGraphicsView):
 		ani = QPauseAnimation(200)
 		self.animation.addAnimation(ani)
 
-		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
+		#if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:如果ai错误命令就不太对
+		if endInfo.trans:
 			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
 			self.animation.addAnimation(ani)
 			self.animationItem.extend(item)
@@ -727,7 +728,7 @@ class HumanReplay(QGraphicsView):
 					anim, item = self.dieAnimation(unit_id)
 					self.animationItem.extend(item)
 					self.animation.addAnimation(anim)
-		#skill
+		#skill加入技能是否成功判断
 		elif cmd.order == 2:
 			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7:
 				anim, item = self.skillAnimation(unit_move, cmd.target, self.gameEndInfo[self.nowRound][-1].base[cmd.target[0]][cmd.target[1]].position) 
