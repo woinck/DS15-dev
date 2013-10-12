@@ -160,7 +160,6 @@ class Sui(threading.Thread):
 		#等待回合初始信息产生完毕
 		while gProcess < sio.OVER:
 			while rProc.acquire():
-				print rProcess
 				if rProcess != sio.RBINFO_SET:
 					rProc.wait()
 				else:

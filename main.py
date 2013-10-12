@@ -111,7 +111,7 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 	if order == 1 and w[0] == 1 - j:
 		if distance(base[j][i].position, base[1 - j][w[1]].position) in base[j][i].attack_range and base[1 - j][w[1]].life > 0:
 			attack_1 = base[j][i].attack(base, (1 - j, w[1]))
-		if base[1 - j][w[1]].life > 0 and distance(base[j][i].position, base[1 - j][w[1]].position) in base[1 - j][w[1]].attack_range:
+		if attack_1 != -1 and base[1 - j][w[1]].life > 0 and distance(base[j][i].position, base[1 - j][w[1]].position) in base[1 - j][w[1]].attack_range:
 			attack_2 = base[1 - j][w[1]].attack(base, (j, i))
 		#攻击及反击
 	elif order == 2 and w[0] == j:
