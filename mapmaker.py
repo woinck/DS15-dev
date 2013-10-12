@@ -25,6 +25,7 @@ maps = [[m(0), m(0), m(1), m(1), m(1), m(1), m(1), m(0), mirror(6, (7,0)), m(3),
 		[m(0), Map_Turret(4), m(1), m(1), m(1), m(1), m(1), m(0),m(1),m(3),m(1),m(0),m(1),m(2),m(2),m(1),m(2),m(1),m(0),m(1)],
 		[m(0), Map_Turret(4), m(1), m(1), m(1), m(1), m(1), m(0),m(1),m(3),m(1),m(0),m(1),m(2),m(2),m(1),m(2),m(1),m(0),m(1)],
 		[m(0), Map_Turret(4), m(1), m(1), m(1), m(1), m(1), m(0),m(1),m(3),m(1),m(0),m(1),m(2),m(2),m(1),m(2),m(1),m(0),m(1)]]
+
 units0 = [[u(6, (0, 0)), u(2, (1, 0)), u(3, (0, 2))],
           [u(6, (3, 3)), u(2, (3, 2)), u(1, (3, 1))]]
         
@@ -35,4 +36,8 @@ units0 = [[u(5, (0, 0))],
           [u(3, (1, 1))]]
 ''' 
 #write_to((maps,units0))
+<<<<<<< HEAD
 sio._WriteFile((maps,units0),'C:\Users\woinck\Documents\GitHub\DS15-dev\\Sample_Map.map')
+=======
+sio._WriteFile((maps,units0),'C:\Users\Fox\Documents\GitHub\DS15-dev\\mapwithturret.map')
+>>>>>>> server_debugging
