@@ -139,7 +139,7 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 
 def _cpp_recvs_begin(conn):
 	result = []
-	recvbuf = conn.recv(20)
+	recvbuf = conn.recv(40)
 	print 'recvbuf',recvbuf
 	conn.send('ok')
 	result.append(recvbuf)

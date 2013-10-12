@@ -1,8 +1,9 @@
 #include "basic.h"
+#include "Basic2.h"
 #include <stdio.h>
 
 game_info info;
-char teamName[20]="player";
+wchar_t teamName[20]=L"player";
 
 int GetHeroType()
 {

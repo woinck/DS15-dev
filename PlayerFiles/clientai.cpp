@@ -1,10 +1,11 @@
 #include<winsock2.h>
 #include<stdio.h>
 #include"basic.h"
+#include "Basic2.h"
 #pragma comment(lib,"WS2_32.lib")
 
 extern game_info info;
-extern char teamName[20];
+extern wchar_t teamName[20];
 extern int GetHeroType();
 
 Command cmd;  //选手操作,每回合传给逻辑
@@ -85,7 +86,7 @@ void main()
 	get_soldier_info();
 	//读取初始信息
 
-	send(client, teamName, 20, 0);
+	send(client, (char *) teamName, 40, 0);
 	recv(client, recvbuf, 3, 0);
 	int heroType = GetHeroType();
 	memset(sendbuf,0,sizeof(char)*128);
