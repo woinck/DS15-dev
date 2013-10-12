@@ -70,5 +70,6 @@
     <file alias="help0.png">image/help0.png</file>
 	<file alias="exit0.png">image/exit0.png</file>
 	<file alias="exit1.png">image/exit1.png</file>
+	<file alias="error_label.png">image/error_label.png</file>
   </qresource>
 </RCC>
