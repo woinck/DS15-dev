@@ -7,7 +7,7 @@ import basic
 import qrc_resource
 UNIT_WIDTH = 26
 UNIT_HEIGHT = 26
-EDGE_WIDTH = 4
+EDGE_WIDTH = 3	
 EXTRA_WIDTH = 3
 MAX_OPACITY = 0.8
 
