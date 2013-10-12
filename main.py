@@ -87,7 +87,6 @@ def perparation(whole_map, base, score, map_temple):
 				if base[i][j].time == basic.HERO_3_UP_TIME:
 					base[i][j].time = 0
 					base[i][j].defence -= 1
-					base[i][j].speed -= 1
 					base[i][j].strength -= 1
 			#英雄3技能持续时间判断
 def calculation(command, base, whole_map, move_range, map_temple, score, unit_id):
@@ -110,8 +109,7 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 			if tp[0] == move_position:
 				tp[1] = 0
 	if order == 1 and w[0] == 1 - j:
-		print "dfdsafasf",i,j,w[1]
-		if distance(base[j][i].position, base[1 - j][w[1]].position) in base[j][i].attack_range:
+		if distance(base[j][i].position, base[1 - j][w[1]].position) in base[j][i].attack_range and base[1 - j][w[1]].life > 0:
 			attack_1 = base[j][i].attack(base, (1 - j, w[1]))
 		if base[1 - j][w[1]].life > 0 and distance(base[j][i].position, base[1 - j][w[1]].position) in base[1 - j][w[1]].attack_range:
 			attack_2 = base[1 - j][w[1]].attack(base, (j, i))

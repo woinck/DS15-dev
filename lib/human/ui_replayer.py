@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_replayer.ui'
 #
-# Created: Mon Oct 07 20:25:32 2013
+# Created: Fri Oct 11 10:23:51 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,20 +26,20 @@ except AttributeError:
 class Ui_Replayer(object):
     def setupUi(self, Replayer):
         Replayer.setObjectName(_fromUtf8("Replayer"))
-        Replayer.resize(1024, 751)
+        Replayer.resize(1024, 768)
         Replayer.setMaximumSize(QtCore.QSize(166664, 166664))
         self.noSoundButton = QtGui.QPushButton(Replayer)
-        self.noSoundButton.setGeometry(QtCore.QRect(20, 40, 40, 40))
+        self.noSoundButton.setGeometry(QtCore.QRect(160, 40, 40, 40))
         self.noSoundButton.setText(_fromUtf8(""))
         self.noSoundButton.setCheckable(False)
         self.noSoundButton.setObjectName(_fromUtf8("noSoundButton"))
         self.soundButton = QtGui.QPushButton(Replayer)
-        self.soundButton.setGeometry(QtCore.QRect(80, 40, 40, 40))
+        self.soundButton.setGeometry(QtCore.QRect(230, 40, 40, 40))
         self.soundButton.setText(_fromUtf8(""))
         self.soundButton.setCheckable(False)
         self.soundButton.setObjectName(_fromUtf8("soundButton"))
         self.loadFileButton = QtGui.QPushButton(Replayer)
-        self.loadFileButton.setGeometry(QtCore.QRect(140, 40, 40, 40))
+        self.loadFileButton.setGeometry(QtCore.QRect(90, 40, 40, 40))
         self.loadFileButton.setText(_fromUtf8(""))
         self.loadFileButton.setCheckable(False)
         self.loadFileButton.setObjectName(_fromUtf8("loadFileButton"))
@@ -186,11 +186,27 @@ class Ui_Replayer(object):
         self.infoLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.infoLayout.setMargin(0)
         self.infoLayout.setObjectName(_fromUtf8("infoLayout"))
+        self.returnButton = QtGui.QPushButton(Replayer)
+        self.returnButton.setGeometry(QtCore.QRect(20, 40, 40, 40))
+        self.returnButton.setText(_fromUtf8(""))
+        self.returnButton.setCheckable(False)
+        self.returnButton.setObjectName(_fromUtf8("returnButton"))
 
         self.retranslateUi(Replayer)
         QtCore.QMetaObject.connectSlotsByName(Replayer)
 
     def retranslateUi(self, Replayer):
         Replayer.setWindowTitle(_translate("Replayer", "Replayer", None))
+        self.noSoundButton.setToolTip(_translate("Replayer", "静音", None))
+        self.soundButton.setToolTip(_translate("Replayer", "放大声音", None))
+        self.loadFileButton.setToolTip(_translate("Replayer", "加载回放", None))
+        self.preStepButton.setToolTip(_translate("Replayer", "上一回合", None))
+        self.playBackwardButton.setToolTip(_translate("Replayer", "快退", None))
+        self.pauseButton.setToolTip(_translate("Replayer", "暂停", None))
+        self.rePlayButton.setToolTip(_translate("Replayer", "开始/重新开始", None))
+        self.endPlayButton.setToolTip(_translate("Replayer", "中止播放", None))
+        self.playForwardButton.setToolTip(_translate("Replayer", "快进", None))
+        self.nextStepButton.setToolTip(_translate("Replayer", "下一回合", None))
         self.roundLabel.setText(_translate("Replayer", "Round 0", None))
+        self.returnButton.setToolTip(_translate("Replayer", "返回上级", None))
 

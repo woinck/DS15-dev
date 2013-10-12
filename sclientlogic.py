@@ -45,7 +45,7 @@ while not over and turn < basic.TURN_MAX:
 				roundEndInfo = main.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
 				over = True
 				if turn == basic.TURN_MAX and j == 1:
-					for k in range(i+1, len(base[j])):
+					for k in range(i + 1, len(base[j])):
 						if base[j][i].life > 0:
 							over = False
 					if over:

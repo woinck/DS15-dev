@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_helpdlg1.ui'
 #
-# Created: Thu Oct 03 00:21:42 2013
+# Created: Fri Oct 11 10:02:33 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -44,11 +44,13 @@ class Ui_Dialog(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; color:#00aaff;\">基本情况：</span>界面左下角加载ai以及地图文件；用户操作黄色方；在开始操作时会有固定蓝色边框标识待操作单位；所有的范围（可移动范围，攻击范围）都用半透明边框标识；中途退出游戏请按左上角返回键。</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; color:#00aaff;\">基本情况：</span>界面左下角加载ai以及地图文件；用户操作黄色方；在开始操作时会有固定蓝色边框和黄色半透明矩形标识待操作单位；所有的范围（可移动范围，攻击范围，技能范围）都用各色半透明边框标识；中途退出游戏请按左上角&quot;x&quot;exit键；返回上级请按左上角返回键。</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; color:#00aaff;\">用户操作：</span>用户操作分为<span style=\" color:#ff0000;\">三步</span>：</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">    1.点击某个可以到达的地图位置让操作单位移到某个点</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">    2.按键下达命令；<span style=\" font-weight:600; color:#ff0000;\">A：攻击，S：技能，D：待机</span>（只有两个英雄和法师有主动技能）</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">    3.若命令为攻击/技能，鼠标点击选择目标，可能没有目标可以选择。</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">    4.可以按esc返回上一操作阶段</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">    5.请关注左边的操作提示栏有贴心的操作提示</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
 

@@ -3,7 +3,7 @@
 from distutils.core import setup
 import py2exe,glob
 
-includes = ["encodings", "encodings.*"]	 
+includes = ["encodings", "encodings.*", "qjpeg4"]	 
 
 py2exe_options = {
 		"includes": ["sip"],#pyqt
@@ -12,14 +12,16 @@ py2exe_options = {
 		"compressed": 1,
 		"optimize": 2,
 		"ascii": 0,
-		"bundle_files": 1,
+		"bundle_files": 3,
 		}
  
-setup(console=["Sample_AI.py","Uihumanvsai.py","sclientlogic.py","sserver.py","replayer.py"],
-	windows=[{"script":"Uihumanvsai.py"},{"script":"replayer.py"}],
+setup(console=["Sample_AI.py","runMain.py","Uihumanvsai.py","sclientlogic.py","sserver.py","replayer.py"],
+	windows=[{"script":"runMain.py"}], 
+	#"icon_resources": [(1, "myicon.ico")]}],#,{"script":"replayer.py"}],
 	options={'py2exe': py2exe_options},
+	zipfile=None,
 	data_files=[#("lib\\human\\image",   
 				  # glob.glob("lib\\human\\image\\*.*")),
-				   ("Maps",["Sample_Map.map"])])
+				   ("mapFiles",["mapwithturret.map"])])
 				   
 				   

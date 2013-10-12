@@ -33,7 +33,6 @@
     <file alias="trans1.png">image/trans1.png</file>
     <file alias="rePlay0.png">image/rePlay0.png</file>
     <file alias="endPlay0.png">image/endPlay0.png</file>
-    <file alias="exit.png">image/exit.png</file>
     <file alias="preStep0.png">image/preStep0.png</file>
     <file alias="nextStep0.png">image/nextStep0.png</file>
     <file alias="open0.png">image/open0.png</file>
@@ -66,5 +65,7 @@
     <file alias="openAI1.png">image/openAI1.png</file>
     <file alias="help1.png">image/help1.png</file>
     <file alias="help0.png">image/help0.png</file>
+	<file alias="exit0.png">image/exit0.png</file>
+	<file alias="exit1.png">image/exit1.png</file>
   </qresource>
 </RCC>

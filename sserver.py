@@ -238,7 +238,7 @@ class Slogic(threading.Thread):
 		self.name = 'Thread-Logic'
 	
 	def run(self):
-		global gProcess,rProcess,mapInfo,heroType,aiInfo,rbInfo,reInfo,rCommand,winner,base,aiConnErr
+		global gProcess,rProcess,mapInfo,heroType,aiInfo,rbInfo,reInfo,rCommand,winner,base,aiConnErr,gameMode
 		
 		connLogic = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
@@ -280,7 +280,7 @@ class Slogic(threading.Thread):
 		
 		while gProcess != sio.OVER:
 			#接收回合开始信息
-			if playMode != AI_VS_AI:
+			if gameMode != sio.AI_VS_AI:
 				time.sleep(1)#time delay
 			while rProc.acquire():
 				if rProcess != sio.START:
@@ -512,9 +512,9 @@ logic_thread.daemon = True
 
 ui_thread.start()
 ui_thread.join()
-ai_thread.connAI[0].close()
-ai_thread.connAI[0].close()
-logic_thread.connLogic.close()
+#ai_thread.connAI[0].close()
+#ai_thread.connAI[0].close()
+#logic_thread.connLogic.close()
 
 #time.sleep(10)
 #raw_input('')
