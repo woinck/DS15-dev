@@ -9,7 +9,7 @@ from myHumanReplay import *
 import sys,copy,time
 import main
 from functools import partial
-from myGetRoute import getAttackRange
+from myGetRoute import getAttackRange,attackDis
 NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
 				 5:"遗迹",6:"传送门"}
 NumToUnitType = {0:"剑士",1:"突击手",2:"狙击手",3:"战斗机",
@@ -304,9 +304,9 @@ class HumanReplay(QGraphicsView):
 				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("A：攻击\nS：技能\nD：待机\nesc:撤销"))
 
 		elif now_state == self.State_Target:
+			tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
-				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
 				if not self.attack_range_list:
@@ -316,7 +316,7 @@ class HumanReplay(QGraphicsView):
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list,1)
 			elif self.Operation == 2:
 				self.setCursor(QCursor(QPixmap(":skill_cursor.png").scaled(30,30),0,0))
-				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
+				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene and attackDis(x.obj.position, tmp_point) == 1]
 				if not poses:
 					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可施用\n技能的对象\nesc返回上一阶段"))
 				else:
