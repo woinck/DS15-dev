@@ -99,26 +99,27 @@ class Map_Turret(Map_Basic):
             base[unit_id[0]][unit_id[1]].attack_range = ABILITY[ARCHER][5]
         self.time = 0
 class Map_Temple(Map_Basic):
-    '''特殊地形：神庙
-    FIELD_EFFECT(move_consumption, score, strength_up, agility_up, defence_up)'''
-    def __init__(self, kind):
-        self.kind = kind
-        self.score = FIELD_EFFECT[kind][1]
-        self.move_consumption = FIELD_EFFECT[kind][0]
-        self.time = 0 #神庙计数器 
-        self.up = random.choice([1,2,3]) #下一个神符种类
-    def effect(self, base, whole_map, unit_id, score):
-        if self.time >= TEMPLE_UP_TIME and ((w.kind < 6 and w.up < BASE_UP_LIMIT) or (w.kind > 5 and w.up < HERO_UP_LIMIT)):
-            base[unit_id[0]][unit_id[1]].up += 1
-            if self.up == 1:
-                base[unit_id[0]][unit_id[1]].strength += 1
-            elif self.up == 2:
-                base[unit_id[0]][unit_id[1]].move_range += 1
-            elif self.up == 3:
-                base[unit_id[0]][unit_id[1]].defence += 1
-            self.time = 0
-            self.up = random.choice([1,2,3])
-            score[unit_id[0]] += self.score
+	'''特殊地形：神庙
+	FIELD_EFFECT(move_consumption, score, strength_up, agility_up, defence_up)'''
+	def __init__(self, kind):
+		self.kind = kind
+		self.score = FIELD_EFFECT[kind][1]
+		self.move_consumption = FIELD_EFFECT[kind][0]
+		self.time = 0 #神庙计数器 
+		self.up = random.choice([1,2,3]) #下一个神符种类
+	def effect(self, base, whole_map, unit_id, score):
+		w = base[unit_id[0]][unit_id[1]]
+		if self.time >= TEMPLE_UP_TIME and ((w.kind < 6 and w.up < BASE_UP_LIMIT) or (w.kind > 5 and w.up < HERO_UP_LIMIT)):
+			base[unit_id[0]][unit_id[1]].up += 1
+			if self.up == 1:
+				base[unit_id[0]][unit_id[1]].strength += 1
+			elif self.up == 2:
+				base[unit_id[0]][unit_id[1]].move_range += 1
+			elif self.up == 3:
+				base[unit_id[0]][unit_id[1]].defence += 1
+			self.time = 0
+			self.up = random.choice([1,2,3])
+			score[unit_id[0]] += self.score
 class Map_Mirror(Map_Basic):
     '''特殊地形：传送门
     FIELD_EFFECT(move_consumption, score, strength_up, agility_up, defence_up)'''
@@ -137,64 +138,64 @@ class Map_Mirror(Map_Basic):
             base[unit_id[0]][unit_id[1]].move(self.out)
             score[unit_id[0]] += self.score
 class Base_Unit:
-    '''一般士兵
-    (LIFE, STRENGTH, AGILITY, DEFENCE, MOVE_RANGE, ATTACK_RANGE, MOVE_SPEED)'''
-    def __init__(self, kind, position = (0,0)):
-        self.kind = kind
-        self.up = 0 #士兵能力上升数
-        self.position = position
-        self.life = ABILITY[kind][0]
-        self.strength = ABILITY[kind][1]
-        self.agility = ABILITY[kind][2]
-        self.defence = ABILITY[kind][3]
-        self.move_range = ABILITY[kind][4]
-        self.attack_range = ABILITY[kind][5]
-        self.move_speed = ABILITY[kind][6]
-        self.time = 0
-    def move(self, p):
-        '''移动至p = (x, y)'''
-        self.position = p
-    def attack(self, base, enemy_id):
-        '''攻击 enemy'''
-        enemy = base[enemy_id[0]][enemy_id[1]]
-        r = random.uniform(0,100)
-        s = (r >= (enemy.agility))
-        if self.strength > enemy.defence:
-            base[enemy_id[0]][enemy_id[1]].life -= int((self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind])
-        return s
-    def skill(self, base, other_id):
-        '''法师对other使用回复技能'''
-        other = base[other_id[0]][other_id[1]]
-        if self.kind == WIZARD:
-            base[other_id[0]][other_id[1]].life += self.strength
-            if base[other_id[0]][other_id[1]].life > ABILITY[other.kind][0]:
-                base[other_id[0]][other_id[1]].life = ABILITY[other.kind][0]   
-    def __lt__(self, orther):
-        '''比较攻击顺序'''
-        return self.move_speed < orther.move_speed
+	'''一般士兵
+	(LIFE, STRENGTH, AGILITY, DEFENCE, MOVE_RANGE, ATTACK_RANGE, MOVE_SPEED)'''
+	def __init__(self, kind, position = (0,0)):
+		self.kind = kind
+		self.up = 0 #士兵能力上升数
+		self.position = position
+		self.life = ABILITY[kind][0]
+		self.strength = ABILITY[kind][1]
+		self.agility = ABILITY[kind][2]
+		self.defence = ABILITY[kind][3]
+		self.move_range = ABILITY[kind][4]
+		self.attack_range = ABILITY[kind][5]
+		self.move_speed = ABILITY[kind][6]
+		self.time = 0
+	def move(self, p):
+		'''移动至p = (x, y)'''
+		self.position = p
+	def attack(self, base, enemy_id):
+		'''攻击 enemy'''
+		enemy = base[enemy_id[0]][enemy_id[1]]
+		r = random.uniform(0,100)
+		s=int(r>=enemy.agility)
+		if self.strength > enemy.defence:
+			base[enemy_id[0]][enemy_id[1]].life -= int((self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind])
+		return s
+	def skill(self, base, other_id):
+		'''法师对other使用回复技能'''
+		other = base[other_id[0]][other_id[1]]
+		if self.kind == WIZARD:
+			base[other_id[0]][other_id[1]].life += self.strength
+			if base[other_id[0]][other_id[1]].life > ABILITY[other.kind][0]:
+				base[other_id[0]][other_id[1]].life = ABILITY[other.kind][0]   
+	def __lt__(self, orther):
+		'''比较攻击顺序'''
+		return self.move_speed < orther.move_speed
 class Hero(Base_Unit):
-    def skill(self, base, other_id):
-        '''英雄技能'''
-        other = base[other_id[0]][other_id[1]]
-        if self.kind == HERO_1:
-            self.life -= HERO_1_REPAIR_COST
-            base[other_id[0]][other_id[1]].life += self.strength
-            if base[other_id[0]][other_id[1]].life > ABILITY[other.kind][0]:
-                base[other_id[0]][other_id[1]].life = ABILITY[other.kind][0]   
-        if self.kind == HERO_3 and other.time == 0:
-            base[other_id[0]][other_id[1]].time = 1
-            base[other_id[0]][other_id[1]].defence += 1
-            base[other_id[0]][other_id[1]].strength += 1
-    def attack(self, base, enemy_id):
-        enemy = base[enemy_id[0]][enemy_id[1]]
-        if self.kind == HERO_2 and random.uniform(0,100) < HERO_2_KILL_RATE:
-            d = 2
-        else:
-            d = 1
-        r = random.uniform(0,100)
-        s = (r >= (enemy.agility))
-        base[enemy_id[0]][enemy_id[1]].life -= (self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind] * d
-        return s        
+	def skill(self, base, other_id):
+		'''英雄技能'''
+		other = base[other_id[0]][other_id[1]]
+		if self.kind == HERO_1:
+			self.life -= HERO_1_REPAIR_COST
+			base[other_id[0]][other_id[1]].life += self.strength
+			if base[other_id[0]][other_id[1]].life > ABILITY[other.kind][0]:
+				base[other_id[0]][other_id[1]].life = ABILITY[other.kind][0]   
+		if self.kind == HERO_3 and other.time == 0:
+			base[other_id[0]][other_id[1]].time = 1
+			base[other_id[0]][other_id[1]].defence += 1
+			base[other_id[0]][other_id[1]].strength += 1
+	def attack(self, base, enemy_id):
+		enemy = base[enemy_id[0]][enemy_id[1]]
+		if self.kind == HERO_2 and random.uniform(0,100) < HERO_2_KILL_RATE:
+			d = 2
+		else:
+			d = 1
+		r = random.uniform(0,100)
+		s=int(r>=enemy.agility)
+		base[enemy_id[0]][enemy_id[1]].life -= (self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind] * d
+		return s		
 class Begin_Info:
     def __init__(self, whole_map, base, hero_type = [6,6]):
         self.map = whole_map #二维地图列表

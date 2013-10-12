@@ -15,9 +15,9 @@ AI_DEBUG = 0
 为1时需先手动运行logic,再运行sserver,再运行ui,再运行ai
 '''
 
-DEBUG_MODE = 1
-RELEASE_MODE = 0
-SINGLE_PROCESS = 0 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
+DEBUG_MODE = 0
+RELEASE_MODE = 1
+SINGLE_PROCESS = 1 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
 
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
 AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
@@ -228,7 +228,8 @@ def Prog_Run(progPath,isAI=False):
 	if SINGLE_PROCESS:
 		progPath=progPath.encode('gbk')
 		if RELEASE_MODE or (isAI and USE_CPP_AI):	
-			result = subprocess.Popen(progPath, stderr = devnull)
+			#result = subprocess.Popen(progPath, stderr = devnull)
+			result = subprocess.Popen(progPath)
 		else: 
 			result = subprocess.Popen('python ' + progPath)
 	else:

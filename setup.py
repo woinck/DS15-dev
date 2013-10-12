@@ -20,6 +20,6 @@ setup(console=["Sample_AI.py","Uihumanvsai.py","sclientlogic.py","sserver.py","r
 	options={'py2exe': py2exe_options},
 	data_files=[#("lib\\human\\image",   
 				  # glob.glob("lib\\human\\image\\*.*")),
-				   ("mapFiles",["mapwithturret.map"])])
+				   ("Maps",["Sample_Map.map"])])
 				   
 				   

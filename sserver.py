@@ -280,7 +280,8 @@ class Slogic(threading.Thread):
 		
 		while gProcess != sio.OVER:
 			#接收回合开始信息
-			time.sleep(1)#time delay
+			if playMode != AI_VS_AI:
+				time.sleep(1)#time delay
 			while rProc.acquire():
 				if rProcess != sio.START:
 					rProc.wait()
@@ -511,5 +512,9 @@ logic_thread.daemon = True
 
 ui_thread.start()
 ui_thread.join()
+ai_thread.connAI[0].close()
+ai_thread.connAI[0].close()
+logic_thread.connLogic.close()
+
 #time.sleep(10)
 #raw_input('')
