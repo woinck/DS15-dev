@@ -447,6 +447,10 @@ class Sai(threading.Thread):
 							print 'prepare to receive cmd'
 							if sio.USE_CPP_AI and gameAIPath[rbInfo.id[0]] != None:
 								rCommand = sio._cpp_recvs(connAI[rbInfo.id[0]])
+								if rCommand.order == 1:
+									rCommand.target = [1-rbInfo.id[0],rCommand.target]
+								else:
+									rCommand.target = [rbInfo.id[0],rCommand.target]
 							else:
 								rCommand = sio._recvs(connAI[rbInfo.id[0]])
 							print 'AI',rbInfo.id[0],'\'s command:'
@@ -512,9 +516,6 @@ logic_thread.daemon = True
 
 ui_thread.start()
 ui_thread.join()
-#ai_thread.connAI[0].close()
-#ai_thread.connAI[0].close()
-#logic_thread.connLogic.close()
 
 #time.sleep(10)
 #raw_input('')

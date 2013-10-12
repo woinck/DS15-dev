@@ -696,7 +696,7 @@ class HumanReplay(QGraphicsView):
 		ani = QPauseAnimation(200)
 		self.animation.addAnimation(ani)
 
-		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
+		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position and hasattr(self.iniMapInfo[cmd.move[0]][cmd.move[1]], "out") and self.iniMapInfo[cmd.move[0]][cmd.move[1]].out == endInfo.base[unit_id[0]][unit_id[1]].position:
 			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
 			self.animation.addAnimation(ani)
 			self.animationItem.extend(item)

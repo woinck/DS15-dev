@@ -5,8 +5,8 @@ reload(sys)
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 #AI模式 0：py 1：cpp
-USE_CPP_AI = 0
-AI_DEBUG = 0
+USE_CPP_AI = 1
+AI_DEBUG = 1
 
 #游戏运行参数
 '''
@@ -140,9 +140,11 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 def _cpp_recvs_begin(conn):
 	result = []
 	recvbuf = conn.recv(20)
+	print 'recvbuf',recvbuf
 	conn.send('ok')
 	result.append(recvbuf)
 	recvbuf = conn.recv(1)
+	print 'recvbuf',recvbuf
 	result.append(int(recvbuf))
 	return result
 				

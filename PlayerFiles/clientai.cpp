@@ -53,7 +53,6 @@ void main()
 	//send(client, "AI has connected.", 17, 0);
 	//建立socket连接
 	
-	printf("111\n");
 
 	recv(client, recvbuf, 127, 0);
 	sscanf(recvbuf, "%d", &info.team_number);
@@ -67,7 +66,6 @@ void main()
 			send(client, "ok", 2, 0);
 		}
 
-	printf("222\n");
 
 	memset(recvbuf, 0, sizeof(char)*128);
 	recv(client, recvbuf, 127, 0);
@@ -86,14 +84,13 @@ void main()
 	send(client, "ok", 2, 0);
 	get_soldier_info();
 	//读取初始信息
-	printf("333\n");
 
 	send(client, teamName, 20, 0);
 	recv(client, recvbuf, 3, 0);
 	int heroType = GetHeroType();
 	memset(sendbuf,0,sizeof(char)*128);
 	sprintf(sendbuf,"%d",heroType);
-	send(client,sendbuf,1,0);
+	send(client,sendbuf,strlen(sendbuf),0);
 
 	while(1)
 	{
