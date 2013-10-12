@@ -9,12 +9,12 @@ from myHumanReplay import *
 import sys,copy,time
 import main
 from functools import partial
-from myGetRoute import getAttackRange
+from myGetRoute import getAttackRange,attackDis
 NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
 				 5:"遗迹",6:"传送门"}
 NumToUnitType = {0:"剑士",1:"突击手",2:"狙击手",3:"战斗机",
-				4:"肉搏者", 5:"治疗师", 6:"HERO_1", 7:"HERO_2",
-				8:"HERO_3"}
+				4:"肉搏者", 5:"治疗师", 6:"狂战士", 7:"暗杀者",
+				8:"大法师"}
 NumToTempleType = {0:"无神符", 1:"力量神符", 2:"敏捷神符", 3:"防御神符"}
 class REPLAYERROR(Exception):
 	def __init__(self, value = ""):
@@ -126,6 +126,7 @@ class HumanReplay(QGraphicsView):
 		if not self.run:
 			return
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
+		print "now move unit:::::::::::", self.nowMoveUnit.obj.position, self.gameBegInfo[-1].base[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]].position
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
 		self.nowMoveUnit.setNowMove(True)
@@ -304,9 +305,9 @@ class HumanReplay(QGraphicsView):
 				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("A：攻击\nS：技能\nD：待机\nesc:撤销"))
 
 		elif now_state == self.State_Target:
+			tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
-				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
 				if not self.attack_range_list:
@@ -316,7 +317,8 @@ class HumanReplay(QGraphicsView):
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list,1)
 			elif self.Operation == 2:
 				self.setCursor(QCursor(QPixmap(":skill_cursor.png").scaled(30,30),0,0))
-				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
+				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene and x != self.nowMoveUnit \
+							and attackDis(x.obj.position, tmp_point) == 1]
 				if not poses:
 					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可施用\n技能的对象\nesc返回上一阶段"))
 				else:
@@ -635,7 +637,7 @@ class HumanReplay(QGraphicsView):
 		ani.setEndValue(0)
 		anim.addAnimation(ani)
 
-		text = "某某光环" if kind == 8 else "回复技能"
+		text = "光环" if kind == 8 else "治疗"
 		kind_ind = EffectIndUnit(QString.fromUtf8(text))
 		self.scene.addItem(kind_ind)
 		kind_ind.setOpacity(0)
@@ -696,7 +698,8 @@ class HumanReplay(QGraphicsView):
 		ani = QPauseAnimation(200)
 		self.animation.addAnimation(ani)
 
-		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position and hasattr(self.iniMapInfo[cmd.move[0]][cmd.move[1]], "out") and self.iniMapInfo[cmd.move[0]][cmd.move[1]].out == endInfo.base[unit_id[0]][unit_id[1]].position:
+		#if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:如果ai错误命令就不太对
+		if endInfo.trans:
 			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
 			self.animation.addAnimation(ani)
 			self.animationItem.extend(item)
@@ -727,12 +730,17 @@ class HumanReplay(QGraphicsView):
 					anim, item = self.dieAnimation(unit_id)
 					self.animationItem.extend(item)
 					self.animation.addAnimation(anim)
-		#skill
+		#skill加入技能是否成功判断
 		elif cmd.order == 2:
-			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7:
-				anim, item = self.skillAnimation(unit_move, cmd.target, self.gameEndInfo[self.nowRound][-1].base[cmd.target[0]][cmd.target[1]].position) 
-				self.animation.addAnimation(anim)
-				self.animationItem.extend(item)
+			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7 and attackDis(self.gameEndInfo[self.nowRound][1].base[cmd.target[0]][cmd.target[1]].position, \
+				self.gameEndInfo[self.nowRound][1].base[unit_id[0]][unit_id[1]].position) == 1:
+				if unit_move.obj.kind == 8 and self.gameBegInfo[self.nowRound].base[cmd.target[0]][cmd.target[1]].strength == \
+					self.gameEndInfo[self.nowRound][1].base[cmd.target[0]][cmd.target[1]].strength:
+					pass
+				else:
+					anim, item = self.skillAnimation(unit_move, cmd.target, (unit_target.corX, unit_target.corY)) 
+					self.animation.addAnimation(anim)
+					self.animationItem.extend(item)
 
 		#待机只暂停0.2秒
 		self.animation.addAnimation(QPauseAnimation(200))

@@ -294,7 +294,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.exitButton.setStyleSheet("#exitButton{border-image: url(:exit0.png);border:0;}"
 										"#exitButton:hover{border-image: url(:exit1.png); border:0;}"
 										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
-		self.errorLabel.setStyleSheet("#errorLabel{background-color: rgba(64, 224, 208, 180);color: rgb(255,97,0);border-radius:5;}")
+		self.errorLabel.setStyleSheet("#errorLabel{border-image: url(:error_label.png);color: rgb(255,97,0);border-radius:5;}")
 		self.info_ai.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;}")
 		self.info_map.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;	}")
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
@@ -597,19 +597,19 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				#wake 动画
 				WaitForAni.wakeAll()
 			#以防命令还没有准备完.每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
-			else:
-				try:
-					mutex.lock()
-					if Already_Wait:
-				#如果uiplayer线程已经等待动画结束,提示用户开始进行动作
-						Already_Wait = False
-						flag = True
-				finally:
-					mutex.unlock()
-				if flag:
-					WaitForAni.wakeAll()
-				#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
-				else:
+		#	else:
+		#		try:
+		#			mutex.lock()
+		#			if Already_Wait:
+		#		#如果uiplayer线程已经等待动画结束,提示用户开始进行动作
+		#				Already_Wait = False
+		#				flag = True
+		# 		finally:
+		#			mutex.unlock()
+		#		if flag:
+		#			WaitForAni.wakeAll()
+		#		#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
+			elif not flag and self.replayWindow.gameBegInfo[self.replayWindow.nowRound].id[0] == 1:
 					try:
 						mutex.lock()
 						Able_To_Comm = True

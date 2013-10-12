@@ -91,8 +91,8 @@ class Ui_HeroTypeDlg(object):
 
     def retranslateUi(self, HeroTypeDlg):
         HeroTypeDlg.setWindowTitle(QtGui.QApplication.translate("HeroTypeDlg", "选择英雄", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("HeroTypeDlg", "英雄1", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("HeroTypeDlg", "英雄2", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("HeroTypeDlg", "英雄3", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("HeroTypeDlg", "狂战士", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("HeroTypeDlg", "暗杀者", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("HeroTypeDlg", "大法师", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("HeroTypeDlg", "尊姓大名:", None, QtGui.QApplication.UnicodeUTF8))
 

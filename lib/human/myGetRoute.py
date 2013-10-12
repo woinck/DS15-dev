@@ -68,7 +68,7 @@ def getAttackRange(units_list, idNum, now_pos, turret):
 	row = 1 - idNum[0]
 	attrange = basic.TURRET_RANGE if turret else units_list[idNum[0]][idNum[1]].attack_range
 	for unit in units_list[row]:
-		if unit.life > 0 and attackDis(unit.position, now_pos) in attrange:
+		if unit.life > 0 and attrange[0] <= attackDis(unit.position, now_pos) <= attrange[1]:
 			arrange_list.append(unit.position)
 	return arrange_list
 

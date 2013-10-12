@@ -23,13 +23,13 @@ def attack_id(whole_map, base, unit_id, move_area):
 	for position in move_area:
 		for j in range(0,len(base[1-team])):
 			target = base[1-team][j]
-			if (not j in result) and target.life > 0 and (main.distance(target.position,position) in self.attack_range):
+			if (not j in result) and target.life > 0 and (self.attack_range[0]<=main.distance(target.position,position)<=self.attack_range):
                                 result += [j]
         if self.kind == basic.ARCHER:
                 for i in move_area:
                         if whole_map[i[0]][i[1]].kind == basic.TURRET:
                                 for j in range(0,len(base[1-team])):
-                                        if main.distance(base[1-team][j].position, i) in basic.TURRET_RANGE:
+                                        if basic.TURRET_RANGE[0]<=main.distance(base[1-team][j].position, i)<=basic.TURRET_RANGE[1]:
                                                 result += [j]
         return result
 def skill_id(whole_map, base, unit_id, move_area):
@@ -46,7 +46,7 @@ def find_position(whole_map, base, unit_id, target_id, distance, move):
         target_position = base[target_id[0]][target_id[1]].position
         for i in move:
                 if whole_map[i[0]][i[1]].kind == basic.TURRET and base[unit_id[0]][unit_id[1]].kind == basic.ARCHER:
-                        if main.distance(i,target_position) in basic.TURRET_RANGE:
+                        if basic.TURRET_RANGE[0]<=main.distance(i,target_position)<=basic.TURRET_RANGE[1]:
                                 return i
                 if main.distance(i, target_position) in distance:
                         return i
@@ -69,7 +69,7 @@ def AI(whole_map, Info):
 	for i in attack_list:
                 target = Info.base[1-team][i]
                 damage = int((self.strength - target.defence) * basic.ATTACK_EFFECT[self.kind][target.kind])
-                if target.life - damage <= 0 and self.agility * 3 - target.agility * 2 > 75:
+                if target.life - damage <= 0:
                         kill += [i]
                 if most_damage < damage and (int((target.strength - self.defence) * basic.ATTACK_EFFECT[target.kind][self.kind])<self.life or target.attack_range != self.attack_range):
                         most_damage = damage

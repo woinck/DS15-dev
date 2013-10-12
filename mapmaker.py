@@ -36,8 +36,5 @@ units0 = [[u(5, (0, 0))],
           [u(3, (1, 1))]]
 ''' 
 #write_to((maps,units0))
-<<<<<<< HEAD
-sio._WriteFile((maps,units0),'C:\Users\woinck\Documents\GitHub\DS15-dev\\Sample_Map.map')
-=======
+
 sio._WriteFile((maps,units0),'C:\Users\Fox\Documents\GitHub\DS15-dev\\mapwithturret.map')
->>>>>>> server_debugging
