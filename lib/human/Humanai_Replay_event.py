@@ -126,6 +126,7 @@ class HumanReplay(QGraphicsView):
 		if not self.run:
 			return
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
+		print "now move unit:::::::::::", self.nowMoveUnit.obj.position, self.gameBegInfo[-1].base[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]].position
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
 		self.nowMoveUnit.setNowMove(True)
@@ -316,7 +317,8 @@ class HumanReplay(QGraphicsView):
 				self.drawArrange(self.attack_range_list,self.tmp_attack_list,1)
 			elif self.Operation == 2:
 				self.setCursor(QCursor(QPixmap(":skill_cursor.png").scaled(30,30),0,0))
-				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene and attackDis(x.obj.position, tmp_point) == 1]
+				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene and x != self.nowMoveUnit \
+							and attackDis(x.obj.position, tmp_point) == 1]
 				if not poses:
 					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可施用\n技能的对象\nesc返回上一阶段"))
 				else:
@@ -730,10 +732,15 @@ class HumanReplay(QGraphicsView):
 					self.animation.addAnimation(anim)
 		#skill加入技能是否成功判断
 		elif cmd.order == 2:
-			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7:
-				anim, item = self.skillAnimation(unit_move, cmd.target, self.gameEndInfo[self.nowRound][-1].base[cmd.target[0]][cmd.target[1]].position) 
-				self.animation.addAnimation(anim)
-				self.animationItem.extend(item)
+			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7 and attackDis(self.gameEndInfo[self.nowRound][1].base[cmd.target[0]][cmd.target[1]].position, \
+				self.gameEndInfo[self.nowRound][1].base[unit_id[0]][unit_id[1]].position) == 1:
+				if unit_move.obj.kind == 8 and self.gameBegInfo[self.nowRound].base[cmd.target[0]][cmd.target[1]].strength == \
+					self.gameEndInfo[self.nowRound][1].base[cmd.target[0]][cmd.target[1]].strength:
+					pass
+				else:
+					anim, item = self.skillAnimation(unit_move, cmd.target, (unit_target.corX, unit_target.corY)) 
+					self.animation.addAnimation(anim)
+					self.animationItem.extend(item)
 
 		#待机只暂停0.2秒
 		self.animation.addAnimation(QPauseAnimation(200))

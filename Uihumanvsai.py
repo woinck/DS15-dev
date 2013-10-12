@@ -597,24 +597,24 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				#wake 动画
 				WaitForAni.wakeAll()
 			#以防命令还没有准备完.每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
-			else:
-				try:
-					mutex.lock()
-					if Already_Wait:
-				#如果uiplayer线程已经等待动画结束,提示用户开始进行动作
-						Already_Wait = False
-						flag = True
-				finally:
-					mutex.unlock()
-				if flag:
-					WaitForAni.wakeAll()
-				#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
-				else:
-					try:
-						mutex.lock()
-						Able_To_Comm = True
-					finally:
-						mutex.unlock()
+		#	else:
+		#		try:
+		#			mutex.lock()
+		#			if Already_Wait:
+		#		#如果uiplayer线程已经等待动画结束,提示用户开始进行动作
+		#				Already_Wait = False
+		#				flag = True
+		# 		finally:
+		#			mutex.unlock()
+		#		if flag:
+		#			WaitForAni.wakeAll()
+		#		#以防命令还没有准备完.虽然不太可能,每次没有接收到最新的endinfo(不管是等待命令还是等待endinfo)都会设置abletocomm
+		#	else :
+		#			try:
+		#				mutex.lock()
+		#				Able_To_Comm = True
+		#			finally:
+		#				mutex.unlock()
 		else:
 			try:
 				mutex.lock()
