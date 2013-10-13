@@ -55,7 +55,7 @@ class HumanReplay(QGraphicsView):
 		self.nowRound = 0
 		self.nowStatus = 0
 		self.iniMapInfo = None
-		self.latestStatus = 1
+		self.latestStatus = 0
 		self.latestRound = 0
 		self.nowMoveUnit = None
 		self.now_state = None

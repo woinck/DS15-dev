@@ -21,10 +21,8 @@ class AiThread(QThread):
 
 	def run(self):
 		#先用QProcess打开平台程序
-		print '11111'
 		self.platProcess = sio.Prog_Run(os.getcwd() + sio.SERV_FILE_NAME)
 		
-		print '222222'
 		self.conn = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
 			self.conn.connect((sio.HOST,sio.UI_PORT))
