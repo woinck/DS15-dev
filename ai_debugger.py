@@ -119,8 +119,7 @@ class ai_debugger(QMainWindow):
 
 		self.infoDockWidget = QDockWidget("Infos", self)
 		self.infoDockWidget.setObjectName("InfoDockWidget")
-		self.infoDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea|
-											Qt.RightDockWidgetArea)
+		self.infoDockWidget.setAllowedAreas(Qt.RightDockWidgetArea)
 		self.infoWidget = InfoWidget(self)
 		self.infoDockWidget.setWidget(self.infoWidget)
 		self.addDockWidget(Qt.RightDockWidgetArea, self.infoDockWidget)
@@ -160,9 +159,9 @@ class ai_debugger(QMainWindow):
 										icon = "reset",
 										tip = "reset all settings")
 		
-		self.debugAction1 = self.createAction("Debug1", self.setDebugMode1, icon = "debug_mode",
+		self.debugAction1 = self.createAction("Debug1", self.setDebugMode1, icon = "debug_mode0",
 										checkable = True, signal = "toggled(bool)", tip ="ai设置debug模式")
-		self.debugAction2 = self.createAction("Debug2", self.setDebugMode2, icon = "debug_mode",
+		self.debugAction2 = self.createAction("Debug2", self.setDebugMode2, icon = "debug_mode0",
 										checkable = True, signal = "toggled(bool)", tip = "ai2设置debug模式")
 		self.addActions(self.configMenu, (resetAction, self.debugAction1, self.debugAction2))
 

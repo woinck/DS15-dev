@@ -37,7 +37,7 @@
 	<file alias="openAI1.png">image/openAI1.png</file>
 	<file alias="exit0.png">image/exit0.png</file>
 	<file alias="exit1.png">image/exit1.png</file>
-   
+	
    <!--ai debugger-->
    <file alias="gameStart.png">icons/gameStart.png</file>
 <file alias="gamePause.png">icons/gamePause.png</file>
@@ -47,6 +47,8 @@
 <file alias="debug_mode.png">icons/modeDebug.png</file>
 <file alias="reset.png">icons/reset.png</file>
 <file alias="icon.png">icons/icon.png</file>
+<file alias="debug_mode0.png">image/debug_mode0.png</file>
+	<file alias="debug_mode1.png">image/debug_mode1.png</file>
 
   </qresource>
 </RCC>

@@ -51,8 +51,9 @@ class InfoWidget(QTabWidget):
 		self.setTabToolTip(3, "the button-pressed map-grid's infos")
 
 	def setAiInfo(self, aiInfo):
+		print "aiaaiaiaiinfo", aiInfo[1]
 		self.infoWidget_Game.info_ainame1.setText(QString.fromUtf8(aiInfo[0]))
-		self.infoWidget_Game.info_ainame2.setText(QString.fromUtf8(aiInfo[1]))
+		self.infoWidget_Game.info_ainame2.setText(aiInfo[1])
 		
 	def setRoundInfo(self, round_):
 		self.infoWidget_Game.info_round.setText("%d" %round_)

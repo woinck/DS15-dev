@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_humanvsai.ui'
 #
-# Created: Sat Oct 12 22:58:15 2013
+# Created: Sun Oct 13 19:36:03 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -44,11 +44,11 @@ class Ui_HumanvsAi(object):
         self.helpButton.setText(_fromUtf8(""))
         self.helpButton.setObjectName(_fromUtf8("helpButton"))
         self.aiButton = QtGui.QPushButton(self.backFrame)
-        self.aiButton.setGeometry(QtCore.QRect(10, 590, 40, 40))
+        self.aiButton.setGeometry(QtCore.QRect(10, 650, 40, 40))
         self.aiButton.setText(_fromUtf8(""))
         self.aiButton.setObjectName(_fromUtf8("aiButton"))
         self.info_ai = QtGui.QLineEdit(self.backFrame)
-        self.info_ai.setGeometry(QtCore.QRect(60, 600, 141, 30))
+        self.info_ai.setGeometry(QtCore.QRect(60, 660, 141, 30))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -58,11 +58,11 @@ class Ui_HumanvsAi(object):
         self.info_ai.setReadOnly(True)
         self.info_ai.setObjectName(_fromUtf8("info_ai"))
         self.mapButton = QtGui.QPushButton(self.backFrame)
-        self.mapButton.setGeometry(QtCore.QRect(10, 650, 40, 40))
+        self.mapButton.setGeometry(QtCore.QRect(10, 590, 40, 40))
         self.mapButton.setText(_fromUtf8(""))
         self.mapButton.setObjectName(_fromUtf8("mapButton"))
         self.info_map = QtGui.QLineEdit(self.backFrame)
-        self.info_map.setGeometry(QtCore.QRect(60, 660, 141, 30))
+        self.info_map.setGeometry(QtCore.QRect(60, 600, 141, 30))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -70,7 +70,7 @@ class Ui_HumanvsAi(object):
         self.info_map.setSizePolicy(sizePolicy)
         self.info_map.setObjectName(_fromUtf8("info_map"))
         self.startButton = QtGui.QPushButton(self.backFrame)
-        self.startButton.setGeometry(QtCore.QRect(10, 710, 40, 40))
+        self.startButton.setGeometry(QtCore.QRect(70, 710, 40, 40))
         self.startButton.setText(_fromUtf8(""))
         self.startButton.setObjectName(_fromUtf8("startButton"))
         self.verticalLayoutWidget_3 = QtGui.QWidget(self.backFrame)
@@ -171,6 +171,11 @@ class Ui_HumanvsAi(object):
         self.exitButton.setGeometry(QtCore.QRect(90, 20, 40, 40))
         self.exitButton.setText(_fromUtf8(""))
         self.exitButton.setObjectName(_fromUtf8("exitButton"))
+        self.debugButton = QtGui.QPushButton(self.backFrame)
+        self.debugButton.setGeometry(QtCore.QRect(10, 710, 40, 40))
+        self.debugButton.setText(_fromUtf8(""))
+        self.debugButton.setCheckable(True)
+        self.debugButton.setObjectName(_fromUtf8("debugButton"))
 
         self.retranslateUi(HumanvsAi)
         QtCore.QMetaObject.connectSlotsByName(HumanvsAi)
@@ -186,4 +191,5 @@ class Ui_HumanvsAi(object):
         self.label.setText(_translate("HumanvsAi", "AI", None))
         self.roundLabel.setText(_translate("HumanvsAi", "Round 0", None))
         self.exitButton.setToolTip(_translate("HumanvsAi", "中止游戏", None))
+        self.debugButton.setToolTip(_translate("HumanvsAi", "操作帮助", None))
 

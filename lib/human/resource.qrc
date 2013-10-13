@@ -71,5 +71,8 @@
 	<file alias="exit0.png">image/exit0.png</file>
 	<file alias="exit1.png">image/exit1.png</file>
 	<file alias="error_label.png">image/error_label.png</file>
+	<file alias="roundLabel.png">image/roundLabel.png</file>
+	<file alias="debug_mode0.png">image/debug_mode0.png</file>
+	<file alias="debug_mode1.png">image/debug_mode1.png</file>
   </qresource>
 </RCC>

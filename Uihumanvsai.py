@@ -17,6 +17,7 @@ try:
 	_frUtf = QString.fromUtf8
 except AttributeError:
 	_frUtf = lambda s:s
+DEBUG_MODE = False
 WAIT_TIME = 5000
 AI_DIR = "." #默认ai目录路径
 MAP_DIR = "."
@@ -57,7 +58,7 @@ class AiThread(QThread):
 			self.conn.close()
 			raise ConnectionError()
 		else:
-			sio._sends(self.conn,(sio.PLAYER_VS_AI, unicode(gameMapPath),(unicode(gameAIPath),None),[False,False]))
+			sio._sends(self.conn,(sio.PLAYER_VS_AI, unicode(gameMapPath),(unicode(gameAIPath),None),[DEBUG_MODE, False]))
 	def isStopped(self):
 		try:
 			self.mutex.lock()
@@ -293,8 +294,12 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 										"#exitButton:hover{border-image: url(:exit1.png); border:0;}"
 										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
 		self.errorLabel.setStyleSheet("#errorLabel{border-image: url(:error_label.png);color: rgb(255,97,0);border-radius:5;}")
+		self.debugButton.setStyleSheet("#debugButton{border-image: url(:debug_mode0.png);border:0;}"
+										"#debugButton:checked{border-image: url(:debug_mode1.png); border-style:inset;}"
+										"#debugButton:hover{border-image: url(:debug_mode1.png);border:0;}")
 		self.info_ai.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;}")
 		self.info_map.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;	}")
+		self.roundLabel.setStyleSheet("*{border-image: url(:roundLabel.png);}")
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 		self.aiPath = ""
 		self.mapPath = ""
@@ -328,6 +333,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.replayWindow.moveAnimEnd.connect(self.on_aniFinished)
 		self.connect(self.replayWindow, SIGNAL("errorOperation"), self.on_errOpr)
 		self.connect(self, SIGNAL("ableToPlay()"), self.on_ablePlay, Qt.QueuedConnection)
+		self.connect(self.debugButton, SIGNAL("toggled(bool)"), self.on_debugButton_toggled)
 
 		self.setWindowTitle("Human_Vs_Ai")
 		self.setWindowIcon(QIcon(QPixmap(":hero_11.png")))
@@ -395,6 +401,12 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.aiThread.start()
 
 		self.updateUi()
+	@pyqtSlot()
+	def on_debugButton_toggled(self, check):
+		print "dafdasfdsfasf"
+		global DEBUG_MODE
+		DEBUG_MODE = check
+
 	#打开player线程
 	def on_tmpRecv(self):
 		self.playThread = Ui_Player(0, self.getComm, self)
