@@ -15,12 +15,10 @@ def _SocketConnect(host,port,connName,list = 1):
 		
 	#设定AI连接最大时间
 	if connName == 'AI':
-		print 'waiting ai'
 		if sio.DEBUG_MODE:
 			serv.settimeout(None)
 		else:
 			serv.settimeout(sio.AI_CONNECT_TIMEOUT)
-		print '\n',
 	else:
 		serv.settimeout(None)
 	serv.listen(list)
@@ -66,7 +64,6 @@ class Sui(threading.Thread):
 			if sio.DEBUG_MODE or gp.AI_Debug[num]:
 				return None
 			else:
-				print 'ai running'
 				return sio.Prog_Run(AIPath,True)
 	def run(self):
 		global gp
@@ -426,8 +423,8 @@ class Sai(threading.Thread):
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							else:
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
-							print 'AI',gp.rbInfo.id[0],'\'s command:'
-							sio.cmdDisplay(gp.rCommand)
+							#print 'AI',gp.rbInfo.id[0],'\'s command:'
+							#sio.cmdDisplay(gp.rCommand)
 						except socket.timeout:
 							print 'fail to receive cmd, default will be used..'
 							gp.rCommand = basic.Command()

@@ -228,9 +228,7 @@ class Ui_Player(QThread):
 			self.AI(rBeginInfo)
 			if rBeginInfo != '|':
 			#	try:	
-				print 'sending command'
 				sio._sends(self.conn,self.command)
-				print 'cmd sent'
 				self.cmdNum += 1
 		#		except sio.ConnException:
 		#			self.stop()
@@ -455,6 +453,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			global WaitForCommand, WaitForIni, WaitForAni
 			WaitForIni.wakeAll()
 			WaitForAni.wakeAll()
+			time.sleep(0.1)
 			WaitForCommand.wakeAll()
 			if self.playThread and self.playThread.isRunning():
 				#self.playThread.terminate()
