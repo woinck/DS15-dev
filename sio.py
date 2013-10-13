@@ -5,7 +5,7 @@ reload(sys)
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 #AI模式 0：py 1：cpp
-USE_CPP_AI = 0
+USE_CPP_AI = 1
 
 #游戏运行参数
 '''
@@ -74,7 +74,7 @@ class MapInfo:
 #向cpp客户端AI传输游戏初始信息
 def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		conn.send(str(team_number))
-		temp = conn.recv(3)
+		conn.recv(3)
 		mirror_number = 0
 		mirror = []
 		for i in range(basic.COORDINATE_X_MAX):
@@ -139,11 +139,10 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 def _cpp_recvs_begin(conn):
 	result = []
 	recvbuf = conn.recv(40)
-	print 'recvbuf',recvbuf
+	#recvbuf = recvbuf.split(chr(0))[0]
 	conn.send('ok')
 	result.append(recvbuf)
 	recvbuf = conn.recv(10)
-	print 'recvbuf',recvbuf
 	result.append(int(recvbuf))
 	return result
 				
@@ -202,13 +201,14 @@ def _ReadFile(filePath):
 
 #将地图信息写入文件
 def _WriteFile(fileInfo,filePath):
+	print filePath
 	with open(filePath,'w') as save:
 		cPickle.dump(fileInfo,save)
 	
 def _ReplayFileName(aiInfo):
 	result = '\\'
 	result += aiInfo[0] + '_vs_' + aiInfo[1] + '_'
-	result += time.strftime('%Y%m%d-%H-%M-%S')
+	result += time.strftime(u'%Y%m%d-%H-%M-%S')
 	result += '.rep'
 	return result
 

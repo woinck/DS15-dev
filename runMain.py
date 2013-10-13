@@ -28,6 +28,7 @@ app.setFont(font)
 palette = app.palette()
 palette.setBrush(QPalette.Active, QPalette.ButtonText, QColor(150,255,255))
 palette.setBrush(QPalette.Disabled, QPalette.ButtonText, QColor(0,0,0))
+QApplication.addLibraryPath(".")
 
 #设置鼠标
 cursor = QCursor(QPixmap(":cursor.png").scaled(30,30), 0, 0)

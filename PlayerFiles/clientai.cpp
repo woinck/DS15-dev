@@ -1,11 +1,10 @@
 #include<winsock2.h>
 #include<stdio.h>
 #include"basic.h"
-#include "Basic2.h"
 #pragma comment(lib,"WS2_32.lib")
 
 extern game_info info;
-extern wchar_t teamName[20];
+extern char teamName[20];
 extern int GetHeroType();
 
 Command cmd;  //选手操作,每回合传给逻辑
@@ -86,7 +85,7 @@ void main()
 	get_soldier_info();
 	//读取初始信息
 
-	send(client, (char *) teamName, 40, 0);
+	send(client, (char *) teamName, sizeof teamName, 0);
 	recv(client, recvbuf, 3, 0);
 	int heroType = GetHeroType();
 	memset(sendbuf,0,sizeof(char)*128);
@@ -100,7 +99,6 @@ void main()
 		if(recvbuf[0] == '|') break; //以|作为游戏结束标志
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
 		send(client, "ok", 3, 0);
-		printf("444\n");
 		for(int i = 0; i < info.temple_number; i++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);

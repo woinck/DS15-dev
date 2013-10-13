@@ -291,7 +291,7 @@ class ai_debugger(QMainWindow):
 		dir = QDir.toNativeSeparators(r".")#/FileAI")
 		fname = unicode(QFileDialog.getOpenFileName(self,
 													"load AI File", dir,
-													"AI files (%s)" % "*.py"))
+													"AI files (%s)" % "*.exe"))
 		if len(self.loaded_ai) < 2 and fname:
 			self.loaded_ai.append(unicode(fname))
 			self.infoWidget.infoWidget_Game.setAiFileinfo(self.loaded_ai)
