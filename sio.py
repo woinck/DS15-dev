@@ -77,8 +77,13 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		conn.recv(3)
 		mirror_number = 0
 		mirror = []
-		for i in range(basic.COORDINATE_X_MAX):
-				for j in range(basic.COORDINATE_Y_MAX):
+		conn.send(str(len(whole_map)))
+		conn.recv(3)
+		conn.send(str(len(whole_map[0])))
+		conn.recv(3)
+		
+		for i in range(len(whole_map)):
+				for j in range(len(whole_map[0])):
 						if whole_map[i][j].kind == basic.MIRROR:
 							mirror_number = mirror_number + 1
 							mirror.append(whole_map[i][j])
@@ -87,8 +92,8 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		conn.send(str(mirror_number))
 		conn.recv(3)
 
-		for i in range(basic.COORDINATE_X_MAX):
-				for j in range(basic.COORDINATE_Y_MAX):
+		for i in range(len(whole_map)):
+				for j in range(len(whole_map[0])):
 					if whole_map[i][j].kind == basic.MIRROR:
 						conn.send(str(i)+' '+str(j)+' '+str(whole_map[i][j].out[0]) + ' '+str(whole_map[i][j].out[1]))
 						conn.recv(3)

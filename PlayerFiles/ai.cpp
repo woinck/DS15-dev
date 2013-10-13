@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 game_info info;
-char teamName[20]="гъ";
+char teamName[20]="Sample";
 
 int GetHeroType()
 {

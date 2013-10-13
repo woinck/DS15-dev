@@ -57,8 +57,17 @@ void main()
 	recv(client, recvbuf, 127, 0);
 	sscanf(recvbuf, "%d", &info.team_number);
 	send(client, "ok", 3, 0);
-	for(int i = 0; i < COORDINATE_X_MAX; i++)
-		for(int j = 0; j < COORDINATE_Y_MAX; j++)
+
+	for (int i = 0; i < 2; i++)
+	{
+	memset(recvbuf, 0, sizeof(char)*128);
+	recv(client, recvbuf, 127, 0);
+	sscanf(recvbuf, "%d", &info.map_size[i]);
+	send(client, "ok", 3, 0);
+	}
+
+	for(int i = 0; i < info.map_size[0]; i++)
+		for(int j = 0; j < info.map_size[1]; j++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);
 			recv(client, recvbuf, 127, 0);
@@ -106,7 +115,6 @@ void main()
 			sscanf(recvbuf, "%d %d %d", &info.temple[i].pos.x, &info.temple[i].pos.y, &info.temple[i].state);
 			send(client, "ok", 3, 0);
 		}
-		printf("555\n");
 		get_soldier_info();
   		cmd = AI_main();
 		memset(sendbuf, 0, sizeof(char)*128);
