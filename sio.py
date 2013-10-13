@@ -158,7 +158,7 @@ def _cpp_recvs(conn):
 	move = (int(rbuf[2]), int(rbuf[3]))
 	return basic.Command(order,move,target_id)
 
-		
+#连接异常
 class ConnException(Exception):
 	def __init__(self):
 		Exception.__init__(self)
@@ -217,13 +217,7 @@ def cmdDisplay(cmd):
 	print 'move:',cmd.move
 	print 'order:',cmd.order
 	print 'target:',cmd.target
-'''
-class Prog_Run(progPath):	
-	def 
-	def run(self):
-		os.system('cmd /c start %s' %(self.progPath))
-		#subprocess.Popen('python ' + progPath,shell = True)
-'''
+
 def Prog_Run(progPath,isAI=False):	
 	global SINGLE_PROCESS
 	if SINGLE_PROCESS:
