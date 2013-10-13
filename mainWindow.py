@@ -10,7 +10,7 @@ from Uiteamwidget import TeamWidget
 from Uiaivsai import AivsAi
 import time#for test
 from Uihumanvsai import HumanvsAi
-#from Uimapeditor import MapEditor
+from mapeditor import Mapeditor
 from replayer import Replayer
 from PyQt4.QtWebKit import *
 
@@ -96,7 +96,7 @@ class MainWindow(QGraphicsView):
 
 		#地图编辑器
 		self.mapEditWindow =  QGraphicsProxyWidget()
-		self.mapWidget =  MapEditor()
+		self.mapWidget =  Mapeditor()
 		self.mapEditWindow.setWidget(self.mapWidget)
 		self.mapEditWindow.setX(0)
 		self.mapEditWindow.setY(0)
@@ -259,14 +259,16 @@ class MainWindow(QGraphicsView):
 		self.trans_TeamToMain = self.TeamState.addTransition(self.teamWidget.returnButton,SIGNAL("clicked()"),
 									 self.MainState)
 
-	 #   self.trans_MapToSingle = self.MapState.addTransition(self.mapWideget.pushButton_5,SIGNAL("clicked()"),
-	  #													   self.SingleState)
-	   # self.trans_MapToSingle.addAnimation(WindowToMenuAnimation(mapEditWindow, singleWindow))
+		self.trans_MapToSingle = self.MapState.addTransition(self.mapWidget.ui.exitButton,SIGNAL("clicked()"),
+															self.SingleState)
+		self.ani_MapToSingle = WindowToMenuAnimation(self.mapEditWindow, self.singleWindow)
+		self.trans_MapToSingle.addAnimation(self.ani_MapToSingle)
 
-#		self.trans_SingleToMap = self.SingleState.addTransition(self.singleWidget.mapedit,SIGNAL("clicked()"),
- #															   self.MapState)
-  #	  self.trans_SingleToMap.addAnimation(MenuToWindowAnimation(self.singleWindow, self.mapEditWindow))
-#
+		self.trans_SingleToMap = self.SingleState.addTransition(self.singleWidget.mapedit,SIGNAL("clicked()"),
+ 															   self.MapState)
+		self.ani_SingleToMap = MenuToWindowAnimation(self.singleWindow, self.mapEditWindow)
+		self.trans_SingleToMap.addAnimation(self.ani_SingleToMap)
+
 		self.trans_SingleToHumanai = self.SingleState.addTransition(self.singleWidget.playervsai,SIGNAL("clicked()"),
   																  self.HumanaiState)
 		self.ani_SingleToHumanai = MenuToWindowAnimation(self.singleWindow, self.humanaiWindow)
@@ -300,7 +302,7 @@ class MainWindow(QGraphicsView):
 		self.transitionList = [self.trans_MainToQuit, self.trans_MainToSingle, self.trans_SingleToMain,
 							   self.trans_SingleToAi, self.trans_AiToSingle, self.trans_MainToTeam, self.trans_TeamToMain,
 							   self.trans_SingleToHumanai, self.trans_HumanaiToSingle, self.trans_SingleToReplay,
-							   self.trans_ReplayToSingle,self.trans_MainToWeb]
+							   self.trans_ReplayToSingle,self.trans_MainToWeb, self.trans_SingleToMap, self.trans_MapToSingle]
 		for transition in self.transitionList:
 			self.connect(transition, SIGNAL("triggered()"), self.showWindow)
 

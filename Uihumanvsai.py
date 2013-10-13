@@ -19,8 +19,8 @@ except AttributeError:
 	_frUtf = lambda s:s
 DEBUG_MODE = False
 WAIT_TIME = 5000
-AI_DIR = "." #默认ai目录路径
-MAP_DIR = "."
+AI_DIR = os.getcwd() #默认ai目录路径
+MAP_DIR = os.getcwd() + "//mapFiles"
 Already_Wait = False
 Able_To_Comm = False
 WaitForCommand=QWaitCondition()
@@ -348,7 +348,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	@pyqtSlot()
 	def on_aiButton_clicked(self):
 		filename = QFileDialog.getOpenFileName(self, _frUtf("载入ai文件"), AI_DIR,
-											   "ai files(*.exe;*.py)")
+											   "ai files(*.exe)")
 		if filename:
 			self.aiPath = filename
 			self.info_ai.setText(filename)

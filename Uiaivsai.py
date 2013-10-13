@@ -143,7 +143,7 @@ class AivsAi(QWidget, ui_aivsai.Ui_AIvsAI):
 	def on_AiButton2_clicked(self):
 		dir = AI_FILE_DIR if AI_FILE_DIR else "."
 		newAiName = unicode(QFileDialog.getOpenFileName(self,QString.fromUtf8("载入ai"),
-														dir, "aifile(*.py)"))
+														dir, "aifile(*.exe)"))
 		if newAiName:
 			for i in range(self.AiCombo2.count()):
 				if newAiName == self.AiCombo2.itemText(i):
