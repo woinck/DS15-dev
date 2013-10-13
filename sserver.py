@@ -1,7 +1,5 @@
 # -*- coding: UTF-8 -*-
 import sio, socket, time, threading, os,subprocess
-from field_shelve import *
-
 
 def _SocketConnect(host,port,connName,list = 1):
 	global gp
@@ -18,7 +16,7 @@ def _SocketConnect(host,port,connName,list = 1):
 	#设定AI连接最大时间
 	if connName == 'AI':
 		print 'waiting ai'
-		if sio.DEBUG_MODE or sio.AI_DEBUG:
+		if sio.DEBUG_MODE:
 			serv.settimeout(None)
 		else:
 			serv.settimeout(sio.AI_CONNECT_TIMEOUT)
@@ -30,6 +28,8 @@ def _SocketConnect(host,port,connName,list = 1):
 	
 	for i in range(list):
 		#进行连接
+		if connName == 'AI' and gp.AI_Debug[i] == True:
+			serv.settimeout(None)
 		try:
 			result.append(serv.accept())
 		except socket.timeout:
@@ -55,7 +55,7 @@ class Sui(threading.Thread):
 		threading.Thread.__init__(self)
 		self.name = 'Thread-UI'
 		
-	def run_AI(self,conn,AIPath):
+	def run_AI(self, conn, AIPath, num):
 		if AIPath == None:
 			try:
 				conn.send('|')
@@ -63,7 +63,7 @@ class Sui(threading.Thread):
 				conn.shutdown(socket.SHUT_RDWR)
 				exit(1)
 		else:
-			if sio.DEBUG_MODE or sio.AI_DEBUG:
+			if sio.DEBUG_MODE or gp.AI_Debug[num]:
 				return None
 			else:
 				print 'ai running'
@@ -71,56 +71,44 @@ class Sui(threading.Thread):
 	def run(self):
 		global gp
 		
-		
-		
 		#与UI连接
 		connUI,address = _SocketConnect(sio.HOST,sio.UI_PORT,'UI')
 		connUI.settimeout(1)
 		
 		#接收游戏模式、地图和AI信息
-		gp.gameMode,gp.gameMapPath,gp.gameAIPath=sio._recvs(connUI)
+		gp.gameMode, gp.gameMapPath, gp.gameAIPath, gp.AI_Debug=sio._recvs(connUI)
 		
 		#设置AI超时开关
 		for i in range(2):
-			if gp.gameAIPath[i]==None or sio.AI_DEBUG:
-				gp.timeoutSwitch[i]=0
+			if gp.gameAIPath[i] == None or gp.AI_Debug[i]:
+				gp.timeoutSwitch[i] = 0
 			else:
-				gp.timeoutSwitch[i]=1
+				gp.timeoutSwitch[i] = 1
 		
 		if gp.gameMode <= sio.PLAYER_VS_PLAYER:
 			if not sio.DEBUG_MODE:
 				sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 				time.sleep(0.1)
 			logic_thread.start()
+			
 		
-		#读取地图文件
-		#print 'gp.gameAIPath: ',gp.gameAIPath#for test
-		#print 'gameMapPath: ',gameMapPath#for test
-		#(gp.mapInfo,gp.base)=read_from(gameMapPath)		
 		(gp.mapInfo,gp.base)=sio._ReadFile(gp.gameMapPath)
 		#运行AI线程及文件
 		AIProg = []
-		while gp.gProc.acquire():
-			if gp.gProcess != sio.LOGIC_CONNECTED:
-				gp.gProc.wait()
-			else:
-				#运行AI连接线程
-				ai_thread.start()
-				#运行AI1
-				AIProg.append(self.run_AI(connUI,gp.gameAIPath[0]))
+		
+		for i in range(2):
+			while gp.gProc.acquire():
+				if gp.gProcess != sio.LOGIC_CONNECTED + i:
+					gp.gProc.wait()
+				else:
+					#运行AI连接线程
+					if not ai_thread.isAlive():
+						ai_thread.start()
+					#运行AI1
+					AIProg.append(self.run_AI(connUI,gp.gameAIPath[i],i))
+					gp.gProc.release()
+					break
 				gp.gProc.release()
-				break
-			gp.gProc.release()
-
-		while gp.gProc.acquire():
-			if gp.gProcess != sio.ONE_AI_CONNECTED:
-				gp.gProc.wait()
-			else:
-				#运行AI2
-				AIProg.append(self.run_AI(connUI,gp.gameAIPath[1]))
-				gp.gProc.release()
-				break
-			gp.gProc.release()
 
 		#所有连接建立后，将游戏进度前调
 		while gp.gProc.acquire():
@@ -151,8 +139,8 @@ class Sui(threading.Thread):
 			gp.gProc.release()
 		
 		#初始化完毕，进入回合==============================================================
-		print 'ui in game'#for test
-		flag = False
+		#print 'ui in game'#for test
+		gp.uiOverFlag = False
 		#等待回合初始信息产生完毕
 		while gp.gProcess < sio.OVER:
 			while gp.rProc.acquire():
@@ -165,7 +153,6 @@ class Sui(threading.Thread):
 					except:
 						connUI.shutdown(socket.SHUT_RDWR)
 						exit(1)
-					print 'gp.rbInfo sent to ui'
 					gp.rProcess = sio.RBINFO_SENT_TO_UI
 					gp.rProc.notifyAll()
 					gp.rProc.release()
@@ -183,18 +170,17 @@ class Sui(threading.Thread):
 					except:
 						connUI.shutdown(socket.SHUT_RDWR)
 						exit(1)
-					print 'gp.reInfo sent to ui'#for test
 					#回合信息存至回放列表中
 					gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
 					gp.rProcess = sio.START
 					gp.rProc.notifyAll()
 					#若游戏结束则跳出循环
 					if gp.reInfo.over:
-						flag = True
+						gp.uiOverFlag = True
 					gp.rProc.release()
 					break
 				gp.rProc.release()
-			if flag:
+			if gp.uiOverFlag:
 				break
 		
 		#向UI发送胜利方
@@ -205,7 +191,6 @@ class Sui(threading.Thread):
 				try:
 					sio._sends(connUI,gp.winner)
 				except:
-					print 'gp.winner sent failed!!!!!!'
 					connUI.shutdown(socket.SHUT_RDWR)
 					exit(1)
 				connUI.settimeout(None)
@@ -275,13 +260,12 @@ class Slogic(threading.Thread):
 		while gp.gProcess != sio.OVER:
 			#接收回合开始信息
 			if gp.gameMode != sio.AI_VS_AI:
-				time.sleep(1)#time delay
+				time.sleep(1) #time delay
 			while gp.rProc.acquire():
 				if gp.rProcess != sio.START:
 					gp.rProc.wait()
 				else:
 					gp.rbInfo = sio._recvs(connLogic)
-					print 'gp.rbInfo received from logic'#for test
 					gp.rProcess = sio.RBINFO_SET
 					gp.rProc.notifyAll()
 					gp.rProc.release()
@@ -298,7 +282,6 @@ class Slogic(threading.Thread):
 					gp.reInfo = sio._recvs(connLogic)
 					if gp.aiConnErr[gp.rbInfo.id[0]]:
 						gp.reInfo.over = sio.AI_BREAKDOWN
-					print 'gp.reInfo received from logic'
 					gp.rProc.release()
 					break
 				gp.rProc.release()
@@ -323,7 +306,6 @@ class Slogic(threading.Thread):
 			for i in range(2):
 				if gp.aiConnErr[i] == True:
 					gp.winner = i
-		print 'gp.winner: ',gp.winner
 		
 		#接收胜利方信息
 		gp.gProc.acquire()
@@ -347,7 +329,6 @@ class Sai(threading.Thread):
 		connAI=[connAI1,connAI2]
 		
 		#设置命令限时
-		print 'gp.timeoutSwitch: ', gp.timeoutSwitch
 		for i in range(2):
 			if gp.timeoutSwitch[i]==1:
 				connAI[i].settimeout(sio.AI_CMD_TIMEOUT)
@@ -483,7 +464,8 @@ class gameParameter():
 		self.gameAIPath = []
 		self.gameMapPath = None
 		self.replayInfo=[] #定义回放列表用于生成回放文件，每个元素储存一个回合的信息
-		self.timeoutSwitch=[1,1]
+		self.timeoutSwitch = [1,1]
+		self.AI_Debug = [False,False]
 		
 		self.mapInfo = []
 		self.base = [[], []]
@@ -491,6 +473,7 @@ class gameParameter():
 		self.heroType = []
 		self.aiConnErr = [False,False]
 		self.winner = -1
+		self.uiOverFlag = False
 		
 		#回合阶段变量
 		self.rbInfo = None
