@@ -3,7 +3,7 @@
 #Fox Ning
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-
+import basic
 
 #Three dictionaries for show types of map or unit
 NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
@@ -47,19 +47,20 @@ class InfoWidget(QTabWidget):
 		self.infoWidget_Game.setUnitinfo("Team %d Soldier %d" %(beginfo.id[0],beginfo.id[1]))
 		self.beg_Flag = 1
 	def endRoundInfo(self, cmd, endinfo):
-		self.infoWidget_Game.setCmdinfo(QString.fromUtf8("move to %s,%s" %(cmd.move,
+		self.infoWidget_Game.setCmdinfo(QString.fromUtf8("移动至%s,%s" %(cmd.move,
 															 NumToActionType[cmd.order]
 															 )))
 		if cmd.order != 0:
 			self.infoWidget_Game.setTargetinfo(QString.fromUtf8("%d队%d号单位" %(cmd.target[0], cmd.target[1])))
 		self.infoWidget_Game.setEffectinfo(QString.fromUtf8("攻击%s，反击%s" %(NumToEffectType[endinfo.effect[0]],
-															  NumToEffect[endinfo.effect[1]])))
+															  NumToEffectType[endinfo.effect[1]])))
+		self.infoWidget_Game.setTimeInfo("%d ms" %endinfo.timeused)
 		#self.infoWidget_Game.setScoreinfo("%d : %d" %(endinfo.score[0],endinfo.score[1]))
 		self.beg_Flag = 0
 	def on_goToRound(self, _round, status, begInfo, endInfo):
 		self.infoWidget_Game.info_round.setText("%d" %_round)
 		self.beginRoundInfo(begInfo)
-		if status:
+		if endInfo:
 			self.endRoundInfo(*endInfo)
 
 		#待实现,在跳转回合时从回放里设置的类传出的信号设置
@@ -98,10 +99,12 @@ class InfoWidget1(QWidget):
 		self.info_mapfile = QLineEdit("")
 		self.info_mapfile.setReadOnly(True)
 		self.label_round = QLabel(QString.fromUtf8("回合数:"))
+		self.info_round = QLineEdit("")
+		self.info_round.setReadOnly(True)
 		self.label_unit = QLabel(QString.fromUtf8("行动单位:"))
 		self.info_unit = QLineEdit("")
 		self.info_unit.setReadOnly(True)
-		self.label_time = QLabel("time used:")
+		self.label_time = QLabel(QString.fromUtf8("用时:"))
 		self.info_time = QLineEdit("")
 		self.info_time.setReadOnly(True)
 		self.label_cmd = QLabel(QString.fromUtf8("命令:"))
@@ -125,14 +128,16 @@ class InfoWidget1(QWidget):
 		self.layout.addWidget(self.info_mapfile, 2, 1)
 		self.layout.addWidget(self.label_time, 3, 0)
 		self.layout.addWidget(self.info_time, 3, 1)
-		self.layout.addWidget(self.label_unit, 4, 0)
-		self.layout.addWidget(self.info_unit, 4, 1)
-		self.layout.addWidget(self.label_cmd, 5, 0)
-		self.layout.addWidget(self.info_cmd, 5, 1)
-		self.layout.addWidget(self.label_target, 6, 0)
-		self.layout.addWidget(self.info_target, 6, 1)
-		self.layout.addWidget(self.label_effect, 7, 0)
-		self.layout.addWidget(self.info_effect, 7, 1)
+		self.layout.addWidget(self.label_round, 4, 0)
+		self.layout.addWidget(self.info_round, 4, 1)
+		self.layout.addWidget(self.label_unit, 5, 0)
+		self.layout.addWidget(self.info_unit, 5, 1)
+		self.layout.addWidget(self.label_cmd, 6, 0)
+		self.layout.addWidget(self.info_cmd, 6, 1)
+		self.layout.addWidget(self.label_target, 7, 0)
+		self.layout.addWidget(self.info_target, 7, 1)
+		self.layout.addWidget(self.label_effect, 8, 0)
+		self.layout.addWidget(self.info_effect, 8, 1)
 	#	self.layout.addWidget(self.label_score, 8, 0)
 	#	self.layout.addWidget(self.info_score, 8, 1)
 

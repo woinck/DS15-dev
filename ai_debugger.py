@@ -13,8 +13,8 @@ import socket,cPickle,time,basic, os
 import sio
 
 DEBUG_MODE = [False, False]
-DEFAULT_SCILENT_AI = os.getcwd() + "//Sample_AI.py"#默认的ai路径,待设置
-DEFAULT_MAP = os.getcwd() + "//mapwithturret.py"
+DEFAULT_SCILENT_AI = os.getcwd() + "\\Sample_AI.py"#默认的ai路径,待设置
+DEFAULT_MAP = os.getcwd() + "\\mapwithturret.map"
 
 #WaitForNext = QWaitCondition()
 #WaitForPause = QWaitCondition()
@@ -43,10 +43,12 @@ class AiThread(QThread):
 			mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)
 			try:
 				rbInfo = sio._recvs(self.conn)
+				self.emit(SIGNAL("firstRecv"), mapInfo, rbInfo, aiInfo, baseInfo)
 			except:
 				self.stop()
 			try:
 				rCommand,reInfo = sio._recvs(self.conn)
+				self.emit(SIGNAL("reRecv"), rCommand, reInfo)
 			except:
 				self.stop()
 			self.emit(SIGNAL("round()"))
@@ -54,10 +56,12 @@ class AiThread(QThread):
 			while not reInfo.over and not self.isStopped():
 				try:
 					rbInfo = sio._recvs(self.conn)
+					self.emit(SIGNAL("rbRecv"), rbInfo)
 				except:
 					self.stop()
 				try:
 					rCommand,reInfo = sio._recvs(self.conn)
+					self.emit(SIGNAL("reRecv"), rCommand, reInfo)
 				except:
 					self.stop()
 					pass
@@ -180,7 +184,7 @@ class ai_debugger(QMainWindow):
 		#to show messages
 		self.connect(self.replayWindow.replayWidget, SIGNAL("unitSelected"),
 					 self.infoWidget.newUnitInfo)
-		self.connect(self.replayWindow.replayWidget, SIGNAL("mapGridSelected"),
+		self.connect(self.replayWindow.replayWidget, SIGNAL("mapSelected"),
 					 self.infoWidget.newMapInfo)
 		#进度条到主界面的通信
 		self.connect(self.replayWindow, SIGNAL("goToRound"), self.infoWidget.on_goToRound)
@@ -201,7 +205,7 @@ class ai_debugger(QMainWindow):
 			action.setShortcut(shortcut)
 		if tip is not None:
 			action.setToolTip(QString.fromUtf8(tip))
-			action.setStatusTip(tip)
+			action.setStatusTip(QString.fromUtf8(tip))
 		if slot is not None:
 			self.connect(action, SIGNAL(signal), slot)
 		if checkable:
@@ -217,34 +221,34 @@ class ai_debugger(QMainWindow):
 
 	#enable/disable actions according to the game status
 	def updateUi(self):
-		# if len(self.loaded_ai) == 2 and self.loaded_map:
-			# if not self.started:
-		#		self.gameStartAction.setEnabled(True)
-		#		self.gameEndAction.setEnabled(False)
-#				self.gameLoadAction1.setEnabled(True)
-#				self.gameLoadAction2.setEnabled(True)
-		#	else:
-		#		self.gameStartAction.setEnabled(False)
-		#		self.gameEndAction.setEnabled(True)
+		if len(self.loaded_ai) == 2 and self.loaded_map:
+			if not self.started:
+				self.gameStartAction.setEnabled(True)
+				self.gameEndAction.setEnabled(False)
+				self.gameLoadAction1.setEnabled(True)
+				self.gameLoadAction2.setEnabled(True)
+			else:
+				self.gameStartAction.setEnabled(False)
+				self.gameEndAction.setEnabled(True)
 #				self.gameLoadAction1.setEnabled(False)
 #				self.gameLoadAction2.setEnabled(False)
-		#else:
- 		 #  self.gameStartAction.setEnabled(False)
- 		  # self.gameEndAction.setEnabled(False)
+		else:
+			self.gameStartAction.setEnabled(False)
+			self.gameEndAction.setEnabled(False)
  #		   self.gameLoadAction1.setEnabled(True)
  #		   self.gameLoadAction2.setEnabled(True)
-		pass
+
 	#game operation slot
 	def startGame(self):
 		#for debug
-		if not self.loaded_ai:
-			self.loaded_ai.append(DEFAULT_SCILENT_AI)
-			self.loaded_ai.append(DEFAULT_SCILENT_AI)
-		if not self.loaded_map:
-			self.loaded_map = DEFAULT_MAP
-		if len(self.loaded_ai) == 1:
+		#if not self.loaded_ai:
+		#	self.loaded_ai.append(DEFAULT_SCILENT_AI)
+		#	self.loaded_ai.append(DEFAULT_SCILENT_AI)
+		#if not self.loaded_map:
+	#		self.loaded_map = DEFAULT_MAP
+	#	if len(self.loaded_ai) == 1:
 		 #加入默认的什么都不做ai
-			self.loaded_ai.append(DEFAULT_SCILENT_AI)
+	#		self.loaded_ai.append(DEFAULT_SCILENT_AI)
 		#开始这个线程开始交互
 		if len(self.loaded_ai) < 2 or not self.loaded_map:
 			return
@@ -253,7 +257,7 @@ class ai_debugger(QMainWindow):
 		self.connect(self.pltThread, SIGNAL("firstRecv"), self.on_firstRecv)
 		self.connect(self.pltThread, SIGNAL("rbRecv"), self.on_rbRecv)
 		self.connect(self.pltThread, SIGNAL("reRecv"), self.on_reRecv)
-		self.connect(self.pltThread, SIGNAL("gameWinner"), self.on_gameWinner)
+		self.connect(self.pltThread, SIGNAL("gameEnd"), self.on_gameWinner)
 		self.connect(self, SIGNAL("toShut()"), self.pltThread, SLOT("on_shut()"))
 		self.connect(self.pltThread, SIGNAL("finished()"), self.deletePlt)
 
@@ -271,7 +275,7 @@ class ai_debugger(QMainWindow):
 		#清空游戏缓存数据
 		#强制在游戏没有进行到胜利条件的时候结束游戏
 		if self.pltThread and self.pltThread.isRunning():
-			self.emit("toShut()")
+			self.emit(SIGNAL("toShut()"))
 		self.gameBegInfo = []
 		self.gameEndInfo = []
 		self.replayWindow.reset()
@@ -333,7 +337,13 @@ class ai_debugger(QMainWindow):
 		#需要其他特效再加
 
 	def reset(self):
-		pass
+		self.debugAction1.setChecked(False)
+		self.debugAction2.setChecked(False)
+		self.loaded_ai = []
+		self.loaded_map = ""
+		self.infoWidget.infoWidget_Game.setAiFileinfo(self.loaded_ai)
+		self.infoWidget.infoWidget_Game.setMapFileinfo(self.loaded_map)
+		self.updateUi()
 #为了同步窗口菜单和信息栏的关闭和打开
 	def synhide(self):
 		self.dockAction.setChecked(False)

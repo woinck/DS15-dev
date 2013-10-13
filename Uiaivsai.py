@@ -29,7 +29,7 @@ class AiThread(QThread):
 		except:
 			self.emit(SIGNAL("connectError()"))
 		else:
-			sio._sends(self.conn,(sio.AI_VS_AI, self.map ,[self.ai1, self.ai2]))
+			sio._sends(self.conn,(sio.AI_VS_AI, self.map ,[self.ai1, self.ai2],[False,False]))
 
 			mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)
 			try:

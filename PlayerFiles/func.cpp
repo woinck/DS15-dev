@@ -19,7 +19,7 @@ Position* move_range(int team_number, int move_id) { //搜索单位可移动范�
   int l = 1, a, i_x, i_y, t;
   short r;
  Position pos;
- if(self.kind != DRAGON_RIDER)
+ if(self.kind != AIRPLANE)
   {for(j = 0; j < SOLDIERS_NUMBER; j++)
      {if(info.soldier[j][1 - team_number].life > 0) {other_block[o] = info.soldier[j][1 - team_number].pos; o++;}
       if(info.soldier[j][team_number].life > 0 && j != move_id) {self_block[s] = info.soldier[j][team_number].pos; s++;}

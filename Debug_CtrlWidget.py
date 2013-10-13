@@ -77,9 +77,13 @@ class AiReplayWidget(QWidget):
 				return
 			if 0 <= new_round <= self.replayWidget.latestRound * 2 + self.replayWidget.latestStatus:
 				self.replayWidget.GoToRound(int(new_round / 2), new_round % 2)
+				if len(self.replayWidget.gameEndInfo) < self.replayWidget.nowRound + 1:
+					endI = None
+				else:
+					endI = self.replayWidget.gameEndInfo[self.replayWidget.nowRound]
 				self.emit(SIGNAL("goToRound"), self.replayWidget.nowRound, self.replayWidget.nowStatus, self.replayWidget.gameBegInfo[self.replayWidget.nowRound],
-									self.replayWidget.gameEndInfo[self.replayWidget.nowRound])
-				self.nowInfo.setText("%d", self.replayWidget.nowRound)
+									endI)
+				self.nowInfo.setText("%d" %self.replayWidget.nowRound)
 				if not self.isPaused:
 					if self.replayWidget.nowStatus:
 						self.ctrlSlider.setValue((self.replayWidget.nowRound + 1) * 2)
@@ -90,7 +94,7 @@ class AiReplayWidget(QWidget):
 							self.pauseButton.setChecked(True)
 			else:
 				self.replayWidget.GoToRound(self.replayWidget.latestRound, 0)
-				self.nowInfo.setText("%d", self.replayWidget.nowRound)
+				self.nowInfo.setText("%d" %self.replayWidget.nowRound)
 				self.ctrlSlider.setValue(self.replayWidget.latestRound * 2 + self.replayWidget.latestStatus)
 				self.pauseButton.setChecked(True)
 				
@@ -108,7 +112,7 @@ class AiReplayWidget(QWidget):
 
 	def updateEnd(self, cmdInfo, endInfo):
 		self.replayWidget.UpdateEndData(cmdInfo, endInfo)
-		if not self.isPaused:
+		if not self.isPaused and len(self.replayWidget.gameEndInfo) == 1:
 			self.pauseGame(False)
 
 	def pauseGame(self, pause):
@@ -117,13 +121,13 @@ class AiReplayWidget(QWidget):
 			self.replayWidget.GoToRound(self.replayWidget.nowRound, self.replayWidget.nowStatus)
 		else:
 			if self.replayWidget.nowStatus:
-				self.setNowRound((self.replayWidget.nowRound+1) * 2)
+				self.ctrlSlider.setValue((self.replayWidget.nowRound+1) * 2)
 			else:
-				if okToPlay():
+				if self.okToPlay():
 					self.replayWidget.Play()
 					
 	def on_aniF(self):
-		self.setNowRound((self.replayWidget.nowRound + 1) * 2)
+		self.ctrlSlider.setValue((self.replayWidget.nowRound + 1) * 2)
 		if not self.isPaused:
 			self.replayWidget.Play()
 			

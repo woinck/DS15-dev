@@ -32,6 +32,7 @@ def attack_id(whole_map, base, unit_id, move_area):
 					if basic.TURRET_RANGE[0]<=main.distance(base[1-team][j].position, i)<=basic.TURRET_RANGE[1]:
 						result += [j]
 	return result
+
 def skill_id(whole_map, base, unit_id, move_area):
 	team = unit_id[0]
 	self = base[team][unit_id[1]]
@@ -51,6 +52,7 @@ def find_position(whole_map, base, unit_id, target_id, distance, move):
 		if main.distance(i, target_position) in distance:
 			return i
 	return (-1,-1)
+
 def AI(whole_map, Info):
 	team=Info.id[0]
 	unit=Info.id[1]
@@ -67,6 +69,7 @@ def AI(whole_map, Info):
 				target_id = i; order = 2
 				break
 	for i in attack_list:
+
 		target = Info.base[1-team][i]
 		damage = int((self.strength - target.defence) * basic.ATTACK_EFFECT[self.kind][target.kind])
 		if target.life - damage <= 0:
@@ -80,6 +83,7 @@ def AI(whole_map, Info):
 		if target.life > kill_life:
 			target_id = i
 			kill_life = target.life 
+
 	if target_id==-1:
 		if self.kind == basic.HERO_3:
 			for i in skill_id(whole_map, Info.base, Info.id, move):

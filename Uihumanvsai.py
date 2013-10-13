@@ -57,7 +57,7 @@ class AiThread(QThread):
 			self.conn.close()
 			raise ConnectionError()
 		else:
-			sio._sends(self.conn,(sio.PLAYER_VS_AI, unicode(gameMapPath),(unicode(gameAIPath),None)))
+			sio._sends(self.conn,(sio.PLAYER_VS_AI, unicode(gameMapPath),(unicode(gameAIPath),None),[False,False]))
 	def isStopped(self):
 		try:
 			self.mutex.lock()
@@ -78,10 +78,10 @@ class AiThread(QThread):
 		self.exit(0)
 		
 	def run(self):
-		temp = sio._recvs(self.conn)#add base info
+		temp = sio._recvs(self.conn)
 		self.emit(SIGNAL("tmpRecv()"))
 
-		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)#add base info
+		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)
 		frInfo = sio._recvs(self.conn)
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
 		try:

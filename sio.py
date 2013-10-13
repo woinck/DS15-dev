@@ -99,17 +99,17 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		
 		for i in range(soldier_number[0]):
 				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
-						   +str(soldier[0][i].strength)+' '+str(soldier[0][i].agility)+' '
+						   +str(soldier[0][i].strength)+' '
 						   +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
-						   +str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '
+						   +str(soldier[0][i].attack_range[0])+' '
 						   +str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '
 						   +str(soldier[0][i].position[0])+' '+str(soldier[0][i].position[1]) )
 				conn.recv(3)
 		for i in range(soldier_number[1]):
 				conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
-						   +str(soldier[1][i].strength)+' '+str(soldier[1][i].agility)+' '
+						   +str(soldier[1][i].strength)+' '
 						   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
-						   +str(soldier[1][i].move_speed)+' '+str(soldier[1][i].attack_range[0])+' '
+						   +str(soldier[1][i].attack_range[0])+' '
 						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
 						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
 				conn.recv(3)
@@ -122,36 +122,37 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 				conn.recv(3)
 		for i in range(soldier_number[0]):
 				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
-						   +str(soldier[0][i].strength)+' '+str(soldier[0][i].agility)+' '
+						   +str(soldier[0][i].strength)+' '
 						   +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
-						   +str(soldier[0][i].move_speed)+' '+str(soldier[0][i].attack_range[0])+' '
+						   +' '+str(soldier[0][i].attack_range[0])+' '
 						   +str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '
 						   +str(soldier[0][i].position[0])+' '+str(soldier[0][i].position[1]) )
 				conn.recv(3)
 		for i in range(soldier_number[1]):
 				conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
-						   +str(soldier[1][i].strength)+' '+str(soldier[1][i].agility)+' '
+						   +str(soldier[1][i].strength)+' '
 						   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
-						   +str(soldier[1][i].move_speed)+' '+str(soldier[1][i].attack_range[0])+' '
+						   +str(soldier[1][i].attack_range[0])+' '
 						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
 						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
 				conn.recv(3)
 
 def _cpp_recvs_begin(conn):
 	result = []
-	recvbuf = conn.recv(20)
+	recvbuf = conn.recv(40)
+	print 'recvbuf',recvbuf
 	conn.send('ok')
 	result.append(recvbuf)
-	recvbuf = conn.recv(1)
+	recvbuf = conn.recv(10)
+	print 'recvbuf',recvbuf
 	result.append(int(recvbuf))
 	return result
 				
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
-	recvbuf = conn.recv(100)
+	recvbuf = conn.recv(10)
 	print recvbuf
 	rbuf = recvbuf.split()
-	print rbuf
 	order = int(rbuf[0])
 	target_id = int(rbuf[1])
 	move = (int(rbuf[2]), int(rbuf[3]))
