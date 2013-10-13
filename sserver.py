@@ -15,12 +15,10 @@ def _SocketConnect(host,port,connName,list = 1):
 		
 	#设定AI连接最大时间
 	if connName == 'AI':
-		print 'waiting ai'
 		if sio.DEBUG_MODE:
 			serv.settimeout(None)
 		else:
 			serv.settimeout(sio.AI_CONNECT_TIMEOUT)
-		print '\n',
 	else:
 		serv.settimeout(None)
 	serv.listen(list)
@@ -66,7 +64,6 @@ class Sui(threading.Thread):
 			if sio.DEBUG_MODE or gp.AI_Debug[num]:
 				return None
 			else:
-				print 'ai running'
 				return sio.Prog_Run(AIPath,True)
 	def run(self):
 		global gp
@@ -164,6 +161,8 @@ class Sui(threading.Thread):
 				if gp.rProcess != sio.REINFO_SET:
 					gp.rProc.wait()
 				else:
+					gp.reInfo.timeused = (gp.cmdEnd - gp.cmdBegin) * 1000
+					
 					#发送回合信息
 					try:	
 						sio._sends(connUI,(gp.rCommand,gp.reInfo))
@@ -408,16 +407,17 @@ class Sai(threading.Thread):
 							sio._cpp_sends(connAI[gp.rbInfo.id[0]],gp.rbInfo.id[1],len(gp.rbInfo.temple),gp.rbInfo.temple,(len(gp.base[0]),len(gp.base[1])),gp.base,roundNum,tempScore)
 						else:
 							sio._sends(connAI[gp.rbInfo.id[0]],gp.rbInfo)
+						print 'gp.rbInfo sent to AI'
 					except sio.ConnException:
 						#AI连接错误，标记至connErr中
 						gp.aiConnErr[gp.rbInfo.id[0]] = True
 						
-					print 'gp.rbInfo sent to AI'
 					if gp.aiConnErr[gp.rbInfo.id[0]] == True:
 						gp.rCommand = basic.Command()
 					else:
 						try:
 							print 'prepare to receive cmd'
+							gp.cmdBegin = time.clock()
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
 								if gp.rCommand.order == 1:
@@ -426,8 +426,9 @@ class Sai(threading.Thread):
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							else:
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
-							print 'AI',gp.rbInfo.id[0],'\'s command:'
-							sio.cmdDisplay(gp.rCommand)
+							gp.cmdEnd = time.clock()
+							#print 'AI',gp.rbInfo.id[0],'\'s command:'
+							#sio.cmdDisplay(gp.rCommand)
 						except socket.timeout:
 							print 'fail to receive cmd, default will be used..'
 							gp.rCommand = basic.Command()
@@ -479,6 +480,8 @@ class gameParameter():
 		self.rbInfo = None
 		self.reInfo = None
 		self.rCommand = None
+		self.cmdBegin = 0
+		self.cmdEnd = 0
 
 		#设置进度标记
 		self.gProcess = sio.START

@@ -49,7 +49,6 @@ def available_spots(map_list, unit_list, source_num, move_target = (-1,-1)):
 			else:
 				a += [[(former_point[0][0], former_point[0][1]), former_point[1] + 1]]
 		a_spots += [a]
-	print "ddddddddddddddd",d_spots
 	a_spots += [[]]
 	if move_target in d_spots:
 		d_spots = []
