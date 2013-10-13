@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-import sio, socket, time, threading, os,subprocess
+import basic, sio, socket, time, threading, os, subprocess
 
 def _SocketConnect(host,port,connName,list = 1):
 	global gp

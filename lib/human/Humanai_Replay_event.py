@@ -126,7 +126,7 @@ class HumanReplay(QGraphicsView):
 		if not self.run:
 			return
 		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
-		print "now move unit:::::::::::", self.nowMoveUnit.obj.position, self.gameBegInfo[-1].base[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]].position
+		#print "now move unit:::::::::::", self.nowMoveUnit.obj.position, self.gameBegInfo[-1].base[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]].position
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
 		self.nowMoveUnit.setNowMove(True)
@@ -434,7 +434,7 @@ class HumanReplay(QGraphicsView):
 		TIME_PER_GRID = 500
 
 		steps = len(route)
-		print "route::::::::::::::::", route
+		#print "route::::::::::::::::", route
 		movAnim = QPropertyAnimation(move_unit, "pos")
 		movAnim.setDuration(steps * TIME_PER_GRID)
 		movAnim.setStartValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))

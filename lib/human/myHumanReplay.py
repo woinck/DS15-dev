@@ -5,9 +5,9 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import basic
 import qrc_resource
-UNIT_WIDTH = 26
-UNIT_HEIGHT = 26
-EDGE_WIDTH = 4
+UNIT_WIDTH = 50
+UNIT_HEIGHT = 50
+EDGE_WIDTH = 5
 EXTRA_WIDTH = 3
 MAX_OPACITY = 0.8
 
