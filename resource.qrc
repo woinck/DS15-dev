@@ -1,0 +1,54 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+	<file alias="cursor.png">image/ui/cursor.png</file>
+	
+    <file alias="mainWindow.png">image/ui/mainWindow.png</file>
+    <file alias="singleWindow.png">image/ui/singleWindow.png</file>
+
+    <file alias="singleGameButton0.png">image/singleGameButton0.png</file>
+	<file alias="singleGameButton1.png">image/singleGameButton1.png</file>
+	<file alias="exitGameButton0.png">image/exitGameButton0.png</file>
+	<file alias="exitGameButton1.png">image/exitGameButton1.png</file>
+	<file alias="webGameButton0.png">image/webGameButton0.png</file>
+	<file alias="webGameButton1.png">image/webGameButton1.png</file>
+	<file alias="teamButton0.png">image/teamButton0.png</file>
+	<file alias="teamButton1.png">image/teamButton1.png</file>
+	<file alias="websiteButton0.png">image/websiteButton0.png</file>
+	<file alias="websiteButton1.png">image/websiteButton1.png</file>
+	<file alias="aivsaiButton0.png">image/aivsaiButton0.png</file>
+	<file alias="aivsaiButton1.png">image/aivsaiButton1.png</file>
+	<file alias="playervsaiButton0.png">image/playervsaiButton0.png</file>
+	<file alias="playervsaiButton1.png">image/playervsaiButton1.png</file>
+	<file alias="mapeditButton0.png">image/mapeditButton0.png</file>
+	<file alias="mapeditButton1.png">image/mapeditButton1.png</file>
+	<file alias="levelmodeButton0.png">image/levelmodeButton0.png</file>
+	<file alias="levelmodeButton1.png">image/levelmodeButton1.png</file>
+	<file alias="return0.png">image/return0.png</file>
+	<file alias="return1.png">image/return1.png</file>
+	<file alias="returnPre0.png">image/returnPre0.png</file>
+	<file alias="returnPre1.png">image/returnPre1.png</file>
+	<file alias="replayButton0.png">image/replayButton0.png</file>
+	<file alias="replayButton1.png">image/replayButton1.png</file>
+	<file alias="start0.png">image/start0.png</file>
+	<file alias="start1.png">image/start1.png</file>
+	<file alias="openMap0.png">image/openMap0.png</file>
+	<file alias="openMap1.png">image/openMap1.png</file>
+	<file alias="openAI0.png">image/openAI0.png</file>
+	<file alias="openAI1.png">image/openAI1.png</file>
+	<file alias="exit0.png">image/exit0.png</file>
+	<file alias="exit1.png">image/exit1.png</file>
+	
+   <!--ai debugger-->
+   <file alias="gameStart.png">icons/gameStart.png</file>
+<file alias="gamePause.png">icons/gamePause.png</file>
+<file alias="gameEnd.png">icons/gameEnd.png</file>
+<file alias="loadAI.png">icons/loadAI.png</file>
+<file alias="loadMap.png">icons/loadMap.png</file>
+<file alias="debug_mode.png">icons/modeDebug.png</file>
+<file alias="reset.png">icons/reset.png</file>
+<file alias="icon.png">icons/icon.png</file>
+<file alias="debug_mode0.png">image/debug_mode0.png</file>
+	<file alias="debug_mode1.png">image/debug_mode1.png</file>
+
+  </qresource>
+</RCC>

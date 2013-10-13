@@ -87,7 +87,6 @@ def perparation(whole_map, base, score, map_temple):
 				if base[i][j].time == basic.HERO_3_UP_TIME:
 					base[i][j].time = 0
 					base[i][j].defence -= 1
-					base[i][j].speed -= 1
 					base[i][j].strength -= 1
 			#英雄3技能持续时间判断
 def calculation(command, base, whole_map, move_range, map_temple, score, unit_id):
@@ -98,6 +97,8 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 	i = unit_id[1]; j = unit_id[0]
 	attack_1 = -1; attack_2 = -1
 	route = [base[j][i].position]
+	#added by ning
+	trans = False
 	if move_position in move_range:
 		sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
 		route += available_spots(whole_map, base, unit_id, move_position)
@@ -105,21 +106,25 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 			whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))		
 		base[j][i].move(move_position)
 		if not sc:
-			whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
+			#added by ning
+			if isinstance(whole_map[move_position[0]][move_position[1]], basic.Map_Mirror):
+				trans = whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
+			else:
+				whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
 		for tp in map_temple:
 			if tp[0] == move_position:
 				tp[1] = 0
-	if order == 1 and w[0] == 1 - j:
-		print "dfdsafasf",i,j,w[1]
-		if distance(base[j][i].position, base[1 - j][w[1]].position) in base[j][i].attack_range:
-			attack_1 = base[j][i].attack(base, (1 - j, w[1]))
-		if base[1 - j][w[1]].life > 0 and distance(base[j][i].position, base[1 - j][w[1]].position) in base[1 - j][w[1]].attack_range:
-			attack_2 = base[1 - j][w[1]].attack(base, (j, i))
-		#攻击及反击
-	elif order == 2 and w[0] == j:
-		if distance(base[j][i].position, base[j][w[1]].position) == 1:
-			base[j][i].skill(base, (j,w[1]))
-			#使用技能
+		if order == 1 and w[0] == 1 - j:
+			if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
+				attack_1 = base[j][i].attack(base, (1 - j, w[1]))
+			if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
+				attack_2 = base[1 - j][w[1]].attack(base, (j, i))
+			#攻击及反击
+		elif order == 2 and w[0] == j:
+			if distance(base[j][i].position, base[j][w[1]].position) == 1:
+				base[j][i].skill(base, (j,w[1]))
+				#使用技能
+
 	for i in [0,1]:
 		over = True
 		for j in base[i]:
@@ -127,7 +132,8 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 				over = False
 		if over:
 			break   
-	return basic.Round_End_Info(base, route, (attack_1, attack_2), score, over)
+	return basic.Round_End_Info(base, route, (attack_1, attack_2), trans, score, over)
+	
 def end_score(score, base, turn):
 	'''结束后计算积分返回胜队，（-1表示平局）'''
 	if turn >= basic.TURN_MAX:

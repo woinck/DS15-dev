@@ -11,7 +11,7 @@ import sio,basic
 #import testdata#for test
 REPLAY_FILE_DIR = "."
 
-BUTTONPIC = ["noSound0", "playSound0", "open0", "pause0", "endPlay0", "rePlay0",
+BUTTONPIC = ["return0", "noSound0", "playSound0", "open0", "pause0", "endPlay0", "rePlay0",
 			 "playForward0", "playBackward0", "preStep0", "nextStep0"]
 
 class ReplayMap(QWidget, Ui_Replaymap):
@@ -21,15 +21,16 @@ class ReplayMap(QWidget, Ui_Replaymap):
 		self.setAutoFillBackground(True)
 		palette = QPalette()
 		palette.setBrush(QPalette.Window,
-                                 QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
-                                                                              Qt.IgnoreAspectRatio,
-                                                                              Qt.SmoothTransformation)))
+								 QBrush(QPixmap(":replay_mapback.png").scaled(self.size(),
+																			  Qt.IgnoreAspectRatio,
+																			  Qt.SmoothTransformation)))
 		self.setPalette(palette)
 
 		self.replayWidget = HumanReplay(scene)
 		self.replayLayout.addWidget(self.replayWidget)
 
 class Replayer(QWidget, Ui_Replayer):
+	willReturn = pyqtSignal()
 	def __init__(self, parent = None):
 		super(Replayer, self).__init__(parent)
 		self.setupUi(self)
@@ -53,26 +54,38 @@ class Replayer(QWidget, Ui_Replayer):
 		#	self.buttons[i].setStyleSheet("QPushButton{border-radius: 20px;}"
 		#									"QPushButton:pressed{border-style:inset;}"
 		#									"QPushButton:checked{border-style:inset;}")
-
-		self.noSoundButton.setStyleSheet("*{border-image: url(:noSound0.png);border:0;}")
-		self.soundButton.setStyleSheet("*{border-image: url(:playSound0.png);border:0;}")
+		self.returnButton.setStyleSheet("#returnButton{border-image: url(:return0.png);}"
+										"#returnButton:hover{border-image: url(:return1.png);}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.noSoundButton.setStyleSheet("#noSoundButton{border-image: url(:noSound0.png);border:0;}"
+		"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.soundButton.setStyleSheet("#soundButton{border-image: url(:playSound0.png);border:0;}"
+		"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
 										#"*:checked
-		self.loadFileButton.setStyleSheet("*{border-image: url(:open0.png);border:0;}"
-											"*:hover{border-image:url(:open1.png);border:0;}")
-		self.pauseButton.setStyleSheet("*{border-image: url(:pause0.png);border:0;}"
-											"*:checked{border-image:url(:start1.png);border:0;}")
-		self.endPlayButton.setStyleSheet("*{border-image: url(:endPlay0.png);border:0;}"
-										"*:hover{border-image: url(:endPlay1.png);border:0;}")
-		self.rePlayButton.setStyleSheet("*{border-image:url(:rePlay0.png);border:0;}"
-										"*:hover{border-image:url(:rePlay1.png);border:0;}")
-		self.playForwardButton.setStyleSheet("*{border-image:url(:playForward0.png);border:0;}"
-										"*:checked{border-image:url(:playForward1.png);border:0;}")
-		self.playBackwardButton.setStyleSheet("*{border-image:url(:playBackward0.png);border:0;}"
-										"*:checked{border-image:url(:playBackward1.png);border:0;}")
-		self.preStepButton.setStyleSheet("*{border-image:url(:preStep0.png);border:0;}"
-										"*:hover{border-image:url(:preStep1.png);border:0;}")
-		self.nextStepButton.setStyleSheet("*{border-image:url(:nextStep0.png); border:0;}"
-										"*:hover{border-image:url(:nextStep1.png);border:0;}")
+		self.loadFileButton.setStyleSheet("#loadFileButton{border-image: url(:open0.png);border:0;}"
+											"#loadFileButton:hover{border-image:url(:open1.png);border:0;}"
+											"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.pauseButton.setStyleSheet("#pauseButton{border-image: url(:pause0.png);border:0;}"
+											"#pauseButton:checked{border-image:url(:start1.png);border:0;}"
+											"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.endPlayButton.setStyleSheet("#endPlayButton{border-image: url(:endPlay0.png);border:0;}"
+										"#endPlayButton:hover{border-image: url(:endPlay1.png);border:0;}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.rePlayButton.setStyleSheet("#rePlayButton{border-image:url(:rePlay0.png);border:0;}"
+										"#rePlayButton:hover{border-image:url(:rePlay1.png);border:0;}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.playForwardButton.setStyleSheet("#playForwardButton{border-image:url(:playForward0.png);border:0;}"
+										"#playForwardButton:checked{border-image:url(:playForward1.png);border:0;}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.playBackwardButton.setStyleSheet("#playBackwardButton{border-image:url(:playBackward0.png);border:0;}"
+										"#playBackwardButton:checked{border-image:url(:playBackward1.png);border:0;}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.preStepButton.setStyleSheet("#preStepButton{border-image:url(:preStep0.png);border:0;}"
+										"#preStepButton:hover{border-image:url(:preStep1.png);border:0;}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.nextStepButton.setStyleSheet("#nextStepButton{border-image:url(:nextStep0.png); border:0;}"
+										"#nextStepButton:hover{border-image:url(:nextStep1.png);border:0;}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
 		#信息变量
 		self.isPaused = False
 		self.started = False
@@ -112,6 +125,11 @@ class Replayer(QWidget, Ui_Replayer):
 		self.playBackwardButton.setEnabled(self.started)
 
 	@pyqtSlot()
+	def on_returnButton_clicked(self):
+		self.on_endPlayButton_clicked()
+		self.willReturn.emit()
+
+	@pyqtSlot()
 	def on_loadFileButton_clicked(self):
 		fname = QFileDialog.getOpenFileName(self, QString.fromUtf8("加载回放文件"), REPLAY_FILE_DIR, "replay files(*.rep)")
    #	 print fname
@@ -123,6 +141,7 @@ class Replayer(QWidget, Ui_Replayer):
 			else:
 				self.fileInfo = fileInfo
 				self.repFileName = fname
+				self.infoWidget.setAiInfo(fileInfo[0][2])
 				#self.reloaded = True
 				self.updateUi()
 
@@ -132,6 +151,7 @@ class Replayer(QWidget, Ui_Replayer):
 		if self.started:
 			self.replayWidget.GoToRound(0, 0)
 			self.roundLabel.setText("Round 0")
+			self.infoWidget.setRoundInfo(0)
 			if not self.isPaused:
 				self.replayWidget.Play()
 		else:
@@ -147,6 +167,7 @@ class Replayer(QWidget, Ui_Replayer):
 			self.pauseButton.setChecked(False)
 			self.replayWidget.GoToRound(0, 0)
 			self.roundLabel.setText("Round 0")
+			self.infoWidget.setRoundInfo(0)
 			self.replayWidget.Play()
 			self.updateUi()
 
@@ -173,6 +194,7 @@ class Replayer(QWidget, Ui_Replayer):
 				try:
 					self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
 					self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
+					self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 				except:
 					self.emit(SIGNAL("toPause()"))
 					print "emit to pause"
@@ -186,9 +208,9 @@ class Replayer(QWidget, Ui_Replayer):
 		try:
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
 			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
+			self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 		except:
 			return
-		print self.isPaused
 		if not self.isPaused:
 			self.replayWidget.Play()
 			#self.pauseButton.setChecked(False)
@@ -199,6 +221,7 @@ class Replayer(QWidget, Ui_Replayer):
 		try:
 			self.replayWidget.GoToRound(self.replayWidget.nowRound -1 , 0)
 			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
+			self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 		except:
 			return
 		if not self.isPaused:
@@ -214,12 +237,14 @@ class Replayer(QWidget, Ui_Replayer):
 			self.forback_flag = False
 		if trigger:
 			self.BorF = 'f'
-			self.timer = self.startTimer(500)
+			self.timer = self.startTimer(200)
 		else:
 			self.killTimer(self.timer)
 			self.timer = None
+			print self.isPaused
 			if not self.isPaused:
-				self.pauseButton.setChecked(False)
+				#self.pauseButton.setChecked(False)
+				self.replayWidget.Play()
 
 	@pyqtSlot()
 	def on_playBackwardButton_toggled(self, trigger):
@@ -237,20 +262,23 @@ class Replayer(QWidget, Ui_Replayer):
 			self.killTimer(self.timer)
 			self.timer = None
 			if not self.isPaused:
-				self.pauseButton.setChecked(False)
+			#	self.pauseButton.setChecked(False)
+				self.replayWidget.Play()
 
 	def timerEvent(self, event):
 		if event.timerId() == self.timer:
-			 print "recv timer event!!!"#for test
-			 change = 1 if self.BorF == 'f' else -1
-			 try:
-				 self.replayWidget.GoToRound(self.replayWidget.nowRound + change, 0)
-				 self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
-			 except:
-				 if self.BorF == 'f':
-					 self.playForwardButton.setChecked(False)
-				 else:
-					 self.playBackwardButton.setChecked(False)
+			print "recv timer event!!!"#for test
+			change = 1 if self.BorF == 'f' else -1
+			try:
+				self.replayWidget.GoToRound(self.replayWidget.nowRound + change, 0)
+				self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
+				self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
+			except:
+				if self.BorF == 'f':
+					self.playForwardButton.setChecked(False)
+				else:
+					self.playBackwardButton.setChecked(False)
+				self.pauseButton.setChecked(True)
 		else:
 			QWidget.timerEvent(self, event)
 
@@ -260,6 +288,7 @@ class Replayer(QWidget, Ui_Replayer):
 			#print "call go to round on animEnd::",self.replayWidget.nowRound#for test
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
 			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
+			self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 		except:
 			self.pauseButton.setChecked(True)
 		else:

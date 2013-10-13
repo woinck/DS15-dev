@@ -9,13 +9,13 @@ from myHumanReplay import *
 import sys,copy,time
 import main
 from functools import partial
-from myGetRoute import getAttackRange
+from myGetRoute import getAttackRange,attackDis
 NumToMapType = {0:"平原",1:"山地",2:"森林",3:"屏障",4:"炮塔",
 				 5:"遗迹",6:"传送门"}
 NumToUnitType = {0:"剑士",1:"突击手",2:"狙击手",3:"战斗机",
-				4:"肉搏者", 5:"治疗师", 6:"HERO_1", 7:"HERO_2",
-				8:"HERO_3"}
-NumToTempleType = {1:"力量神符", 2:"敏捷神符", 3:"防御神符"}
+				4:"肉搏者", 5:"治疗师", 6:"狂战士", 7:"暗杀者",
+				8:"大法师"}
+NumToTempleType = {0:"无神符", 1:"力量神符", 2:"敏捷神符", 3:"防御神符"}
 class REPLAYERROR(Exception):
 	def __init__(self, value = ""):
 		self.value = value
@@ -55,7 +55,7 @@ class HumanReplay(QGraphicsView):
 		self.nowRound = 0
 		self.nowStatus = 0
 		self.iniMapInfo = None
-		self.latestStatus = 1
+		self.latestStatus = 0
 		self.latestRound = 0
 		self.nowMoveUnit = None
 		self.now_state = None
@@ -81,6 +81,7 @@ class HumanReplay(QGraphicsView):
 
 		self.gameBegInfo = []
 		self.gameEndInfo = []
+		self.templeList = None
 		#鼠标选定单位
 		self.focusUnit = MouseFocusUnit(0, 0)
 		self.scene.addItem(self.focusUnit)
@@ -124,9 +125,10 @@ class HumanReplay(QGraphicsView):
 	def GetCommand(self):
 		if not self.run:
 			return
-		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
+		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
+		#print "now move unit:::::::::::", self.nowMoveUnit.obj.position, self.gameBegInfo[-1].base[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]].position
 		self.nowMoveUnit.setNowMove(True)
 
 	#event handlers
@@ -171,7 +173,13 @@ class HumanReplay(QGraphicsView):
 					flag = True
 					#self.emit(SIGNAL("unitSelected"),it.obj)
 				elif isinstance(it, MapUnit) and hasattr(it.obj, "time"):
-					self.showLabelInfo(it.obj, pos, 0)
+					tp = 0
+					if isinstance(it.obj, basic.Map_Temple):
+						for j in self.templeList:
+							if j[0] == (it.corX, it.corY):
+								tp = j[1]
+								break
+					self.showLabelInfo(it.obj, pos,tp, 0)
 
 	def mousePressEvent(self, event):
 		if not self.run:
@@ -188,7 +196,13 @@ class HumanReplay(QGraphicsView):
 			if isinstance(it, SoldierUnit):
 				self.emit(SIGNAL("unitSelected"),it.obj)
 			elif isinstance(it, MapUnit):
-				self.emit(SIGNAL("mapSelected"), it.obj)
+				tp = 0
+				if isinstance(it.obj, basic.Map_Temple):
+					for j in self.templeList:
+						if j[0] == (it.corX, it.corY):
+							tp = j[1]
+							break
+				self.emit(SIGNAL("mapSelected"), it.obj,tp)
 				item = it
 				flag = True
 		if event.button() == Qt.RightButton:
@@ -241,14 +255,14 @@ class HumanReplay(QGraphicsView):
 		#攻击
 		if event.key() == Qt.Key_A:
 			if self.nowMoveUnit.obj.kind == basic.WIZARD:
-				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("法师不能攻击,请选择其他命令s或d"))
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("法师不能攻击\n请选择其他命令\nS:技能\nD:待机"))
 				return
 			self.Operation = 1
 			self.oprFinished.emit()
 		#skill
 		elif event.key() == Qt.Key_S:
 			if self.nowMoveUnit.obj.kind < 5 or self.nowMoveUnit.obj.kind == 7:
-				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("此单位不能使用技能，请选择其他命令a或d"))
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("此单位无主动技能\n请选择其他命令\nA:攻击\nD:待机"))
 				return
 			self.Operation = 2
 			self.oprFinished.emit()
@@ -275,6 +289,7 @@ class HumanReplay(QGraphicsView):
 				self.focusUnit.setPos(self.nowMoveUnit.corX, self.nowMoveUnit.corY)
 				self.move_range_list = self.gameBegInfo[self.latestRound].range
 				self.drawArrange(self.move_range_list,self.tmp_move_list)
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("点击地图上\n绿色半透明框\n覆盖的位置\n(可到达点)"))
 				#setCursor
 		elif now_state == self.State_Opr:
 			if isinstance(self.nowMoveUnit, SoldierUnit):
@@ -287,33 +302,38 @@ class HumanReplay(QGraphicsView):
 				if self.transPoint:
 					#self.moveToPos = self.transPoint
 					self.drawRoute([self.transPoint], self.tmp_route_list)
-				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("A：攻击，S：技能，D：待机，esc:撤销"))
+				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("A：攻击\nS：技能\nD：待机\nesc:撤销"))
 
 		elif now_state == self.State_Target:
+			tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 			if self.Operation == 1:
 				self.setCursor(QCursor(QPixmap(":attack_cursor.png").scaled(30,30),0,0))
-				tmp_point = self.transPoint if self.transPoint else self.moveToPos#debugging
 				turret_flag = self.nowMoveUnit.obj.kind == basic.ARCHER and self.iniMapInfo[tmp_point[0]][tmp_point[1]].kind == basic.TURRET
 				self.attack_range_list = getAttackRange(self.gameBegInfo[-1].base, self.gameBegInfo[-1].id, tmp_point, turret_flag)
 				if not self.attack_range_list:
-					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可攻击的对象,esc可返回上一阶段"))
-				self.drawArrange(self.attack_range_list,self.tmp_attack_list)
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可攻击\n的对象\nesc返回上一阶段"))
+				else:
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("点击红色框\n覆盖的单位\n(可攻击对象)"))
+				self.drawArrange(self.attack_range_list,self.tmp_attack_list,1)
 			elif self.Operation == 2:
 				self.setCursor(QCursor(QPixmap(":skill_cursor.png").scaled(30,30),0,0))
-				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene]
+				poses = [x.obj.position for x in self.UnitBase[self.nowMoveUnit.idNum[0]] if x.scene() == self.scene and x != self.nowMoveUnit \
+							and attackDis(x.obj.position, tmp_point) == 1]
 				if not poses:
-					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可施用技能的对象,esc可返回上一阶段"))
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("没有可施用\n技能的对象\nesc返回上一阶段"))
+				else:
+					self.emit(SIGNAL("errorOperation"), QString.fromUtf8("点击蓝色框\n覆盖的单位\n(可施用技能对象)"))
 				self.attack_range_list = poses
-				self.drawArrange(poses, self.tmp_attack_list)
+				self.drawArrange(poses, self.tmp_attack_list, 2)
 
 
 	def on_Exited(self):
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 		self.nowMoveUnit.setNowMove(False)
 
-	def drawArrange(self, arrange_list,list_):
+	def drawArrange(self, arrange_list,list_, kind_ind = 0):
 		for pos in arrange_list:
-			ind_unit = ArrangeIndUnit(pos[0], pos[1])
+			ind_unit = ArrangeIndUnit(pos[0], pos[1], kind_ind)
 			self.scene.addItem(ind_unit)
 			ind_unit.setPos(pos[0],pos[1])
 			list_.append(ind_unit)
@@ -374,6 +394,7 @@ class HumanReplay(QGraphicsView):
 
 	def Initialize(self, begInfo,frInfo):
 		self.setMap(begInfo.map)
+		self.templeList = frInfo.temple
 		self.iniMapInfo = begInfo.map
 		self.setSoldier(begInfo.base)
 		self.latestStatus = self.latestRound = 0
@@ -413,7 +434,7 @@ class HumanReplay(QGraphicsView):
 		TIME_PER_GRID = 500
 
 		steps = len(route)
-		print "route::::::::::::::::", route
+		#print "route::::::::::::::::", route
 		movAnim = QPropertyAnimation(move_unit, "pos")
 		movAnim.setDuration(steps * TIME_PER_GRID)
 		movAnim.setStartValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))
@@ -616,7 +637,7 @@ class HumanReplay(QGraphicsView):
 		ani.setEndValue(0)
 		anim.addAnimation(ani)
 
-		text = "某某光环" if kind == 8 else "回复技能"
+		text = "光环" if kind == 8 else "治疗"
 		kind_ind = EffectIndUnit(QString.fromUtf8(text))
 		self.scene.addItem(kind_ind)
 		kind_ind.setOpacity(0)
@@ -666,6 +687,7 @@ class HumanReplay(QGraphicsView):
 
 		unit_id = self.gameBegInfo[self.nowRound].id
 		unit_move = self.UnitBase[unit_id[0]][unit_id[1]]
+		unit_move.setNowMove(True)
 		cmd = self.gameEndInfo[self.nowRound][0]
 		endInfo = self.gameEndInfo[self.nowRound][1]
 		self.animation = QSequentialAnimationGroup()
@@ -677,7 +699,8 @@ class HumanReplay(QGraphicsView):
 		ani = QPauseAnimation(200)
 		self.animation.addAnimation(ani)
 
-		if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:
+		#if cmd.move != endInfo.base[unit_id[0]][unit_id[1]].position:如果ai错误命令就不太对
+		if endInfo.trans:
 			ani, item = self.transAnimation(unit_move, cmd.move, endInfo.base[unit_id[0]][unit_id[1]].position)
 			self.animation.addAnimation(ani)
 			self.animationItem.extend(item)
@@ -708,20 +731,29 @@ class HumanReplay(QGraphicsView):
 					anim, item = self.dieAnimation(unit_id)
 					self.animationItem.extend(item)
 					self.animation.addAnimation(anim)
-		#skill
+		#skill加入技能是否成功判断
 		elif cmd.order == 2:
-			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7:
-				anim, item = self.skillAnimation(unit_move, cmd.target, unit_target.obj.position) 
-				self.animation.addAnimation(anim)
-				self.animationItem.extend(item)
+			if unit_move.obj.kind >= 5 and unit_move.obj.kind != 7 and attackDis(self.gameEndInfo[self.nowRound][1].base[cmd.target[0]][cmd.target[1]].position, \
+				self.gameEndInfo[self.nowRound][1].base[unit_id[0]][unit_id[1]].position) == 1:
+				if unit_move.obj.kind == 8 and self.gameBegInfo[self.nowRound].base[cmd.target[0]][cmd.target[1]].strength == \
+					self.gameEndInfo[self.nowRound][1].base[cmd.target[0]][cmd.target[1]].strength:
+					pass
+				else:
+					anim, item = self.skillAnimation(unit_move, cmd.target, (unit_target.corX, unit_target.corY)) 
+					self.animation.addAnimation(anim)
+					self.animationItem.extend(item)
 
 		#待机只暂停0.2秒
 		self.animation.addAnimation(QPauseAnimation(200))
 		self.connect(self.animation, SIGNAL("finished()"), self.moveAnimEnd)
 		self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
+		self.connect(self.animation, SIGNAL("finished()"), partial(self.nothing, unit_move))
 		#self.connect(self.animation, SIGNAL("finished()"), self.__test)
 		#self.connect(self.animation, SIGNAL("finished()"), self.TerminateAni)	
 		self.animation.start()
+
+	def nothing(self, unit):
+		unit.setNowMove(False)
 
 	#展示round_, status的场面
 	def GoToRound(self, round_, status):
@@ -734,37 +766,36 @@ class HumanReplay(QGraphicsView):
 		self.nowStatus = status
 
 		#self.setMap(self.getMap(round_, status))
-
+		self.templeList = self.gameBegInfo[round_].temple
 		if status:
 			self.setSoldier(self.gameEndInfo[round_][1].base)
 		else:
 
 			self.setSoldier(self.gameBegInfo[round_].base)
 
-	def showLabelInfo(self, item, pos, type = 1):
+	def showLabelInfo(self, item, pos, tp = 0, type = 1):
 		if type:
 			cd = basic.HERO_3_UP_TIME - item.time if item.time != 0 else QString.fromUtf8("无加成")
-			self.InfoLabel.setText(QString.fromUtf8("  类型:%1 \n  生命:%2 \n  攻击:%3 \n  敏捷:%4 \n  防御:%5 \n  加成CD:%6 ")\
+			self.InfoLabel.setText(QString.fromUtf8("  类型:%1 \n  生命:%2 \n  攻击:%3 \n  防御:%4 \n  加成CD:%5 ")\
 													.arg(QString.fromUtf8(NumToUnitType[item.kind]))
 													.arg(item.life)
 													.arg(item.strength)
-													.arg(item.agility)
+													#.arg(item.agility)
 													.arg(item.defence)
 													.arg(cd))
 			
 		else:
 			if isinstance(item, basic.Map_Turret):
-				self.InfoLabel.setText(QString.fromUtf8("  类型:%1 \n  分值:%2 \n  冷却:%3 ")
+				self.InfoLabel.setText(QString.fromUtf8("  类型:%1 \n  分值:%2 \n  停留时间:%3 ")
 										#.arg(QString.fromUtf8(NumToMapType[item.kind]))
 										.arg(QString.fromUtf8("炮塔"))
 										.arg(item.score)
 										.arg(item.time))
 			else:
-				cd = basic.TEMPLE_UP_TIME - item.time if (basic.TEMPLE_UP_TIME - item.time) > 0 else 0
-				self.InfoLabel.setText(QString.fromUtf8("  类型:神庙 \n  分值:%1 \n  冷却:%2 \n  神符种类：%3")
+				self.InfoLabel.setText(QString.fromUtf8("  类型:神庙 \n  分值:%1 \n  神符种类：%2")
 										.arg(item.score)
-										.arg(cd)
-										.arg(QString.fromUtf8(NumToTempleType[item.up])))
+									#	.arg(cd)
+										.arg(QString.fromUtf8(NumToTempleType[tp])))
 										
 
 		self.InfoLabel.move(pos)
@@ -807,7 +838,7 @@ class HumanReplay(QGraphicsView):
 		self.route_ind_list = []
 		self.move_range_list = []
 		self.attack_range_list = []
-
+		self.templeList = None
 		self.resetUnit()
 		self.resetMap()
 		self.mapChangeInfo = []

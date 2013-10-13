@@ -5,8 +5,9 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import basic
 import qrc_resource
-UNIT_WIDTH = 26
-UNIT_HEIGHT = 26
+
+UNIT_WIDTH = 40
+UNIT_HEIGHT = 40
 EDGE_WIDTH = 4
 EXTRA_WIDTH = 3
 MAX_OPACITY = 0.8
@@ -54,9 +55,8 @@ class MapUnit(AbstractUnit):
 		super(MapUnit, self).__init__(x, y, parent)
 
 		self.obj = map_
-#QGraphicsItem reimplement paint() rather than paintEvent
+
 	def paint(self, painter, option, widget = None):
-#		painter = QPainter()
 		painter.save()
 		filename = ":" + FILE_MAP[self.obj.kind] + ".png"
 		image = QImage(filename).convertToFormat(QImage.Format_ARGB32)
@@ -93,7 +93,9 @@ class SoldierUnit(AbstractUnit):
 		if self.nowMove:
 			brush = QBrush(Qt.SolidPattern)
 			brush.setColor(QColor(180,250,0,120))
+			pen = QPen(Qt.NoPen)
 			painter.setBrush(brush)
+			painter.setPen(pen)
 			painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
 #		
 
@@ -186,15 +188,21 @@ class MirrorIndUnit(AbstractUnit):
 		painter.restore()
 
 class ArrangeIndUnit(AbstractUnit):
-	def __init__(self, x, y, parent = None):
+	def __init__(self, x, y, color, parent = None):
 		super(ArrangeIndUnit, self).__init__(x, y, parent)
 		self.setZValue(1)
+		self.color = color
 #		self.setOpacity(1)
 
 	def paint(self, painter, option, widget = None):
 		painter.save()
 		brush = QBrush(Qt.SolidPattern)
-		brush.setColor(QColor(0,200,200,80))
+		if self.color == 0:
+			brush.setColor(QColor(0,255,0, 80))
+		elif self.color == 2:
+			brush.setColor(QColor(0,200,200,80))
+		else:
+			brush.setColor(QColor(255, 0, 0, 80))
 		painter.setBrush(brush)
 		painter.drawRect(QRect(EDGE_WIDTH/2, EDGE_WIDTH/2, UNIT_WIDTH + EDGE_WIDTH/2, UNIT_HEIGHT + EDGE_WIDTH/2))
 		painter.restore()
@@ -217,7 +225,7 @@ class RouteIndUnit(AbstractUnit):
 
 
 		brush = QBrush(Qt.SolidPattern)
-		brush.setColor(QColor(200, 0, 0))
+		brush.setColor(QColor(138, 54, 15,200))
 		painter.setBrush(brush)
  #	   painter.setCompositionMode(QPainter.CompositionMode_Multiply)#QPainter.CompositionMode_Destination)#QPainter.CompositionMode_Multiply)
 		painter.drawEllipse(QPointF((UNIT_WIDTH + EDGE_WIDTH) / 2, (UNIT_HEIGHT + EDGE_WIDTH) / 2), 5, 5)
@@ -268,7 +276,7 @@ class DieIndUnit(AbstractUnit):
 		painter.save()
 #		painter.begin(self.scene().views()[0])
 		brush = QBrush(Qt.SolidPattern)
-		brush.setColor(QColor(200,0,0,80))
+		brush.setColor(QColor(255,0,0,140))
 		painter.setBrush(brush)
 		painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
 #		
