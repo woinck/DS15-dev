@@ -24,6 +24,7 @@
 		<file alias="barrier1.png">MapImage/barrier.png</file>
 		<file alias="temple1.png">MapImage/temple.png</file>
 		<file alias="turret1.png">MapImage/turret.png</file>
+		<file alias="mirror1.png">MapImage/mirror.png</file>
 		<file alias="mapback.png">image/mapback.png</file>
 		<file alias="LOGO.png">image/LOGO.png</file>
 		

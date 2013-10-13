@@ -28,8 +28,8 @@ class Mapeditor(QtGui.QMainWindow):
 		self.side = 0
 		self.mode = 0
 		self.filename = None
-		self.X = 15
-		self.Y = 15
+		self.X = 20
+		self.Y = 20
 		self.scene = QtGui.QGraphicsScene()
 		self.view = Ui_MapEditor(self.scene, self)
 		self.ui.viewLayout.addWidget(self.view)

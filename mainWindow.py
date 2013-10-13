@@ -123,14 +123,13 @@ class MainWindow(QGraphicsView):
 		self.scene1.addItem(self.teamWindow)
 
 		self.webWindow = QGraphicsProxyWidget()
-		self.webWidget = QWebView()
+		self.webWidget = WebWidget()
 		self.webWindow.setWidget(self.webWidget)
 		self.webWidget.resize(1024, 768)
 		self.webWindow.setX(0)
 		self.webWindow.setY(0)
 		self.webWindow.setZValue(0.5)
 		self.scene1.addItem(self.webWindow)
-		self.webWidget.load(QUrl("http://duishi.eekexie.org"))
 		
 		
 		#登陆
@@ -283,7 +282,10 @@ class MainWindow(QGraphicsView):
 		self.trans_MainToWeb = self.MainState.addTransition(self.beginWidget.websiteButton,SIGNAL("clicked()"),self.WebState)
 		self.ani_MainToWeb = MenuToWindowAnimation(self.singleWindow, self.webWindow)
 		self.trans_MainToWeb.addAnimation(self.ani_MainToWeb)
-#
+		
+		self.trans_WebToMain = self.WebState.addTransition(self.webWidget.returnButton, SIGNAL("clicked()"), self.MainState)
+		self.ani_WebToMain = WindowToMenuAnimation(self.webWindow, self.singleWindow)
+		self.trans_WebToMain.addAnimation(self.ani_WebToMain)
 
 #		self.trans_SingleToLogin = self.SingleState.addTransition(self.singleWidget.levelmode,SIGNAL("clicked()"),
  #					self.LoginState)
@@ -302,7 +304,8 @@ class MainWindow(QGraphicsView):
 		self.transitionList = [self.trans_MainToQuit, self.trans_MainToSingle, self.trans_SingleToMain,
 							   self.trans_SingleToAi, self.trans_AiToSingle, self.trans_MainToTeam, self.trans_TeamToMain,
 							   self.trans_SingleToHumanai, self.trans_HumanaiToSingle, self.trans_SingleToReplay,
-							   self.trans_ReplayToSingle,self.trans_MainToWeb, self.trans_SingleToMap, self.trans_MapToSingle]
+							   self.trans_ReplayToSingle,self.trans_MainToWeb, self.trans_SingleToMap, self.trans_MapToSingle,
+							   self.trans_WebToMain]
 		for transition in self.transitionList:
 			self.connect(transition, SIGNAL("triggered()"), self.showWindow)
 
@@ -363,12 +366,3 @@ class MainWindow(QGraphicsView):
 	def resizeEvent(self, event):
 		QGraphicsView.resizeEvent(self,event)
 		self.scene1.setSceneRect(self.scene1.itemsBoundingRect())
-
-	#for test
-	#def on_quit(self):
-		#for ani in [self.ani_SingleToMain, self.ani_MainToSingle, self.ani_AiToSingle, self.ani_SingleToAi, self.ani_ReplayToSingle,
-		#			self.ani_SingleToReplay, self.ani_SingleToHumanai, self.ani_HumanaiToSingle]:
-		#	ani.deleteLater()
-		#self.close()
-	#	QApplication.instance().quit()
-		

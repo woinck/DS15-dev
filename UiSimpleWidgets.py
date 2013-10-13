@@ -1,9 +1,10 @@
 # -*- coding:UTF-8 -*-
 import ui_beginMenu
 import ui_widgetssingle
-import ui_musicCheck
+import ui_musicCheck, ui_website
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+from PyQt4.QtWebKit import *
 import qrc_resource
 
 class BeginMenu(QWidget,ui_beginMenu.Ui_beginMenu):
@@ -64,9 +65,18 @@ class MusicCheck(QWidget, ui_musicCheck.Ui_musicCheck):
 
 #可不可以加外部应用程序链接
 
-
-class MapEditor(QWidget):
-	pass
+class WebWidget(QWidget, ui_website.Ui_webWidget):
+	def __init__(self, parent = None):
+		super(WebWidget, self).__init__(parent)
+		self.setupUi(self)
+		pal = self.palette()
+		pal.setBrush(QPalette.Window, QBrush(QColor(Qt.white)))
+		self.setPalette(pal)
+		self.webWidget = QWebView()
+		self.webWidget.load(QUrl("http://duishi.eekexie.org"))
+		self.verticalLayout.addWidget(self.webWidget)
+		self.returnButton.setStyleSheet("*{border-image: url(:return0.png);}"
+										"*:hover{border-image: url(:return1.png);}")
 
 class TestWidget(QWidget):
 	pass
