@@ -131,7 +131,7 @@ typedef enum cmd_order
 
 typedef struct command {  // 选手操作,每回合传给逻辑
     Position destination; // 要移动的目的地
-    Cmd_Order order;            // 0:待机，1:攻击，2:技能
+    Cmd_Order order;            // wait:待机，attack:攻击，skill:技能
     int target_id;        // 目标单位
 } Command;
 #endif

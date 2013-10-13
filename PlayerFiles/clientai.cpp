@@ -1,11 +1,10 @@
 #include<winsock2.h>
 #include<stdio.h>
 #include"basic.h"
-#include "Basic2.h"
 #pragma comment(lib,"WS2_32.lib")
 
 extern game_info info;
-extern wchar_t teamName[20];
+extern char teamName[20];
 extern int GetHeroType();
 
 Command cmd;  //选手操作,每回合传给逻辑
@@ -58,8 +57,17 @@ void main()
 	recv(client, recvbuf, 127, 0);
 	sscanf(recvbuf, "%d", &info.team_number);
 	send(client, "ok", 3, 0);
-	for(int i = 0; i < COORDINATE_X_MAX; i++)
-		for(int j = 0; j < COORDINATE_Y_MAX; j++)
+
+	for (int i = 0; i < 2; i++)
+	{
+	memset(recvbuf, 0, sizeof(char)*128);
+	recv(client, recvbuf, 127, 0);
+	sscanf(recvbuf, "%d", &info.map_size[i]);
+	send(client, "ok", 3, 0);
+	}
+
+	for(int i = 0; i < info.map_size[0]; i++)
+		for(int j = 0; j < info.map_size[1]; j++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);
 			recv(client, recvbuf, 127, 0);
@@ -86,7 +94,7 @@ void main()
 	get_soldier_info();
 	//读取初始信息
 
-	send(client, (char *) teamName, 40, 0);
+	send(client, (char *) teamName, sizeof teamName, 0);
 	recv(client, recvbuf, 3, 0);
 	int heroType = GetHeroType();
 	memset(sendbuf,0,sizeof(char)*128);
@@ -100,7 +108,6 @@ void main()
 		if(recvbuf[0] == '|') break; //以|作为游戏结束标志
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
 		send(client, "ok", 3, 0);
-		printf("444\n");
 		for(int i = 0; i < info.temple_number; i++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);
@@ -108,7 +115,6 @@ void main()
 			sscanf(recvbuf, "%d %d %d", &info.temple[i].pos.x, &info.temple[i].pos.y, &info.temple[i].state);
 			send(client, "ok", 3, 0);
 		}
-		printf("555\n");
 		get_soldier_info();
   		cmd = AI_main();
 		memset(sendbuf, 0, sizeof(char)*128);
