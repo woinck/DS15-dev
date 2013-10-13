@@ -12,6 +12,8 @@ import time#for test
 from Uihumanvsai import HumanvsAi
 #from Uimapeditor import MapEditor
 from replayer import Replayer
+#from PyQt4.Core
+from PyQt4.QtWebKit import *
 
 #styleSheet = """
 #QPushButton {background-image: url(image/button.jpg);}
@@ -120,7 +122,17 @@ class MainWindow(QGraphicsView):
 		self.teamWindow.setZValue(0.5)
 		self.scene1.addItem(self.teamWindow)
 
- 
+		self.webWindow = QGraphicsProxyWidget()
+		self.webWidget = QWebView()
+		self.webWindow.setWidget(self.webWidget)
+		self.webWidget.resize(1024, 768)
+		self.webWindow.setX(0)
+		self.webWindow.setY(0)
+		self.webWindow.setZValue(0.5)
+		self.scene1.addItem(self.webWindow)
+		self.webWidget.load(QUrl("http://duishi.eekexie.org"))
+		
+		
 		#登陆
 		self.LogInWindow =  QGraphicsProxyWidget()
 		self.logInwidget =  LogInWidget()
@@ -149,7 +161,7 @@ class MainWindow(QGraphicsView):
 		self.humanaiWindow.widget().close()
 		self.LogInWindow.widget().close()
 		self.testWindow.widget().close()
-
+		self.webWindow.widget().close()
 		self.windowList = [self.aiWindow, self.replayWindow, self.mapEditWindow,
 							self.humanaiWindow, self.LogInWindow, self.testWindow]
 		self.link = "http://duishi.eekexie.org/"
@@ -197,7 +209,7 @@ class MainWindow(QGraphicsView):
 		self.stateDict = {self.MainState:self.beginWindow, self.TeamState:self.teamWindow,
 						  self.ReplayState:self.replayWindow, self.MapState:self.mapEditWindow, self.AiState:self.aiWindow,
 						  self.HumanaiState:self.humanaiWindow, self.LogState:self.LogInWindow,
-						  self.SingleState:self.singleWindow}
+						  self.SingleState:self.singleWindow, self.WebState:self.webWindow}
 		#存下上一个state
 		self.preState = None
 
@@ -264,6 +276,10 @@ class MainWindow(QGraphicsView):
  											 self.SingleState)
 		self.ani_HumanaiToSingle = WindowToMenuAnimation(self.humanaiWindow, self.singleWindow)
 		self.trans_HumanaiToSingle.addAnimation(self.ani_HumanaiToSingle)
+		
+		self.trans_MainToWeb = self.MainState.addTransition(self.beginWidget.websiteButton,SIGNAL("clicked()"),self.WebState)
+		self.ani_MainToWeb = MenuToWindowAnimation(self.singleWindow, self.webWindow)
+		self.trans_MainToWeb.addAnimation(self.ani_MainToWeb)
 #
 
 #		self.trans_SingleToLogin = self.SingleState.addTransition(self.singleWidget.levelmode,SIGNAL("clicked()"),
@@ -277,13 +293,13 @@ class MainWindow(QGraphicsView):
 	 #				self.LogInToTest(QString))
 	 #   self.connect(self.testwidget.pushButton,SIGNAL("clicked()"),
 	  #			   self.TestToLogIn)
-		self.connect(self.beginWidget.websiteButton, SIGNAL("clicked()"), self.goToWebsite)
+		#self.connect(self.beginWidget.websiteButton, SIGNAL("clicked()"), self.goToWebsite)
 		for state in self.stateDict.keys():
 			self.connect(state, SIGNAL("entered()"), self.closeWindow)
 		self.transitionList = [self.trans_MainToQuit, self.trans_MainToSingle, self.trans_SingleToMain,
 							   self.trans_SingleToAi, self.trans_AiToSingle, self.trans_MainToTeam, self.trans_TeamToMain,
 							   self.trans_SingleToHumanai, self.trans_HumanaiToSingle, self.trans_SingleToReplay,
-							   self.trans_ReplayToSingle]
+							   self.trans_ReplayToSingle,self.trans_MainToWeb]
 		for transition in self.transitionList:
 			self.connect(transition, SIGNAL("triggered()"), self.showWindow)
 
