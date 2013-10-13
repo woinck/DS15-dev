@@ -5,6 +5,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import basic
 import qrc_resource
+
 UNIT_WIDTH = 50
 UNIT_HEIGHT = 50
 EDGE_WIDTH = 5
@@ -92,7 +93,9 @@ class SoldierUnit(AbstractUnit):
 		if self.nowMove:
 			brush = QBrush(Qt.SolidPattern)
 			brush.setColor(QColor(180,250,0,120))
+			pen = QPen(Qt.NoPen)
 			painter.setBrush(brush)
+			painter.setPen(pen)
 			painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
 #		
 

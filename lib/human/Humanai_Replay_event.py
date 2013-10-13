@@ -55,7 +55,7 @@ class HumanReplay(QGraphicsView):
 		self.nowRound = 0
 		self.nowStatus = 0
 		self.iniMapInfo = None
-		self.latestStatus = 1
+		self.latestStatus = 0
 		self.latestRound = 0
 		self.nowMoveUnit = None
 		self.now_state = None
@@ -125,10 +125,10 @@ class HumanReplay(QGraphicsView):
 	def GetCommand(self):
 		if not self.run:
 			return
-		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
-		#print "now move unit:::::::::::", self.nowMoveUnit.obj.position, self.gameBegInfo[-1].base[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]].position
 		#等待state已进入初始状态(started并已entered)
 		QTimer.singleShot(0, self, SIGNAL("commBeg()"))
+		self.nowMoveUnit = self.UnitBase[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]]
+		#print "now move unit:::::::::::", self.nowMoveUnit.obj.position, self.gameBegInfo[-1].base[self.gameBegInfo[-1].id[0]][self.gameBegInfo[-1].id[1]].position
 		self.nowMoveUnit.setNowMove(True)
 
 	#event handlers
@@ -687,6 +687,7 @@ class HumanReplay(QGraphicsView):
 
 		unit_id = self.gameBegInfo[self.nowRound].id
 		unit_move = self.UnitBase[unit_id[0]][unit_id[1]]
+		unit_move.setNowMove(True)
 		cmd = self.gameEndInfo[self.nowRound][0]
 		endInfo = self.gameEndInfo[self.nowRound][1]
 		self.animation = QSequentialAnimationGroup()
@@ -746,9 +747,13 @@ class HumanReplay(QGraphicsView):
 		self.animation.addAnimation(QPauseAnimation(200))
 		self.connect(self.animation, SIGNAL("finished()"), self.moveAnimEnd)
 		self.connect(self.animation, SIGNAL("finished()"), self.animation, SLOT("deleteLater()"))
+		self.connect(self.animation, SIGNAL("finished()"), partial(self.nothing, unit_move))
 		#self.connect(self.animation, SIGNAL("finished()"), self.__test)
 		#self.connect(self.animation, SIGNAL("finished()"), self.TerminateAni)	
 		self.animation.start()
+
+	def nothing(self, unit):
+		unit.setNowMove(False)
 
 	#展示round_, status的场面
 	def GoToRound(self, round_, status):

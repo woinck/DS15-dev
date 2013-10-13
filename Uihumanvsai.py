@@ -446,6 +446,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				#self.aiThread.terminate()
 				#self.aiThread.conn.shutdown(socket.SHUT_RDWR)
 				self.emit(SIGNAL("aiShut()"))
+				#self.aiThread.deleteLater()
+				#self.aiThread = None
 				#self.aiThread.exit()
 				#self.aiThread.wait()
 				#self.aiThread.stop()
@@ -459,6 +461,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 				#self.playThread.terminate()
 				#self.playThread.exit()
 				self.emit(SIGNAL("playShut()"))
+				#self.playThread.deleteLater()
+				#self.playThread = None
 				#self.playThread.stop()
 				#self.playThread.wait()
 			self.reset()
