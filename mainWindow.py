@@ -12,7 +12,6 @@ import time#for test
 from Uihumanvsai import HumanvsAi
 #from Uimapeditor import MapEditor
 from replayer import Replayer
-#from PyQt4.Core
 from PyQt4.QtWebKit import *
 
 #styleSheet = """
