@@ -54,7 +54,7 @@ class InfoWidget(QTabWidget):
 			self.infoWidget_Game.setTargetinfo(QString.fromUtf8("%d队%d号单位" %(cmd.target[0], cmd.target[1])))
 		self.infoWidget_Game.setEffectinfo(QString.fromUtf8("攻击%s，反击%s" %(NumToEffectType[endinfo.effect[0]],
 															  NumToEffectType[endinfo.effect[1]])))
-		self.infoWidget_Game.setTimeInfo("%d ms" %endinfo.timeused)
+		self.infoWidget_Game.setTimeinfo("%d ms" %endinfo.timeused)
 		#self.infoWidget_Game.setScoreinfo("%d : %d" %(endinfo.score[0],endinfo.score[1]))
 		self.beg_Flag = 0
 	def on_goToRound(self, _round, status, begInfo, endInfo):
