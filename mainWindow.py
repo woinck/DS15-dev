@@ -23,20 +23,19 @@ class MainWindow(QGraphicsView):
 	def __init__(self, parent = None):
 		super(MainWindow, self).__init__(parent)
 		
-
 		self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 		self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 		self.scene1 =  QGraphicsScene(self)
 		self.scene1.setSceneRect(self.scene1.itemsBoundingRect())
 		self.setScene(self.scene1)
 		self.setAttribute(Qt.WA_DeleteOnClose, True)
+
 		#音乐
 		self.sourceList =[]
 		self.output = Phonon.AudioOutput(Phonon.MusicCategory, self)
 		self.media = Phonon.MediaObject()
 		Phonon.createPath(self.media, self.output)
-		self.sourceList.append(Phonon.MediaSource(QString("music/music.mp3")))
-
+		self.sourceList.append(Phonon.MediaSource(QString("music/music.m4a")))
 
 		self.backWindow = QGraphicsProxyWidget()
 		self.backWidget = BackWidget()
@@ -55,6 +54,8 @@ class MainWindow(QGraphicsView):
 		self.beginWindow.setZValue(0.5)
 		self.scene1.addItem(self.beginWindow)
 
+
+		
 		#设置音乐按键
 		self.musicWindow =  QGraphicsProxyWidget()
 		self.musicWidget =  MusicCheck()
@@ -165,6 +166,7 @@ class MainWindow(QGraphicsView):
 		self.windowList = [self.aiWindow, self.replayWindow, self.mapEditWindow,
 							self.humanaiWindow, self.LogInWindow, self.testWindow]
 		self.link = "http://duishi.eekexie.org/"
+
 #		self.menuList = [beginWindow, singleWindow]
 
 #	self.connect(self.singleWidget.ui.replay,SIGNAL("clicked()"),self.replayWidget.GoInto)
@@ -312,7 +314,6 @@ class MainWindow(QGraphicsView):
 
 		self.stateMachine.setInitialState(self.MainState)
 		self.stateMachine.start()
-
 
 	def closeWindow(self):
 		sender = self.sender()
