@@ -792,7 +792,6 @@ class HumanReplay(QGraphicsView):
 										.arg(item.score)
 										.arg(item.time))
 			else:
-				#cd = basic.TEMPLE_UP_TIME - item.time if (basic.TEMPLE_UP_TIME - item.time) > 0 else 0
 				self.InfoLabel.setText(QString.fromUtf8("  类型:神庙 \n  分值:%1 \n  神符种类：%2")
 										.arg(item.score)
 									#	.arg(cd)

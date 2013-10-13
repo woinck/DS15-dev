@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_humanvsai.ui'
 #
-# Created: Sun Oct 13 19:36:03 2013
+# Created: Sun Oct 13 20:42:33 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -191,5 +191,5 @@ class Ui_HumanvsAi(object):
         self.label.setText(_translate("HumanvsAi", "AI", None))
         self.roundLabel.setText(_translate("HumanvsAi", "Round 0", None))
         self.exitButton.setToolTip(_translate("HumanvsAi", "中止游戏", None))
-        self.debugButton.setToolTip(_translate("HumanvsAi", "操作帮助", None))
+        self.debugButton.setToolTip(_translate("HumanvsAi", "调试模式", None))
 

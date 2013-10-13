@@ -296,7 +296,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.errorLabel.setStyleSheet("#errorLabel{border-image: url(:error_label.png);color: rgb(255,97,0);border-radius:5;}")
 		self.debugButton.setStyleSheet("#debugButton{border-image: url(:debug_mode0.png);border:0;}"
 										"#debugButton:checked{border-image: url(:debug_mode1.png); border-style:inset;}"
-										"#debugButton:hover{border-image: url(:debug_mode1.png);border:0;}")
+										"#debugButton:hover{border-image: url(:debug_mode1.png);border:0;}"
+										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
 		self.info_ai.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;}")
 		self.info_map.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;	}")
 		self.roundLabel.setStyleSheet("*{border-image: url(:roundLabel.png);}")

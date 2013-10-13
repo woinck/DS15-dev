@@ -441,7 +441,7 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>操作帮助</string>
+     <string>调试模式</string>
     </property>
     <property name="text">
      <string/>
