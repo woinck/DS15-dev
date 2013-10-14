@@ -310,6 +310,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.Able_To_Play = True
 		self.winner = None
 		self.lastRound = -1
+		self.aiThread = None
+		self.playThread = None
 		self.sTimer = QTimer(self)
 		self.sTimer.setInterval(6000)
 		self.sTimer.setSingleShot(True)
@@ -348,7 +350,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	@pyqtSlot()
 	def on_aiButton_clicked(self):
 		filename = QFileDialog.getOpenFileName(self, _frUtf("载入ai文件"), AI_DIR,
-											   "ai files(*.exe)")
+											   "ai files(*.exe;*.py)")
 		if filename:
 			self.aiPath = filename
 			self.info_ai.setText(filename)

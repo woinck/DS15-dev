@@ -237,8 +237,11 @@ class Slogic(threading.Thread):
 			if gp.gProcess < sio.HERO_TYPE_SET:
 				gp.gProc.wait()
 			else:
-				for i in range(2):
-					gp.base[i][0].kind = gp.heroType[i]
+				#for i in range(2):
+				#	gp.base[i][0].kind = gp.heroType[i]
+				for j in gp.base:
+					for i in j:
+						print i.kind
 				sio._sends(connLogic,basic.Begin_Info(gp.mapInfo,gp.base,gp.heroType))
 				gp.gProc.release()
 				break
@@ -359,8 +362,8 @@ class Sai(threading.Thread):
 						gp.aiInfo.append('Player'+str(i))
 						gp.heroType.append(6)
 						
-				for i in range(2):
-					gp.base[i][0].kind=gp.heroType[i]
+				#for i in range(2):
+				#	gp.base[i][0].kind=gp.heroType[i]
 				#调节游戏进度标记
 				gp.gProcess = sio.HERO_TYPE_SET
 				#print 'gp.heroType set'#for test

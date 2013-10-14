@@ -155,7 +155,6 @@ class HumanReplay(QGraphicsView):
 			self.tmpMouseUnit = None	
 		self.mouseUnit.setPos(item.corX, item.corY)
 		if isinstance(item.obj, basic.Map_Mirror):
-			print "hdsafadfasdf"#for test
 			self.tmpMouseUnit = MirrorIndUnit(0,0)
 			self.scene.addItem(self.tmpMouseUnit)
 			self.tmpMouseUnit.setPos(item.obj.out)
@@ -296,11 +295,9 @@ class HumanReplay(QGraphicsView):
 				self.route_ind_list = main.available_spots(self.getMap(self.latestRound, 0), self.gameBegInfo[-1].base, self.gameBegInfo[-1].id,self.moveToPos)#改成逻辑的函数
 				if not self.route_ind_list:
 					self.route_ind_list = [self.nowMoveUnit.obj.position]
-				#print "route_int_list:::::::::::", self.route_ind_list#for test
 				self.drawRoute(self.route_ind_list,self.tmp_route_list)
 				#镜子
 				if self.transPoint:
-					#self.moveToPos = self.transPoint
 					self.drawRoute([self.transPoint], self.tmp_route_list)
 				self.emit(SIGNAL("errorOperation"), QString.fromUtf8("A：攻击\nS：技能\nD：待机\nesc:撤销"))
 
@@ -434,7 +431,6 @@ class HumanReplay(QGraphicsView):
 		TIME_PER_GRID = 500
 
 		steps = len(route)
-		#print "route::::::::::::::::", route
 		movAnim = QPropertyAnimation(move_unit, "pos")
 		movAnim.setDuration(steps * TIME_PER_GRID)
 		movAnim.setStartValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))

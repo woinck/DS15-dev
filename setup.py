@@ -15,9 +15,9 @@ py2exe_options = {
 		"bundle_files": 1,
 		}
  
-setup(console=["runMain.py", "Sample_AI.py","Uihumanvsai.py","sclientlogic.py","sserver.py","replayer.py", "ai_debugger.py"],
+setup(console=["Mirror.py", "sclientlogic.py","sserver.py", "ai_debugger.py"],
 	windows=[{"script": "ai_debugger.py", "icon_resources":[(42, "image\\aidebugger.ico")]},
-	{"script":"runMain.py", "icon_resources":[(1, "image\\mirror.ico")]}], 
+	{"script":"Mirror.py", "icon_resources":[(1, "image\\mirror.ico")]}], 
 	#"icon_resources": [(1, "myicon.ico")]}],#,{"script":"replayer.py"}],
 	options={'py2exe': py2exe_options},
 	data_files=[#("lib\\human\\image",   
