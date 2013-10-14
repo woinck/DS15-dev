@@ -84,6 +84,7 @@ class AiThread(QThread):
 
 		mapInfo,baseInfo,aiInfo = sio._recvs(self.conn)
 		frInfo = sio._recvs(self.conn)
+
 		self.emit(SIGNAL("firstRecv"),mapInfo, frInfo, aiInfo, baseInfo)
 		try:
 			rCommand, reInfo = sio._recvs(self.conn)

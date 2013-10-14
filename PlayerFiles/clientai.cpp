@@ -34,7 +34,7 @@ void get_soldier_info()
 	}
 } //用于每回合更新双方单位信息
 
-void main()
+int main()
 {
 	WORD wVersionRequired;
 	WSADATA wsaData;
@@ -42,7 +42,7 @@ void main()
 	if ( WSAStartup(wVersionRequired, &wsaData) != 0 )
 	{
 		printf("The version required is not found!/n");
-		return;
+		return 1;
 	}
 	client = socket(AF_INET, SOCK_STREAM, 0);
 	SOCKADDR_IN cliaddr;
@@ -124,5 +124,6 @@ void main()
 
 	closesocket(client);
 	WSACleanup();
+	return 0;
 }
 
