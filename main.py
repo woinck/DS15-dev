@@ -115,6 +115,7 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 			if tp[0] == move_position:
 				tp[1] = 0
 		if order != 0 and w[1] >= len(base[w[0]]):
+
 			order == 0
 		if order == 1 and w[0] == 1 - j:
 			if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
