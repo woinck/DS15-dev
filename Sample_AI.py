@@ -54,6 +54,7 @@ def find_position(whole_map, base, unit_id, target_id, distance, move):
 	return (-1,-1)
 
 def AI(whole_map, Info):
+	result = basic.Command(0,(0,0),(0,0))
 	team=Info.id[0]
 	unit=Info.id[1]
 	self=Info.base[team][unit]
@@ -74,9 +75,10 @@ def AI(whole_map, Info):
 		damage = int((self.strength - target.defence) * basic.ATTACK_EFFECT[self.kind][target.kind])
 		if target.life - damage <= 0:
 			kill += [i]
-		if most_damage < damage and (int((target.strength - self.defence) * basic.ATTACK_EFFECT[target.kind][self.kind])<self.life or target.attack_range != self.attack_range):
-			most_damage = damage
-			target_id = i
+		if target.kind!=basic.WIZARD:
+			if most_damage < damage and (int((target.strength - self.defence) * basic.ATTACK_EFFECT[target.kind][self.kind])<self.life or target.attack_range != self.attack_range):
+				most_damage = damage
+				target_id = i
 	kill_life = 0
 	for i in kill:
 		target = Info.base[1-team][i]

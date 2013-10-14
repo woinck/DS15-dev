@@ -351,7 +351,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 	@pyqtSlot()
 	def on_aiButton_clicked(self):
 		filename = QFileDialog.getOpenFileName(self, _frUtf("载入ai文件"), AI_DIR,
-											   "ai files(*.exe;*.py)")
+											   "ai files(*.exe)")
 		if filename:
 			self.aiPath = filename
 			self.info_ai.setText(filename)
