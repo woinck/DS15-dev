@@ -10,7 +10,7 @@ from Uiteamwidget import TeamWidget
 from Uiaivsai import AivsAi
 import time#for test
 from Uihumanvsai import HumanvsAi
-from mapeditor import Mapeditor
+from lib.editor.mapeditor import Mapeditor
 from replayer import Replayer
 from PyQt4.QtWebKit import *
 
@@ -28,13 +28,14 @@ class MainWindow(QGraphicsView):
 		self.scene1.setSceneRect(self.scene1.itemsBoundingRect())
 		self.setScene(self.scene1)
 		self.setAttribute(Qt.WA_DeleteOnClose, True)
-
+		
+		
 		#音乐
 		self.sourceList =[]
-		self.output = Phonon.AudioOutput(Phonon.MusicCategory, self)
-		self.media = Phonon.MediaObject()
-		Phonon.createPath(self.media, self.output)
-		self.sourceList.append(Phonon.MediaSource(QString("music/music.m4a")))
+		#self.output = Phonon.AudioOutput(Phonon.MusicCategory, self)
+		#self.media = Phonon.MediaObject()
+		#Phonon.createPath(self.media, self.output)
+		#self.sourceList.append(Phonon.MediaSource(QString("music/music.m4a")))
 
 		self.backWindow = QGraphicsProxyWidget()
 		self.backWidget = BackWidget()
@@ -43,6 +44,7 @@ class MainWindow(QGraphicsView):
 		self.backWindow.setY(0)
 		self.backWindow.setZValue(0)
 		self.scene1.addItem(self.backWindow)
+		
 		#设置开始窗口按钮
 		self.beginWindow =  QGraphicsProxyWidget()
 		self.beginWidget =  BeginMenu()
@@ -54,7 +56,7 @@ class MainWindow(QGraphicsView):
 		self.scene1.addItem(self.beginWindow)
 
 
-		
+		'''
 		#设置音乐按键
 		self.musicWindow =  QGraphicsProxyWidget()
 		self.musicWidget =  MusicCheck()
@@ -66,6 +68,7 @@ class MainWindow(QGraphicsView):
 		self.musicWindow.setZValue(0.9)
 		self.scene1.addItem(self.musicWindow)
 #		self.musicWindow.widget()setDisabled(True)
+		'''
 		#设置AI对战窗口
 		self.aiWindow =  QGraphicsProxyWidget()
 		self.aiWidget =  AivsAi()
@@ -311,9 +314,9 @@ class MainWindow(QGraphicsView):
 
 		self.setAttribute(Qt.WA_DeleteOnClose)
 		self.connect(self.stateMachine, SIGNAL("finished()"), self, SLOT("close()"))
-		self.connect(self.musicWidget.checkBox,SIGNAL("clicked()"),
-					 self.Music)
-		self.connect(self.media,SIGNAL("aboutToFinish()"),self.continueMusic)
+		#self.connect(self.musicWidget.checkBox,SIGNAL("clicked()"),
+		#			 self.Music)
+		#self.connect(self.media,SIGNAL("aboutToFinish()"),self.continueMusic)
 
 
 		self.stateMachine.setInitialState(self.MainState)
@@ -336,7 +339,7 @@ class MainWindow(QGraphicsView):
 			if target in self.stateDict:
 				self.stateDict[target].widget().show()
 
-	def Music(self):
+	"""def Music(self):
 		if not self.sourceList:
 			QMessageBox.information(this, tr("no music files"), tr("no files to play"))
 			return
@@ -353,16 +356,18 @@ class MainWindow(QGraphicsView):
 		self.media.enqueue(self.sourceList)
 		self.media.play()
 		pass
-	
+	"""
 	def goToWebsite(self):
 		QDesktopServices.openUrl(QUrl(self.link))
+	
+	'''
 	def closeEvent(self, event):
 		if self.media.state() == Phonon.PlayingState:
 			self.musicWidget.checkBox.setTristate(False)
 			self.media.pause()
 		self.media.stop()
 		event.accept()
-
+	'''
 	def resizeEvent(self, event):
 		QGraphicsView.resizeEvent(self,event)
 		self.scene1.setSceneRect(self.scene1.itemsBoundingRect())

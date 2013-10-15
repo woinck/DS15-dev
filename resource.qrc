@@ -37,6 +37,7 @@
 	<file alias="openAI1.png">image/openAI1.png</file>
 	<file alias="exit0.png">image/exit0.png</file>
 	<file alias="exit1.png">image/exit1.png</file>
+
 	
    <!--ai debugger-->
    <file alias="gameStart.png">icons/gameStart.png</file>

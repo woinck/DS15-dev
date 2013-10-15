@@ -90,6 +90,8 @@ class Sui(threading.Thread):
 			
 		
 		(gp.mapInfo,gp.base)=sio._ReadFile(gp.gameMapPath)
+
+		
 		#运行AI线程及文件
 		AIProg = []
 		
@@ -124,6 +126,7 @@ class Sui(threading.Thread):
 				gp.gProc.wait()
 			else:
 				try:
+					
 					sio._sends(connUI,(gp.mapInfo,gp.base,gp.aiInfo))
 				except:
 					connUI.shutdown(socket.SHUT_RDWR)
@@ -237,11 +240,6 @@ class Slogic(threading.Thread):
 			if gp.gProcess < sio.HERO_TYPE_SET:
 				gp.gProc.wait()
 			else:
-				#for i in range(2):
-				#	gp.base[i][0].kind = gp.heroType[i]
-				for j in gp.base:
-					for i in j:
-						print i.kind
 				sio._sends(connLogic,basic.Begin_Info(gp.mapInfo,gp.base,gp.heroType))
 				gp.gProc.release()
 				break
@@ -268,6 +266,7 @@ class Slogic(threading.Thread):
 					gp.rProc.wait()
 				else:
 					gp.rbInfo = sio._recvs(connLogic)
+					
 					gp.rProcess = sio.RBINFO_SET
 					gp.rProc.notifyAll()
 					gp.rProc.release()
@@ -362,8 +361,6 @@ class Sai(threading.Thread):
 						gp.aiInfo.append('Player'+str(i))
 						gp.heroType.append(6)
 						
-				#for i in range(2):
-				#	gp.base[i][0].kind=gp.heroType[i]
 				#调节游戏进度标记
 				gp.gProcess = sio.HERO_TYPE_SET
 				#print 'gp.heroType set'#for test
@@ -429,6 +426,8 @@ class Sai(threading.Thread):
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							else:
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
+								print 'python cmd recv:::::::::'
+								print gp.rCommand.target
 							gp.cmdEnd = time.clock()
 							#print 'AI',gp.rbInfo.id[0],'\'s command:'
 							#sio.cmdDisplay(gp.rCommand)

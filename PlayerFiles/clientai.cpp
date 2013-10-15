@@ -34,7 +34,7 @@ void get_soldier_info()
 	}
 } //用于每回合更新双方单位信息
 
-void main()
+int main()
 {
 	WORD wVersionRequired;
 	WSADATA wsaData;
@@ -42,7 +42,7 @@ void main()
 	if ( WSAStartup(wVersionRequired, &wsaData) != 0 )
 	{
 		printf("The version required is not found!/n");
-		return;
+		return 1;
 	}
 	client = socket(AF_INET, SOCK_STREAM, 0);
 	SOCKADDR_IN cliaddr;
@@ -53,7 +53,7 @@ void main()
 	//send(client, "AI has connected.", 17, 0);
 	//建立socket连接
 	
-
+	
 	recv(client, recvbuf, 127, 0);
 	sscanf(recvbuf, "%d", &info.team_number);
 	send(client, "ok", 3, 0);
@@ -103,11 +103,13 @@ void main()
 
 	while(1)
 	{
-		memset(recvbuf, 0, sizeof(char)*128);
-		recv(client, recvbuf, 127, 0);
+		memset(recvbuf, 0, sizeof(char)*128);		
+		printf("%d\n",recv(client, recvbuf, 127, 0));
+
 		if(recvbuf[0] == '|') break; //以|作为游戏结束标志
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
 		send(client, "ok", 3, 0);
+		//printf("%d++++++\n",info.turn);
 		for(int i = 0; i < info.temple_number; i++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);
@@ -124,5 +126,6 @@ void main()
 
 	closesocket(client);
 	WSACleanup();
+	return 0;
 }
 

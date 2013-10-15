@@ -3,7 +3,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from lib.human.Humanai_Replay_event import HumanReplay
-
+import basic
 class AiReplayWidget(QWidget):
 	def __init__(self, scene, parent = None):
 		QWidget.__init__(self, parent)
@@ -13,7 +13,8 @@ class AiReplayWidget(QWidget):
 		self.replayWidget = HumanReplay(scene, parent)
 		self.ctrlSlider = QSlider()
 		self.ctrlSlider.setOrientation(Qt.Horizontal)
-		self.ctrlSlider.setRange(0, 300)
+		range_ = basic.TURN_MAX * 20 * 2
+		self.ctrlSlider.setRange(0, range_)
 		self.totalLabel = QLabel(QString.fromUtf8("总回合:"))
 		self.nowLabel = QLabel(QString.fromUtf8("当前显示回合:"))
 		self.totalInfo = QLCDNumber()

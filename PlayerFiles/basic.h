@@ -9,7 +9,7 @@ const int TURN_MAX = 30;         // 最大回合数
 const int COORDINATE_X_MAX = 20; // 地图最大范围
 const int COORDINATE_Y_MAX = 20;
 const int SOLDIERS_NUMBER = 10;  // 单位数量上限
-const int MIRROR_MAX = 10;       // 魔镜数量上限
+const int MIRROR_MAX = 20;       // 魔镜数量上限
 const int TEMPLE_MAX = 10;       // 遗迹数量上限
 
 /////////////////////////////////////////////////////////////
