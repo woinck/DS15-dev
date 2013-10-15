@@ -3,7 +3,7 @@ import random
 import time
 #常量采用全字母大写，变量及函数全字母小写，类名首字母大写，单词用‘—‘隔开
 random.seed(time.time())
-TURN_MAX = 20
+TURN_MAX = 30
 COORDINATE_X_MAX = 20
 COORDINATE_Y_MAX = 20
 SOLDIERS_NUMBER = 10
@@ -96,7 +96,7 @@ class Map_Turret(Map_Basic):
 		if k == ARCHER:
 			base[unit_id[0]][unit_id[1]].attack_range = TURRET_RANGE
 	def leave(self, base, unit_id):
-		k = base[unit_id[0]][unit_id[1]]
+		k = base[unit_id[0]][unit_id[1]].kind
 		if k == ARCHER:
 			base[unit_id[0]][unit_id[1]].attack_range = ABILITY[ARCHER][5]
 		self.time = 0
@@ -159,13 +159,13 @@ class Base_Unit:
 	def move(self, p):
 		'''移动至p = (x, y)'''
 		self.position = p
-	def attack(self, base, enemy_id):
+	def attack(self, base, enemy_id, multiple = 1):
 		'''攻击 enemy'''
 		enemy = base[enemy_id[0]][enemy_id[1]]
 		r = random.uniform(0,100)
 		s=int(r>=enemy.agility)
 		if self.strength > enemy.defence:
-			base[enemy_id[0]][enemy_id[1]].life -= int((self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind])
+			base[enemy_id[0]][enemy_id[1]].life -= int((self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind] * multiple)
 		return s
 	def skill(self, base, other_id):
 		'''法师对other使用回复技能'''

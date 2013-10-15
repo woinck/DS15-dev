@@ -1,0 +1,32 @@
+Bugs:
+	朴Basic版本问题
+
+	弓手离开炮塔攻击距离不变
+	
+	cpp move_range
+	
+	cpp Sample AI
+
+
+Platform:
+
+	AI崩溃情况的处理功能未经过大量测试，可能有问题
+	
+	c++的Sample AI!!
+	
+	AI崩溃判胜负情况
+	
+	回放文件无法存中文路径
+
+	回放文件要改为边进行游戏边存
+
+	异常情况传输给UI
+	
+	考虑是否用线程完成sserver，sclientlogic功能
+	
+	完善给选手的log文件
+	
+	确定给展示组的回放文件格式
+	
+	
+
