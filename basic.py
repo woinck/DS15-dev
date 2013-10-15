@@ -96,7 +96,7 @@ class Map_Turret(Map_Basic):
 		if k == ARCHER:
 			base[unit_id[0]][unit_id[1]].attack_range = TURRET_RANGE
 	def leave(self, base, unit_id):
-		k = base[unit_id[0]][unit_id[1]]
+		k = base[unit_id[0]][unit_id[1]].kind
 		if k == ARCHER:
 			base[unit_id[0]][unit_id[1]].attack_range = ABILITY[ARCHER][5]
 		self.time = 0
