@@ -1,70 +1,101 @@
 #include "basic.h"
-#include <stdlib.h>
+#define NULL 0
+#define INFINITE 10086
+const int MaxV = 20; // 地图边长最大值
+const int AdjacentVec[4][2] = { // 四个毗邻点的方向向量
+    {0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+void relax(Game_Info &gameInfo, int *pathv, int v, int col, int row);
+int minEdge(int num, int *pathv);
 
-extern game_info info;
+// 计算所得的移动范围坐标将连续储存在选手传入的地址tmp表示后，
+// 请确保tmp后申请了足够多的空间用以储存移动范围。
+// 返回值move_range直接返回能够到达的点的数量。 
+// team和id分别代表寻求单位的队伍和单位号。
+int move_range(Game_Info &gameInfo, int team, int id, Position *tmp) { 
+    Soldier_Basic &mvObj = gameInfo.soldier[id][team];  // 当前移动单位结构体
+    int pathv[MaxV * MaxV];                             // 维护从源点到各点的最短距离
+    // 求地图列数和行数
+    int col = gameInfo.map_size[1], row = gameInfo.map_size[0];                             
 
-Position* move_range(int team_number, int move_id) { //搜索单位可移动范围,以（-1，-1）结束
-  typedef struct spot {
-    Position pos;
-    int move_consume;
-  }Spot;
-  Soldier_Basic self = info.soldier[move_id][team_number];
-  int o = 0, s = 0, d = 0, i, j, b;
-  Position end = {-1,-1};
-  Position* result = (Position*)(malloc(self.move_range * self.move_range * sizeof(Position)));
-  Spot* up_layer = (Spot*)(malloc(sizeof(Spot))), * down_layer;
-  Position* other_block = (Position*)(malloc((SOLDIERS_NUMBER + COORDINATE_X_MAX) * sizeof(Position)));
-  Position* self_block = (Position*)(malloc(SOLDIERS_NUMBER * sizeof(Position)));
-  const Position direction[4] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-  int l = 1, a, i_x, i_y, t;
-  short r;
- Position pos;
- if(self.kind != AIRPLANE)
-  {for(j = 0; j < SOLDIERS_NUMBER; j++)
-     {if(info.soldier[j][1 - team_number].life > 0) {other_block[o] = info.soldier[j][1 - team_number].pos; o++;}
-      if(info.soldier[j][team_number].life > 0 && j != move_id) {self_block[s] = info.soldier[j][team_number].pos; s++;}
-      }
-   for(i = 0; i < COORDINATE_X_MAX; i++)
-    for(j = 0; j < COORDINATE_Y_MAX; j++)
-      if(info.map[i][j] == BARRIER) {other_block[o].x = i; other_block[o].y = j; o++;}
-   }
- result[d] = self.pos; d++;
- up_layer[0].pos = self.pos; up_layer[0].move_consume = 1;
- for(i = 0; i < self.move_range; i++)
-  {down_layer = (Spot*)(malloc((l * 4 + 1) * sizeof(Spot)));
-   a = 0;
-   for(j = 0; j < l; j++)
-       if(up_layer[j].move_consume >= FIELD_EFFECT[info.map[up_layer[j].pos.x][up_layer[j].pos.y]][0])
-           for(t = 0; t < 4; t++)
-            {i_x = up_layer[j].pos.x + direction[t].x;
-             i_y = up_layer[j].pos.y + direction[t].y;
-             if(0 <= i_x && i_x <= COORDINATE_X_MAX && 0 <= i_y && i_y<=COORDINATE_Y_MAX)
-               {r = 1;
-                pos.x = i_x; pos.y = i_y;
-                for(b = 0; b < o; b++)
-                    if(other_block[b].x == pos.x && other_block[b].y == pos.y) {r = 0;break;}
-                for(b = 0; b < d; b++)
-                    if(pos.x == result[b].x && pos.y == result[b].y) {r = 0;break;}
-                if(r)
-                   {down_layer[a].pos = pos;
-                    down_layer[a].move_consume = 1;
-                    a++;
-                    r = 1;
-                    for(b = 0; b < s; s++)
-                       if(self_block[b].x == pos.x && self_block[b].y == pos.y) r = 0;
-                    if(r)
-                      {result[d] = pos;
-                       d++;}
+    int source = mvObj.pos.x * col + mvObj.pos.y;       // 源点在pathv中的index
+
+    for (int i = 0; i < col * row - 1; ++i)             // 初始化最短距离为正无穷
+        pathv[i] = INFINITE;
+    pathv[source] = 0;                                  // 源点距离为0
+    tmp[0].x = mvObj.pos.x; tmp[0].y = mvObj.pos.y;    
+    relax(gameInfo, pathv, source, id, team);           // 于源点处松弛
+    int num = 1;                                        // 记录已证实可达的点数
+    while (true) {
+        int pathNum = minEdge(col * row - 1, pathv);    // 贪心
+
+        // 在移动力耗尽以及没有点可松弛时跳出
+        if (pathv[pathNum] > mvObj.move_range || pathNum == -1) {
+            break;
+        } else {
+            int x = pathNum / col, y = pathNum % col;   // 松弛点在地图中的坐标
+            // 除去己敌方单位
+            int flag = 0;
+            for (int teamx = 0; teamx < 2; ++teamx)
+                for (int i = 0; i < gameInfo.soldier_number[teamx]; ++i) {
+                    if ((x == gameInfo.soldier[i][teamx].pos.x) && 
+                        (y == gameInfo.soldier[i][teamx].pos.y) && 
+                        (gameInfo.soldier[i][teamx].life)) {
+                            flag = 1; break;}
+                }
+            // 将该点并入结果中
+            if (!flag) { tmp[num].x = x; tmp[num++].y = y;}
+            relax(gameInfo, pathv, pathNum, id, team);  // 松弛
+        }
+        pathv[pathNum] = 0;                             // 置0表示该点已经松弛过
+    }
+    return num;
+}
+
+// 使用pathv中的第v个终点来松弛
+void relax(Game_Info &gameInfo, int *pathv, int v, int id, int team) { 
+    int col = gameInfo.map_size[1], row = gameInfo.map_size[0];
+    int vx = v / col, vy = v % col; // 第v个点在地图中的坐标
+    for (int i =0; i < 4; ++i) {    // 4个方向松弛
+        int endx = vx + AdjacentVec[i][0], endy = vy + AdjacentVec[i][1];
+        if (endx >=0 && endy >= 0 && endx < col && endy < row) {
+            int pathEnd = endx * col + endy;
+            int edgeLen = FIELD_EFFECT[gameInfo.map[endx][endy]][0];
+            
+            if (gameInfo.soldier[id][team].kind
+                == AIRPLANE) { edgeLen = 1; } // 飞行单位无视地形
+            else {  // 判断是否遇到障碍
+                int eneNum = gameInfo.soldier_number[1 - team];
+                for (int i = 0; i < eneNum; ++i) {
+                    Soldier_Basic 
+                        &eneSol = gameInfo.soldier[i][1 - team];
+                    if (eneSol.pos.x == endx && 
+                        eneSol.pos.y == endy && eneSol.life) {
+                            edgeLen = INFINITE;
+                            break;
                     }
                 }
+                if (gameInfo.map[endx][endy] == BARRIER) {
+                    edgeLen = INFINITE;
+                    break;
+                }
             }
-       else
-         {down_layer[a].pos = up_layer[j].pos;
-          down_layer[a].move_consume = up_layer[j].move_consume + 1;
-          a++;}
-   l = a;
-   free(up_layer);
-   up_layer = down_layer;}
- free(up_layer); free(other_block); free(self_block);
- result[d] = end;
- return result;}
+            // 松弛
+            if (pathv[pathEnd] && edgeLen + pathv[v] < pathv[endx * col + endy]) {
+                pathv[endx * col + endy] = edgeLen + pathv[v];
+            }
+
+        }
+    }
+}
+
+int minEdge(int num, int *pathv) { // 贪心最短路，在没有可行路径时返回-1
+    int minCost = INFINITE, tmp = 0;
+    for (int i = 0; i < num; ++i) {
+        if (pathv[i] < minCost && pathv[i]) {
+            minCost = pathv[i];
+            tmp = i;
+        }
+    }
+    if (minCost == INFINITE) return -1;
+    return tmp;
+}
