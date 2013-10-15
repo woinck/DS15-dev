@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
 	<file alias="cursor.png">image/ui/cursor.png</file>
-	
+	<file alias="splash.png">image/splash.png</file>
     <file alias="mainWindow.png">image/ui/mainWindow.png</file>
     <file alias="singleWindow.png">image/ui/singleWindow.png</file>
 

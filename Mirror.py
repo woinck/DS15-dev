@@ -35,7 +35,7 @@ cursor = QCursor(QPixmap(":cursor.png").scaled(30,30), 0, 0)
 app.setOverrideCursor(cursor)
 
 #splash
-splash = QSplashScreen(QPixmap('./image/splash.png'),Qt.WindowStaysOnTopHint)
+splash = QSplashScreen(QPixmap(':splash.png'),Qt.WindowStaysOnTopHint)
 
 
 splash.show()

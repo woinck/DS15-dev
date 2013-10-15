@@ -8,9 +8,11 @@ COORDINATE_X_MAX = 20
 COORDINATE_Y_MAX = 20
 SOLDIERS_NUMBER = 10
 
-TURRET_RANGE = range(2,11)
-TEMPLE_UP_TIME = 10
-TURRET_SCORE_TIME = 5
+
+TURRET_RANGE = [2,10]
+
+TEMPLE_UP_TIME = 1
+TURRET_SCORE_TIME = 1
 
 PLAIN = 0#平原
 MOUNTAIN = 1#山地
@@ -44,14 +46,14 @@ WIZARD = 5#法师
 HERO_1 = 6
 HERO_2 = 7
 HERO_3 = 8
-ABILITY = {SABER:(25,18,0,12,6,[1],1),
-		   LANCER:(25,17,0,13,7,[1],2),
-		   ARCHER:(25,17,0,12,6,[2],3),
-		   DRAGON_RIDER:(21,15,0,12,8,[1],4),
-		   WARRIOR:(30,17,0,14,5,[1],5),
-		   WIZARD:(21,10,0,12,6,[],6),
-		   HERO_1:(55,20,0,14,5,[1],0),
-		   HERO_2:(40,20,0,13,6,[1],0),
+ABILITY = {SABER:(25,18,0,12,6,[1,1],1),
+		   LANCER:(25,17,0,13,7,[1,1],2),
+		   ARCHER:(25,17,0,12,6,[2,2],3),
+		   DRAGON_RIDER:(21,15,0,12,8,[1,1],4),
+		   WARRIOR:(30,17,0,14,5,[1,1],5),
+		   WIZARD:(21,10,0,12,6,[0,0],6),
+		   HERO_1:(55,20,0,14,5,[1,1],0),
+		   HERO_2:(40,20,0,13,6,[1,1],0),
 		   HERO_3:(45,18,0,14,7,[1,2],0)}
 #(LIFE, STRENGTH, AGILITY, DEFENCE, MOVE_RANGE, ATTACK_RANGE)
 #WIZARD:不可攻击，STRENGTH表示回复生命数
@@ -108,6 +110,7 @@ class Map_Temple(Map_Basic):
 		self.time = 0 #神庙计数器 
 		self.up = random.choice([1,2,3]) #下一个神符种类
 	def effect(self, base, whole_map, unit_id, score):
+		w = base[unit_id[0]][unit_id[1]]
 		if self.time >= TEMPLE_UP_TIME and ((w.kind < 6 and w.up < BASE_UP_LIMIT) or (w.kind > 5 and w.up < HERO_UP_LIMIT)):
 			base[unit_id[0]][unit_id[1]].up += 1
 			if self.up == 1:
@@ -131,11 +134,13 @@ class Map_Mirror(Map_Basic):
 		r = True
 		for i in base:
 			for j in i:
-				if j.position == self.out:
+				if j.position == self.out and j.life > 0:
 					r = False
 		if r:
 			base[unit_id[0]][unit_id[1]].move(self.out)
 			score[unit_id[0]] += self.score
+		#added by ning
+		return r
 class Base_Unit:
 	'''一般士兵
 	(LIFE, STRENGTH, AGILITY, DEFENCE, MOVE_RANGE, ATTACK_RANGE, MOVE_SPEED)'''
@@ -213,9 +218,11 @@ class Command:
 		self.order = order #0:待机，1:攻击，2:技能
 		self.target = target_id #同Round_Begin_Info.move_unit
 class Round_End_Info:
-	def __init__(self, base, route, attack_effect, score, over = False):
+	def __init__(self, base, route, attack_effect, trans, score, over = False):
 		self.base = base
 		self.route = route#行动路线，点列表
 		self.score = score #二元数组，表示当前两队积分
 		self.over = over #布尔型，True为结束
+		self.trans = trans#added by ning表明有没有镜子传送成功方便播放动画
+		self.timeused = -1
 		self.effect = attack_effect #二元组表示攻击与反击方是否命中,1表示命中，0表示未命中，-1表示未攻击(超出攻击范围或已死亡),如(1,-1)表示攻击命中，目标未反击
