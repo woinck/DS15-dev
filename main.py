@@ -114,7 +114,6 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 		for tp in map_temple:
 			if tp[0] == move_position:
 				tp[1] = 0
-				
 		if order != 0 and w[1] >= len(base[w[0]]):
 			order == 0
 		if order == 1 and w[0] == 1 - j:
