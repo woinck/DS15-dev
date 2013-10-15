@@ -16,15 +16,21 @@ py2exe_options = {
 		"bundle_files": 1,
 		}
  
-setup(console=["Mirror.py", "sclientlogic.py","sserver.py", "ai_debugger.py"],
+setup(console=["MirroW.py", "sclientlogic.py","sserver.py", "ai_debugger.py"],
 	windows=[{"script": "ai_debugger.py", "icon_resources":[(42, "image\\aidebugger.ico")]},
-	{"script":"Mirror.py", "icon_resources":[(1, "image\\mirror.ico")]}], 
+	{"script":"MirroW.py", "icon_resources":[(1, "image\\mirror.ico")]},
+	#{"script":"sclientlogic.py"},
+	#{"script":"sserver.py"},
+	{"script":"ai_debugger.py"}
+	], 
 	#"icon_resources": [(1, "myicon.ico")]}],#,{"script":"replayer.py"}],
 	options={'py2exe': py2exe_options},
 	data_files=[#("lib\\human\\image",   
 				   ("mapFiles",glob.glob("Maps\\*.map")),
+
 				   #("music",glob.glob('music\\*.*')),
 				   #('phonon_backend',['C:\Python27\Lib\site-packages\PyQt4\plugins\phonon_backend\\phonon_ds94.dll']),
+
 				]
 				   
 	)

@@ -2,6 +2,8 @@
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 reload(sys)
+logF = open('log.log','w')
+sys.stdout = logF
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 #AI模式 0：py 1：cpp
@@ -100,14 +102,17 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 		
 		conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
 		conn.recv(3)
-		
+
 		for i in range(soldier_number[0]):
 				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
 						   +str(soldier[0][i].strength)+' '
-						   +str(soldier[0][i].defence)+' '+str(soldier[0][i].move_range)+' '
+						   +str(soldier[0][i].defence)+' '
+						   +str(soldier[0][i].move_range)+' '
 						   +str(soldier[0][i].attack_range[0])+' '
-						   +str(soldier[0][i].attack_range[1])+' '+str(soldier[0][i].up)+' '
-						   +str(soldier[0][i].position[0])+' '+str(soldier[0][i].position[1]) )
+						   +str(soldier[0][i].attack_range[1])+' '
+						   +str(soldier[0][i].up)+' '
+						   +str(soldier[0][i].position[0])+' '
+						   +str(soldier[0][i].position[1]))
 				conn.recv(3)
 		for i in range(soldier_number[1]):
 				conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
@@ -144,7 +149,7 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 def _cpp_recvs_begin(conn):
 	result = []
 	recvbuf = conn.recv(40)
-	#recvbuf = recvbuf.split(chr(0))[0]
+	recvbuf = recvbuf.split(chr(0))[0]
 	conn.send('ok')
 	result.append(recvbuf)
 	recvbuf = conn.recv(10)
@@ -154,7 +159,6 @@ def _cpp_recvs_begin(conn):
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
-	print recvbuf
 	rbuf = recvbuf.split()
 	order = int(rbuf[0])
 	target_id = int(rbuf[1])
@@ -227,8 +231,8 @@ def Prog_Run(progPath,isAI=False):
 	if SINGLE_PROCESS:
 		progPath=progPath.encode('gbk')
 		if RELEASE_MODE or (isAI and USE_CPP_AI):	
-			#result = subprocess.Popen(progPath, stderr = devnull)
-			result = subprocess.Popen(progPath)
+			result = subprocess.Popen(progPath, stderr = devnull)
+			#result = subprocess.Popen(progPath)
 		else: 
 			result = subprocess.Popen('python ' + progPath)
 	else:

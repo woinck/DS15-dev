@@ -3,13 +3,32 @@
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from lib.editor.Ui_mapeditor import *
+from Ui_mapeditor import *
 from basic import *
 import sio
 from Ui_Map import *
-import lib.editor.qrc_resource
+import qrc_resource
 #reload(sys)
 #sys.setdefaultencoding("utf-8")
+
+class Ui_Image:
+	def __init__(self):
+		self.image_mapBackground = QPixmap(":mapback.png")
+		self.image_logo = QPixmap(":LOGO.png")
+		self.image_plain = QPixmap(":plain.png")
+		self.image_mountain = QPixmap(":mountain.png")
+		self.image_forest = QPixmap(":forest.png")
+		self.image_barrier = QPixmap(":barrier.png")
+		self.image_turret = QPixmap(":turret.png")
+		self.image_temple = QPixmap(":temple.png")
+		self.image_mirror = QPixmap(":mirror.png")
+		self.image_saber0 = QPixmap(":saber0.png")
+		self.image_lancer0 = QPixmap(":lancer0.png")
+		self.image_archer0 = QPixmap(":archer0.png")
+		self.image_warrior0 = QPixmap(":warrior0.png")
+		self.image_rider0 = QPixmap(":dragon_rider0.png")
+		self.image_wizard0 = QPixmap(":wizard0.png")
+		self.image_hero10 = QPixmap(":hero_10.png")
 
 class Mapeditor(QtGui.QMainWindow):
 	def __init__(self, parent = None):
@@ -40,8 +59,8 @@ class Mapeditor(QtGui.QMainWindow):
 									"*:hover{border-image: url(:saveMap1.png);}")
 		self.ui.saveasButton.setStyleSheet("*{border-image: url(:saveAs0.png);}"
 									"*:hover{border-image: url(:saveAs1.png);}")
-		self.ui.openButton.setStyleSheet("*{border-image: url(:openMap0.png);}"
-									"*:hover{border-image: url(:openMap1.png);}")
+		self.ui.openButton.setStyleSheet("*{border-image: url(:openMap00.png);}"
+									"*:hover{border-image: url(:openMap01.png);}")
 		self.ui.exitButton.setStyleSheet("*{border-image: url(:returnPre0.png);}"
 									"*:hover{border-image: url(:returnPre1.png);}")
 		
@@ -103,41 +122,43 @@ class Mapeditor(QtGui.QMainWindow):
 
 		QtCore.QObject.connect(self.ui.tab_1,\
 							   QtCore.SIGNAL('currentChanged(int)'), self.changemode)
+							   
+		self.imagePack = Ui_Image()
 
 	def paintEvent(self, event):
 		paint = QPainter(self)
-		paint.drawPixmap(0,0,1024,768,QPixmap(":mapback.png"))
-		paint.drawPixmap(25,10,130,150,QPixmap(":LOGO.png"))
+		paint.drawPixmap(0,0,1024,768, self.imagePack.image_mapBackground)
+		paint.drawPixmap(25,10,130,150, self.imagePack.image_logo)
 		if self.mode == 0:
 			paint.drawPixmap(self.ui.Button1_0.x() + self.ui.tab_1.x() +140, self.ui.Button1_0.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":plain.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_plain)
 			paint.drawPixmap(self.ui.Button1_1.x() + self.ui.tab_1.x() +140, self.ui.Button1_1.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":mountain.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_mountain)
 			paint.drawPixmap(self.ui.Button1_2.x() + self.ui.tab_1.x() +140, self.ui.Button1_2.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":forest.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_forest)
 			paint.drawPixmap(self.ui.Button1_3.x() + self.ui.tab_1.x() +140, self.ui.Button1_3.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":barrier.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_barrier)
 			paint.drawPixmap(self.ui.Button1_4.x() + self.ui.tab_1.x() +140, self.ui.Button1_4.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":turret.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_turret)
 			paint.drawPixmap(self.ui.Button1_5.x() + self.ui.tab_1.x() +140, self.ui.Button1_5.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":temple.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_temple)
 			paint.drawPixmap(self.ui.Button1_6.x() + self.ui.tab_1.x() +140, self.ui.Button1_6.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":mirror.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_mirror)
 		else:
 			paint.drawPixmap(self.ui.Button2_0.x() + self.ui.tab_1.x() +140, self.ui.Button2_0.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":saber0.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_saber0)
 			paint.drawPixmap(self.ui.Button2_1.x() + self.ui.tab_1.x() +140, self.ui.Button2_1.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":lancer0.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_lancer0)
 			paint.drawPixmap(self.ui.Button2_2.x() + self.ui.tab_1.x() +140, self.ui.Button2_2.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":archer0.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_archer0)
 			paint.drawPixmap(self.ui.Button2_3.x() + self.ui.tab_1.x() +140, self.ui.Button2_3.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":dragon_rider0.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_rider0)
 			paint.drawPixmap(self.ui.Button2_4.x() + self.ui.tab_1.x() +140, self.ui.Button2_4.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":warrior0.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_warrior0)
 			paint.drawPixmap(self.ui.Button2_5.x() + self.ui.tab_1.x() +140, self.ui.Button2_5.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":wizard0.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_wizard0)
 			paint.drawPixmap(self.ui.Button2_6.x() + self.ui.tab_1.x() +140, self.ui.Button2_6.y()
-							 + self.ui.tab_1.y() + 20, 30, 30, QPixmap(":hero_10.png"))
+							 + self.ui.tab_1.y() + 20, 30, 30, self.imagePack.image_hero10)
 
 	def redefault(self):
 		self.ui.tab_1.setCurrentIndex(0)
@@ -336,6 +357,7 @@ class Mapeditor(QtGui.QMainWindow):
 		else:
 			box = QMessageBox(QMessageBox.Warning, "Error", "The document can't be saved!")
 			box.exec_()
+
 
 if __name__ == "__main__":
 	app = QtGui.QApplication(sys.argv)
