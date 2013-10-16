@@ -3,7 +3,7 @@
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 reload(sys)
 logF = open('log.log','w')
-sys.stdout = logF
+#sys.stdout = logF
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 #AI模式 0：py 1：cpp
@@ -17,7 +17,7 @@ USE_CPP_AI = 1
 '''
 
 DEBUG_MODE = 0
-RELEASE_MODE = 1
+RELEASE_MODE = 0
 SINGLE_PROCESS = 1 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
 
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收

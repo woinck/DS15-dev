@@ -9,6 +9,7 @@
 ReplayFiles/
 *.map
 log.txt
+log.log
 
 #releas
 dist/

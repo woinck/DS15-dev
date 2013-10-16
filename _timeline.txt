@@ -1,4 +1,6 @@
 Bugs:
+	xp系统不支持
+	
 	朴Basic版本问题
 
 	弓手离开炮塔攻击距离不变
@@ -6,6 +8,8 @@ Bugs:
 	cpp move_range
 	
 	cpp Sample AI
+	
+	战机是否可改为任意地形消耗移动力为1？
 
 
 Platform:

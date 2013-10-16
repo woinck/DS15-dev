@@ -34,7 +34,7 @@ for i in range(0,len(whole_map)):
 while not over and turn < basic.TURN_MAX:
 	turn += 1
 	main.perparation(whole_map, base, score, map_temple)
-	for i in range(0, len(base[1])):
+	for i in range(0, basic.SOLDIERS_NUMBER):
 		for j in range(0,2):
 			if i >= len(base[j]):
 				break
