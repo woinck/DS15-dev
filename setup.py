@@ -3,7 +3,8 @@
 from distutils.core import setup
 import py2exe,glob
 
-includes = ["encodings", "encodings.*", "qjpeg4"]	 
+includes = ["encodings", "encodings.*", "qjpeg4"]	
+
 
 py2exe_options = {
 		"includes": ["sip", "PyQt4.QtNetwork"],#pyqt
@@ -26,8 +27,10 @@ setup(console=["MirroW.py", "sclientlogic.py","sserver.py", "ai_debugger.py"],
 	options={'py2exe': py2exe_options},
 	data_files=[#("lib\\human\\image",   
 				   ("mapFiles",glob.glob("Maps\\*.map")),
-				#   ("music",glob.glob('music\\*.*')),
-				#   ('phonon_backend',['C:\Python27\Lib\site-packages\PyQt4\plugins\phonon_backend\\phonon_ds94.dll']),
+
+				   #("music",glob.glob('music\\*.*')),
+				   #('phonon_backend',['C:\Python27\Lib\site-packages\PyQt4\plugins\phonon_backend\\phonon_ds94.dll']),
+
 				]
 				   
 	)

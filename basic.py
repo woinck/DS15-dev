@@ -159,13 +159,13 @@ class Base_Unit:
 	def move(self, p):
 		'''移动至p = (x, y)'''
 		self.position = p
-	def attack(self, base, enemy_id):
+	def attack(self, base, enemy_id, multiple = 1):
 		'''攻击 enemy'''
 		enemy = base[enemy_id[0]][enemy_id[1]]
 		r = random.uniform(0,100)
 		s=int(r>=enemy.agility)
 		if self.strength > enemy.defence:
-			base[enemy_id[0]][enemy_id[1]].life -= int((self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind])
+			base[enemy_id[0]][enemy_id[1]].life -= int((self.strength - enemy.defence) * s * ATTACK_EFFECT[self.kind][enemy.kind] * multiple)
 		return s
 	def skill(self, base, other_id):
 		'''法师对other使用回复技能'''
