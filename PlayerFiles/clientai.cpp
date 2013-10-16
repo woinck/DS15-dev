@@ -104,12 +104,12 @@ int main()
 	while(1)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);		
-		printf("%d\n",recv(client, recvbuf, 127, 0));
+		recv(client, recvbuf, 128, 0);
+		send(client, "ok", 3, 0);
 
 		if(recvbuf[0] == '|') break; //以|作为游戏结束标志
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
-		send(client, "ok", 3, 0);
-		//printf("%d++++++\n",info.turn);
+
 		for(int i = 0; i < info.temple_number; i++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);

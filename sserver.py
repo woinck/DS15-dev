@@ -407,9 +407,11 @@ class Sai(threading.Thread):
 							sio._cpp_sends(connAI[gp.rbInfo.id[0]],gp.rbInfo.id[1],len(gp.rbInfo.temple),gp.rbInfo.temple,(len(gp.base[0]),len(gp.base[1])),gp.base,roundNum,tempScore)
 						else:
 							sio._sends(connAI[gp.rbInfo.id[0]],gp.rbInfo)
-						print 'gp.rbInfo sent to AI'
+						print 'Round BeginInfo sent to AI'
 					except sio.ConnException:
 						#AI连接错误，标记至connErr中
+						gp.aiConnErr[gp.rbInfo.id[0]] = True
+					except:
 						gp.aiConnErr[gp.rbInfo.id[0]] = True
 						
 					if gp.aiConnErr[gp.rbInfo.id[0]] == True:
