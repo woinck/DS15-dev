@@ -7,7 +7,7 @@ logF = open('log.log','w')
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 #AI模式 0：py 1：cpp
-USE_CPP_AI = 1
+USE_CPP_AI = 0
 
 #游戏运行参数
 '''

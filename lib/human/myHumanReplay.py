@@ -267,7 +267,11 @@ class EffectIndUnit(QGraphicsTextItem):
 			font.setBold(True)
 		self.setFont(font)
 		self.setDefaultTextColor(QColor(Qt.red))
-
+	def setText(self, text):
+		if text[0] == "+" or text[0] == '-':
+			font.setPointSize(font.pointSize() * 2)
+			font.setBold(True)
+		QGraphicsTextItem.setText(self, text)
 class DieIndUnit(AbstractUnit):
 	def __init__(self, x = 0, y = 0, parent = None):
 		super(DieIndUnit, self).__init__(x, y, parent)
