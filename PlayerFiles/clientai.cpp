@@ -1,6 +1,7 @@
 #include<winsock2.h>
 #include<stdio.h>
 #include"basic.h"
+#include <Windows.h>
 #pragma comment(lib,"WS2_32.lib")
 
 extern game_info info;
@@ -49,8 +50,13 @@ int main()
 	cliaddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 	cliaddr.sin_family = AF_INET;
 	cliaddr.sin_port = htons(8803);
-	connect(client, (sockaddr*)&cliaddr, sizeof(sockaddr));
-	//send(client, "AI has connected.", 17, 0);
+	if(connect(client, (sockaddr*)&cliaddr, sizeof(sockaddr)) == -1)
+	{
+		printf("\n==============欢迎参加队式十五==============\n\n");
+		printf("没有检测到平台端口，请确认平台程序已经运行再运行本程序\n");
+		system("pause>nul");
+		exit(0);
+	}
 	//建立socket连接
 	
 	
@@ -104,11 +110,11 @@ int main()
 	while(1)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);		
-		recv(client, recvbuf, 128, 0);
-		send(client, "ok", 3, 0);
+		recv(client, recvbuf, 127, 0);
 
 		if(recvbuf[0] == '|') break; //以|作为游戏结束标志
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
+		send(client, "ok", 3, 0);
 
 		for(int i = 0; i < info.temple_number; i++)
 		{
