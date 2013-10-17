@@ -3,7 +3,7 @@ import random
 import time
 #常量采用全字母大写，变量及函数全字母小写，类名首字母大写，单词用‘—‘隔开
 random.seed(time.time())
-TURN_MAX = 20
+TURN_MAX = 30
 COORDINATE_X_MAX = 20
 COORDINATE_Y_MAX = 20
 SOLDIERS_NUMBER = 10
@@ -96,7 +96,7 @@ class Map_Turret(Map_Basic):
 		if k == ARCHER:
 			base[unit_id[0]][unit_id[1]].attack_range = TURRET_RANGE
 	def leave(self, base, unit_id):
-		k = base[unit_id[0]][unit_id[1]]
+		k = base[unit_id[0]][unit_id[1]].kind
 		if k == ARCHER:
 			base[unit_id[0]][unit_id[1]].attack_range = ABILITY[ARCHER][5]
 		self.time = 0

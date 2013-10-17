@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-import basic, sio, socket, time, threading, os, subprocess
+import basic, sio, socket, time, threading, os, subprocess, sys
 
 def _SocketConnect(host,port,connName,list = 1):
 	global gp
@@ -11,7 +11,7 @@ def _SocketConnect(host,port,connName,list = 1):
 	except:
 		print 'port occupied, the program will exit...'
 		time.sleep(3)
-		exit(1)
+		sys.exit(1)
 		
 	#设定AI连接最大时间
 	if connName == 'AI':
@@ -33,7 +33,7 @@ def _SocketConnect(host,port,connName,list = 1):
 		except socket.timeout:
 			print connName,i,'connection failed'
 			time.sleep(3)
-			exit(1)
+			sys.exit(1)
 		
 		#每有一个socket连接成功（两个AI算一个socket）则进程标记+1
 		print '\n%s%d connected: %s\n' %(connName,i,result[-1][1]),
@@ -59,7 +59,7 @@ class Sui(threading.Thread):
 				conn.send('|')
 			except:
 				conn.shutdown(socket.SHUT_RDWR)
-				exit(1)
+				sys.exit(1)
 		else:
 			if sio.DEBUG_MODE or gp.AI_Debug[num]:
 				return None
@@ -130,7 +130,7 @@ class Sui(threading.Thread):
 					sio._sends(connUI,(gp.mapInfo,gp.base,gp.aiInfo))
 				except:
 					connUI.shutdown(socket.SHUT_RDWR)
-					exit(1)
+					sys.exit(1)
 				gp.replayInfo.append((gp.mapInfo,gp.base,gp.aiInfo))
 				gp.gProcess = sio.ROUND
 				gp.gProc.notifyAll()
@@ -152,7 +152,7 @@ class Sui(threading.Thread):
 						sio._sends(connUI,gp.rbInfo)
 					except:
 						connUI.shutdown(socket.SHUT_RDWR)
-						exit(1)
+						sys.exit(1)
 					gp.rProcess = sio.RBINFO_SENT_TO_UI
 					gp.rProc.notifyAll()
 					gp.rProc.release()
@@ -171,7 +171,7 @@ class Sui(threading.Thread):
 						sio._sends(connUI,(gp.rCommand,gp.reInfo))
 					except:
 						connUI.shutdown(socket.SHUT_RDWR)
-						exit(1)
+						sys.exit(1)
 					#回合信息存至回放列表中
 					gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
 					gp.rProcess = sio.START
@@ -194,7 +194,7 @@ class Sui(threading.Thread):
 					sio._sends(connUI,gp.winner)
 				except:
 					connUI.shutdown(socket.SHUT_RDWR)
-					exit(1)
+					sys.exit(1)
 				connUI.settimeout(None)
 				replay_mode = sio._recvs(connUI)
 				gp.gProc.notifyAll()
@@ -221,20 +221,16 @@ class Slogic(threading.Thread):
 	
 	def run(self):
 		global gp
-		connLogic = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		try:
-			connLogic.connect((sio.HOST,sio.LOGIC_PORT))
+			connLogic,address = _SocketConnect(sio.HOST,sio.LOGIC_PORT,'Logic')
 			print 'Logic connected'
 		except:
 			print 'logic connection failed, the program will exit...'
 			time.sleep(2)
-			exit(1)
+			sys.exit(1)
 			
-		if gp.gProc.acquire():
-			gp.gProcess += 1
-			gp.gProc.notifyAll()
-			gp.gProc.release()
-			
+		sio._sends(connLogic,gp.timeoutSwitch)
+		
 		#发送游戏初始信息
 		while gp.gProc.acquire():
 			if gp.gProcess < sio.HERO_TYPE_SET:
