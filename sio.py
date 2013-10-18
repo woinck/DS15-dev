@@ -1,7 +1,7 @@
  #-*- coding:UTF-8 -*-
 
 
-RELEASE_MODE = 1
+RELEASE_MODE = 0
 
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
@@ -232,8 +232,8 @@ def Prog_Run(progPath,isAI=False):
 	if SINGLE_PROCESS:
 		progPath=progPath.encode('gbk')
 		if RELEASE_MODE or (isAI and USE_CPP_AI):	
-			result = subprocess.Popen(progPath, stderr = devnull)
-			#result = subprocess.Popen(progPath)
+			#result = subprocess.Popen(progPath, stderr = devnull)
+			result = subprocess.Popen(progPath)
 		else: 
 			result = subprocess.Popen('python ' + progPath)
 	else:

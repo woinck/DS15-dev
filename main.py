@@ -33,10 +33,10 @@ def available_spots(map_list, unit_list, source_num, move_target = (-1,-1)):
 	d_spots = [s_position] # 所有已经确定可到的点
 	a_spots = [[[s_position,1]]] # 所有点按到达顺序形成的二阶链表，元素为 点+该点已消耗的移动力
 	direction = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-	for i in range(1, s_unit.move_range):
+	for i in range(1, s_unit.move_range + 1):
 		a = []
 		for former_point in a_spots[i-1]:
-			if former_point[1] >= map_list[former_point[0][0]][former_point[0][1]].move_consumption:
+			if former_point[1] >= map_list[former_point[0][0]][former_point[0][1]].move_consumption or s_unit.kind == basic.DRAGON_RIDER:
 				for j in direction:
 					i_1 = former_point[0][0] + j[0]
 					i_2 = former_point[0][1] + j[1]
@@ -103,11 +103,8 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 		sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
 		route += available_spots(whole_map, base, unit_id, move_position)
 		if not sc:
-			print "))))))",base[j][i].attack_range,base[j][i].position
-			print whole_map[base[j][i].position[0]][base[j][i].position[1]].__class__.__name__
 			whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))		
 			base[j][i].move(move_position)
-			print "))))))",base[j][i].attack_range
 		if whole_map[move_position[0]][move_position[1]].kind == basic.MIRROR:
                         order = 0
 		if not sc:
@@ -125,7 +122,7 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 			if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
 				attack_1 = base[j][i].attack(base, (1 - j, w[1]))
 			if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
-				attack_2 = base[1 - j][w[1]].attack(base, (j, i),0.5)
+				attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 			#攻击及反击
 		elif order == 2 and w[0] == j:
 			if distance(base[j][i].position, base[j][w[1]].position) == 1:

@@ -9,12 +9,10 @@ try:
 except:
 	print 'failed to connect, the program will exit...'
 	time.sleep(2)
-	exit(1)
+	sys.exit(1)
 	
 print 'platform connected'
 
-timeoutSwitch = sio._recvs(conn)
-print 'timeoutSwitch:',timeoutSwitch
 begin_Info = sio._recvs(conn)
 base = begin_Info.base
 whole_map = begin_Info.map
@@ -37,23 +35,14 @@ while not over and turn < basic.TURN_MAX:
 	for i in range(0, basic.SOLDIERS_NUMBER):
 		for j in range(0,2):
 			if i >= len(base[j]):
-				break
+				continue
 			if base[j][i].life > 0:
 				move_range = main.available_spots(whole_map, base, (j, i))
 				roundBeginInfo = basic.Round_Begin_Info((j,i), move_range, base, map_temple)
-				
-				if timeoutSwitch[j] == 0:
-					conn.settimeout(None)
-				else:
-					conn.settimeout(2)
-				
-				try:
-					#发送每回合的开始信息：
-					sio._sends(conn, roundBeginInfo)
-					#接收AI的命令：
-					roundCommand = sio._recvs(conn)
-				except:
-					exit(1)
+				#发送每回合的开始信息：
+				sio._sends(conn, roundBeginInfo)
+				#接收AI的命令：
+				roundCommand = sio._recvs(conn)
 				roundEndInfo = main.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
 				over = True
 				if turn == basic.TURN_MAX and j == 1:

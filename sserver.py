@@ -88,9 +88,10 @@ class Sui(threading.Thread):
 				time.sleep(0.1)
 			logic_thread.start()
 			
-		
+		#读取地图
 		(gp.mapInfo,gp.base)=sio._ReadFile(gp.gameMapPath)
-
+		gp.base[0].sort()
+		gp.base[1].sort()
 		
 		#运行AI线程及文件
 		AIProg = []
