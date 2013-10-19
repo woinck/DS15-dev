@@ -8,7 +8,7 @@ import cPickle, basic, threading, os, time, subprocess, socket, sys
 reload(sys)
 
 sys.setdefaultencoding('gbk')
-os.system("chcp 936")
+#os.system("chcp 936")
 
 if RELEASE_MODE == 1:
 	logF = open('log.log','w')

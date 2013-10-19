@@ -229,9 +229,7 @@ class Slogic(threading.Thread):
 			print 'logic connection failed, the program will exit...'
 			time.sleep(2)
 			sys.exit(1)
-			
-		sio._sends(connLogic,gp.timeoutSwitch)
-		
+					
 		#发送游戏初始信息
 		while gp.gProc.acquire():
 			if gp.gProcess < sio.HERO_TYPE_SET:
@@ -278,6 +276,7 @@ class Slogic(threading.Thread):
 				else:	
 					sio._sends(connLogic,gp.rCommand)
 					gp.reInfo = sio._recvs(connLogic)
+					
 					if gp.aiConnErr[gp.rbInfo.id[0]]:
 						gp.reInfo.over = sio.AI_BREAKDOWN
 					gp.rProc.release()
@@ -401,7 +400,7 @@ class Sai(threading.Thread):
 					#发送回合信息
 					try:
 						if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
-							sio._cpp_sends(connAI[gp.rbInfo.id[0]],gp.rbInfo.id[1],len(gp.rbInfo.temple),gp.rbInfo.temple,(len(gp.base[0]),len(gp.base[1])),gp.base,roundNum,tempScore)
+							sio._cpp_sends(connAI[gp.rbInfo.id[0]],gp.rbInfo.id[1],len(gp.rbInfo.temple),gp.rbInfo.temple,(len(gp.rbInfo.base[0]),len(gp.rbInfo.base[1])),gp.rbInfo.base,roundNum,tempScore)
 						else:
 							sio._sends(connAI[gp.rbInfo.id[0]],gp.rbInfo)
 						print 'Round BeginInfo sent to AI'
@@ -423,6 +422,8 @@ class Sai(threading.Thread):
 									gp.rCommand.target = [1-gp.rbInfo.id[0],gp.rCommand.target]
 								else:
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
+								print 'cpp cmd recv:::::::::'
+								print gp.rCommand.target
 							else:
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
 								print 'python cmd recv:::::::::'
