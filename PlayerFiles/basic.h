@@ -1,6 +1,8 @@
 #ifndef _BASIC_H
 #define _BASIC_H
 
+const int FREE_CHOOSE = 0;  //参数为1时，选手可以自由选择兵种
+
 /////////////////////////////////////////////////////////////
 // 游戏基本参数
 /////////////////////////////////////////////////////////////
@@ -119,13 +121,12 @@ typedef struct game_info { // 游戏信息结构体，每回合选手从中获取必要的信息
     int move_id;                                  // 移动单位，表示本队伍中第move_id个人
     int score[2];                                 // 两队当前积分(不包括存活士兵所占）
     int turn;                                     // 当前总回合数
-    int temple_number;
+    int temple_number;                            // 神庙数量
     Temple temple[TEMPLE_MAX];                    // 各神庙的位置及状态
     Soldier_Basic soldier[SOLDIERS_NUMBER][2];    // 双方单位的信息
 }Game_Info;
 
-typedef enum cmd_order
-{
+typedef enum cmd_order { //command order的枚举类型
 	wait, attack, skill
 }Cmd_Order;
 
