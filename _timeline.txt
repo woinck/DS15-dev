@@ -1,5 +1,7 @@
 Bugs:
-
+	attack takes 4 parameter
+	
+	hero score = 3? 5?
 
 Platform:
 

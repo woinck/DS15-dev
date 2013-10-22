@@ -1,7 +1,7 @@
  #-*- coding:UTF-8 -*-
 
 
-RELEASE_MODE = 0
+RELEASE_MODE = 1
 
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
@@ -38,7 +38,7 @@ LOGIC_PORT = 8801 # logic 连接端口
 UI_PORT = 8802 # UI 连接端口
 AI_PORT = 8803 # AI 连接端口
 #error
-devnull = open(os.devnull, 'w')
+#devnull = open(os.devnull, 'w')
 if RELEASE_MODE:
 	SERV_FILE_NAME = '\\sserver.exe'
 	LOGIC_FILE_NAME = '\\sclientlogic.exe'

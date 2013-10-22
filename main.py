@@ -141,6 +141,10 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 def end_score(score, base, turn):
 	'''结束后计算积分返回胜队，（-1表示平局）'''
 	if turn >= basic.TURN_MAX:
+		if score[1] != score[0]:
+			winner =  int(score[1] > score[0])
+		else:
+			winner = 1
 		for i in [0,1]:
 			for j in range(0, len(base[i])):
 				if base[i][j].life > 0:
@@ -148,10 +152,7 @@ def end_score(score, base, turn):
 						score[i] += base[i][j].life * basic.BASE_SCORE
 					else:
 						score[i] += base[i][j].life * basic.HERO_SCORE
-		if score[1] != score[0]:
-			return int(score[1] > score[0])
-		else:
-			return -1
+		return winner
 	for i in [0,1]:
 		over = True
 		for j in base[i]:

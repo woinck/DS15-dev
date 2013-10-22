@@ -14,7 +14,6 @@ except:
 print 'platform connected'
 
 begin_Info = sio._recvs(conn)
-print begin_Info
 base = begin_Info.base
 whole_map = begin_Info.map
 hero_type = begin_Info.hero_type
@@ -30,7 +29,10 @@ for i in range(0,len(whole_map)):
 	for j in range(0,len(whole_map[i])):
 		if whole_map[i][j].kind == basic.TEMPLE:
 			map_temple += [[(i, j), 0]]
-
+for i in range(0, 2):
+	for j in range(0,len(base[i])):
+		if whole_map[base[i][j].position[0]][base[i][j].position[1]].kind != basic.MIRROR:
+			whole_map[base[i][j].position[0]][base[i][j].position[1]].effect(base, whole_map, (i, j), score)
 while not over and turn < basic.TURN_MAX:
 	turn += 1
 	main.perparation(whole_map, base, score, map_temple)
@@ -53,6 +55,8 @@ while not over and turn < basic.TURN_MAX:
 							over = False
 					if over:
 						roundEndInfo.over = over
+						main.end_score(score,base,turn)
+						roundEndInfo.score = score
 				#发送每回合结束时的信息：
 				sio._sends(conn, roundEndInfo)
 				over = roundEndInfo.over

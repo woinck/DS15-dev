@@ -2,14 +2,17 @@
 #include <stdio.h>
 
 game_info info = {};
+
 char teamName[20]="Player";        //ÔÚÕâÀïÉè¶¨¶ÓÎéÃû×Ö£¬¾¡Á¿ÓÃÓ¢ÎÄ
+
 
 int GetHeroType()
 {
-	return ASSASSIN;   //Ñ¡ÔñÓ¢ĞÛ
+	return ASSASSIN;   //é€‰æ‹©è‹±é›„
 }
 
 int move_range(Game_Info &gameInfo, int team, int id, Position *tmp);
+
 
 void ChooseSoldier(int num_inc, int id[])
 {
@@ -22,12 +25,13 @@ void ChooseSoldier(int num_inc, int id[])
 		else info.soldier[id[i]][info.team_number].kind = 3;	
 	}
 
+
 }
 
 Command AI_main()
 {
 	Command cmd;
-	//Ñ¡ÊÖÔÚÕâÀïĞ´×Ô¼ºµÄAIÖ÷º¯Êı
+	//é€‰æ‰‹åœ¨è¿™é‡Œå†™è‡ªå·±çš„AIä¸»å‡½æ•°
 	
 	
 
