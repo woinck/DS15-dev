@@ -59,7 +59,7 @@ void relax(Game_Info &gameInfo, int *pathv, int v, int id, int team) {
         int endx = vx + AdjacentVec[i][0], endy = vy + AdjacentVec[i][1];
         if (endx >=0 && endy >= 0 && endx < col && endy < row) {
             int pathEnd = endx * col + endy;
-            int edgeLen = FIELD_EFFECT[gameInfo.map[endx][endy]][0];
+            int edgeLen = FIELD_EFFECT[gameInfo.map[vx][vy]][0];
             
             if (gameInfo.soldier[id][team].kind
                 == AIRPLANE) { edgeLen = 1; } // 飞行单位无视地形

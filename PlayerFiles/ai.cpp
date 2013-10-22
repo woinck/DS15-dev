@@ -2,33 +2,22 @@
 #include <stdio.h>
 
 game_info info = {};
-char teamName[20]="Sample";
+char teamName[20]="Player";
 
 int GetHeroType()
 {
-	return ASSASSIN;   //Ñ¡ÔñÓ¢ĞÛ
+	return ASSASSIN;   //é€‰æ‹©è‹±é›„
 }
 
-void ChooseSoldier(int num_inc, int id[]) //±øÖÖ£¨kind£©Ñ¡Ôñº¯Êı£¬num_inc±íÊ¾±¾ÂÖĞèÒª½øĞĞÑ¡ÔñµÄÊ¿±øÊıÁ¿£¬id[i]±íÊ¾µÚi¸öĞèÒªÑ¡ÔñÖÖÀàµÄÊ¿±ø±àºÅ
-{
-	//Ñ¡ÊÖÔÚÕâÀïĞ´Ñ¡Ôñ±øÖÖµÄ²ßÂÔ£¬ÒÔÏÂÎªÊ¾Àı
-	for (int i=0; i<num_inc; i++)
-	{
-		if(info.soldier[0][1-info.team_number].kind == BERSERKER) //Èç¹û¶Ô·½µÄÓ¢ĞÛÎª¿ñÕ½Ê¿
-			info.soldier[id[i]][info.team_number].kind = 1;
-		else info.soldier[id[i]][info.team_number].kind = 2;
-	}
-}
+int move_range(Game_Info &gameInfo, int team, int id, Position *tmp);
 
 
 Command AI_main()
 {
 	Command cmd;
-	//Ñ¡ÊÖÔÚÕâÀïĞ´×Ô¼ºµÄAIÖ÷º¯Êı
+	//é€‰æ‰‹åœ¨è¿™é‡Œå†™è‡ªå·±çš„AIä¸»å‡½æ•°
 	
-	cmd.order = wait;
-	cmd.destination = info.soldier[info.move_id][info.team_number].pos;
-	cmd.destination.x--; 
-	cmd.target_id = 0;
+	
+
 	return cmd;
 }

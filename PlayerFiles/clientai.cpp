@@ -14,7 +14,6 @@ char sendbuf[128] = {}; //向平台发送信息
 
 SOCKET client; //声明client，用于下面的get_soldier_info()的调用
 
-void ChooseSoldier(int num_inc, int id[]);
 command AI_main();
 
 void get_soldier_info()
@@ -95,43 +94,14 @@ int main()
 	}
 
 	///////////////////////////////////以下为自由选择兵种模式关闭和开启的处理
-	if (FREE_CHOOSE == 0)   
-	{
+	
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
 		sscanf(recvbuf, "%d %d", &info.soldier_number[0], &info.soldier_number[1]);
 		send(client, "ok", 3, 0);
 		get_soldier_info();
 		//读取初始信息
-	}
-	else while (1)
-	{
-		memset(recvbuf, 0, sizeof(char)*128);		
-		recv(client, recvbuf, 127, 0);
-		if(recvbuf[0] == '|') break; //以|作为选择结束标志
 
-		int enemy_inc, self_inc; //对方最新选择兵种的士兵数目，己方本轮需要进行选择的士兵数
-		int choice[2]; //对方最新选择的兵种号
-		int id[2]; //当前要选兵种的士兵号
-		sscanf(recvbuf, "%d %d %d %d %d %d", &enemy_inc, &choice[0], &choice[1], &self_inc, &id[0], &id[1]);
-
-		for (int i=info.soldier_number[1-info.team_number]; i<enemy_inc; i++)   //读取对手的已选信息
-		{
-			info.soldier[i][1-info.team_number].kind = choice[i-info.team_number];
-		}
-		info.soldier_number[1-info.team_number] += enemy_inc;
-
-		ChooseSoldier(self_inc, id); //调用选手编写的选择函数		
-	
-		for (int i=0; i<self_inc; i++)  //向平台发送选择信息
-		{
-			memset(sendbuf, 0, sizeof(char)*128);
-			sprintf(sendbuf, "%d", info.soldier[info.soldier_number[info.team_number]+i][info.team_number].kind);
-			send(client, sendbuf, strlen(sendbuf), 0);
-			recv(client, recvbuf, 3, 0);
-		}
-		info.soldier_number[info.team_number] += self_inc;
-	}
 
 	send(client, (char *) teamName, sizeof teamName, 0);
 	recv(client, recvbuf, 3, 0);

@@ -55,6 +55,8 @@ while not over and turn < basic.TURN_MAX:
 							over = False
 					if over:
 						roundEndInfo.over = over
+						main.end_score(score,base,turn)
+						roundEndInfo.score = score
 				#发送每回合结束时的信息：
 				sio._sends(conn, roundEndInfo)
 				over = roundEndInfo.over
@@ -65,6 +67,6 @@ while not over and turn < basic.TURN_MAX:
 		
 winner = main.end_score(score, base, turn)
 print 'winner:',winner
-sio._sends(conn, winner, score)
+sio._sends(conn, winner)
 conn.close()
 print 'logic end'

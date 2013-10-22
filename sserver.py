@@ -192,7 +192,7 @@ class Sui(threading.Thread):
 				gp.gProc.wait()
 			else:
 				try:
-					sio._sends(connUI,gp.winner,score)
+					sio._sends(connUI,gp.winner)
 				except:
 					connUI.shutdown(socket.SHUT_RDWR)
 					sys.exit(1)
@@ -298,7 +298,7 @@ class Slogic(threading.Thread):
 				break	
 		
 		if gp.reInfo.over == sio.NORMAL_OVER:
-			gp.winner,gp.score = sio._recvs(connLogic)
+			gp.winner = sio._recvs(connLogic)
 		if gp.reInfo.over == sio.AI_BREAKDOWN:
 			for i in range(2):
 				if gp.aiConnErr[i] == True:
@@ -476,7 +476,6 @@ class gameParameter():
 		self.heroType = []
 		self.aiConnErr = [False,False]
 		self.winner = -1
-		self.score = []
 		self.uiOverFlag = False
 		
 		#回合阶段变量
