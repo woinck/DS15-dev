@@ -17,6 +17,9 @@ if RELEASE_MODE == 1:
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 1
 
+#兵种选择模式 0：固定兵种 1：自由选择兵种
+FREE_CHOOSE = 0
+
 #游戏运行参数
 DEBUG_MODE = 0
 SINGLE_PROCESS = 1 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
@@ -100,29 +103,35 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 					if whole_map[i][j].kind == basic.MIRROR:
 						conn.send(str(i)+' '+str(j)+' '+str(whole_map[i][j].out[0]) + ' '+str(whole_map[i][j].out[1]))
 						conn.recv(3)
-		
-		conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
-		conn.recv(3)
+		if FREE_CHOOSE == 0:
+			conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
+			conn.recv(3)
+			for i in range(soldier_number[0]):
+					conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
+							   +str(soldier[0][i].strength)+' '
+							   +str(soldier[0][i].defence)+' '
+							   +str(soldier[0][i].move_range)+' '
+							   +str(soldier[0][i].attack_range[0])+' '
+							   +str(soldier[0][i].attack_range[1])+' '
+							   +str(soldier[0][i].up)+' '
+							   +str(soldier[0][i].position[0])+' '
+							   +str(soldier[0][i].position[1]))
+					conn.recv(3)
+			for i in range(soldier_number[1]):
+					conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
+							   +str(soldier[1][i].strength)+' '
+							   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
+							   +str(soldier[1][i].attack_range[0])+' '
+							   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
+							   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
+					conn.recv(3)
 
-		for i in range(soldier_number[0]):
-				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
-						   +str(soldier[0][i].strength)+' '
-						   +str(soldier[0][i].defence)+' '
-						   +str(soldier[0][i].move_range)+' '
-						   +str(soldier[0][i].attack_range[0])+' '
-						   +str(soldier[0][i].attack_range[1])+' '
-						   +str(soldier[0][i].up)+' '
-						   +str(soldier[0][i].position[0])+' '
-						   +str(soldier[0][i].position[1]))
-				conn.recv(3)
-		for i in range(soldier_number[1]):
-				conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
-						   +str(soldier[1][i].strength)+' '
-						   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
-						   +str(soldier[1][i].attack_range[0])+' '
-						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
-						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
-				conn.recv(3)
+#向cpp客户端传输兵种选择信息
+def _cpp_sends_choose(conn, enemy_inc, choice, self_inc, id):
+	conn.send(str(enemy_inc)+' '+str(choice[0])+' '+str(choice[1])
+		+' '+str(self_inc)+' '+str(id[0])+' '+str(id[1]))
+
+
 #向cpp客户端AI传输每回合信息
 def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, turn, score,):
 		conn.send(str(move_id)+' '+str(temple_number)+' '+str(turn)+' '+str(score[0])+' '+str(score[1]))
@@ -147,6 +156,7 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
 				conn.recv(3)
 
+#从cpp客户端AI接收初始信息
 def _cpp_recvs_begin(conn):
 	result = []
 	recvbuf = conn.recv(40)
@@ -157,10 +167,18 @@ def _cpp_recvs_begin(conn):
 	result.append(int(recvbuf))
 	return result
 				
+#从cpp客户端AI接收兵种选择信息
+def _cpp_recvs_choose(conn, self_inc, soldier, team_number):
+	kind = []
+	for i in range(self_inc):
+		kind.append(int(conn.recv(1)))
+	return kind
+
+
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
-	rbuf = recvbuf.split()
+	rbuf x recvbuf.split()
 	order = int(rbuf[0])
 	target_id = int(rbuf[1])
 	move = (int(rbuf[2]), int(rbuf[3]))

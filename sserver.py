@@ -12,7 +12,7 @@ def _SocketConnect(host,port,connName,list = 1):
 		print 'port occupied, the program will exit...'
 		time.sleep(3)
 		sys.exit(1)
-		
+
 	#设定AI连接最大时间
 	if connName == 'AI':
 		if sio.DEBUG_MODE:
