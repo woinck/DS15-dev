@@ -104,6 +104,7 @@ int main()
 		get_soldier_info();
 		//读取初始信息
 	}
+
 	else while (1)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);		
