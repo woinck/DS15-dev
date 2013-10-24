@@ -168,11 +168,11 @@ def _cpp_recvs_begin(conn):
 	return result
 				
 #从cpp客户端AI接收兵种选择信息
-def _cpp_recvs_choose(conn, self_inc, soldier, team_number):
-	kind = []
+def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 	for i in range(self_inc):
-		kind.append(int(conn.recv(1)))
-	return kind
+		temp = basic.Base_Unit(int(conn.recv(1)), soldier[team_number][id[i]].position)
+		soldier[team_number][id[i]] = temp
+
 
 
 #从cpp客户端AI接收每回合指令

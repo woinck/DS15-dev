@@ -4,14 +4,14 @@
 const int MaxV = 20; // 地图边长最大值
 const int AdjacentVec[4][2] = { // 四个毗邻点的方向向量
     {0, -1}, {0, 1}, {-1, 0}, {1, 0}};
-void relax(Game_Info &gameInfo, int *pathv, int v, int col, int row);
-int minEdge(int num, int *pathv);
+void relax(Game_Info &gameInfo, int pathv[], int v, int col, int row);
+int minEdge(int num, int pathv[]);
 
 // 计算所得的移动范围坐标将连续储存在选手传入的地址tmp表示后，
 // 请确保tmp后申请了足够多的空间用以储存移动范围。
 // 返回值move_range直接返回能够到达的点的数量。 
 // team和id分别代表寻求单位的队伍和单位号。
-int move_range(Game_Info &gameInfo, int team, int id, Position *tmp) { 
+int move_range(Game_Info &gameInfo, int team, int id, Position tmp[]) { 
     Soldier_Basic &mvObj = gameInfo.soldier[id][team];  // 当前移动单位结构体
     int pathv[MaxV * MaxV];                             // 维护从源点到各点的最短距离
     // 求地图列数和行数
@@ -52,7 +52,7 @@ int move_range(Game_Info &gameInfo, int team, int id, Position *tmp) {
 }
 
 // 使用pathv中的第v个终点来松弛
-void relax(Game_Info &gameInfo, int *pathv, int v, int id, int team) { 
+void relax(Game_Info &gameInfo, int pathv[], int v, int id, int team) { 
     int col = gameInfo.map_size[1], row = gameInfo.map_size[0];
     int vx = v / col, vy = v % col; // 第v个点在地图中的坐标
     for (int i =0; i < 4; ++i) {    // 4个方向松弛
@@ -76,7 +76,6 @@ void relax(Game_Info &gameInfo, int *pathv, int v, int id, int team) {
                 }
                 if (gameInfo.map[endx][endy] == BARRIER) {
                     edgeLen = INFINITE;
-                    break;
                 }
             }
             // 松弛
@@ -88,7 +87,7 @@ void relax(Game_Info &gameInfo, int *pathv, int v, int id, int team) {
     }
 }
 
-int minEdge(int num, int *pathv) { // 贪心最短路，在没有可行路径时返回-1
+int minEdge(int num, int pathv[]) { // 贪心最短路，在没有可行路径时返回-1
     int minCost = INFINITE, tmp = 0;
     for (int i = 0; i < num; ++i) {
         if (pathv[i] < minCost && pathv[i]) {
