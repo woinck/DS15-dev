@@ -1,23 +1,27 @@
  #-*- coding:UTF-8 -*-
 
+
+RELEASE_MODE = 1
+
+
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 reload(sys)
-logF = open('log.log','w')
-sys.stdout = logF
+
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
+
+if RELEASE_MODE == 1:
+	logF = open('log.log','w')
+	sys.stdout = logF
+
 #AI模式 0：py 1：cpp
-USE_CPP_AI = 0
+USE_CPP_AI = 1
+
+#兵种选择模式 0：固定兵种 1：自由选择兵种
+FREE_CHOOSE = 0
 
 #游戏运行参数
-'''
-关于DEGUB_MODE:
-为0时,启动游戏只需运行相应UI即可,程序将自动调用sserver及logic文件;
-为1时需先手动运行logic,再运行sserver,再运行ui,再运行ai
-'''
-
 DEBUG_MODE = 0
-RELEASE_MODE = 0
 SINGLE_PROCESS = 1 #此常量为1时各命令窗口合并，只会产生一个线程，为0时分开（便于调试）
 
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
@@ -34,7 +38,7 @@ LOGIC_PORT = 8801 # logic 连接端口
 UI_PORT = 8802 # UI 连接端口
 AI_PORT = 8803 # AI 连接端口
 #error
-devnull = open(os.devnull, 'w')
+#devnull = open(os.devnull, 'w')
 if RELEASE_MODE:
 	SERV_FILE_NAME = '\\sserver.exe'
 	LOGIC_FILE_NAME = '\\sclientlogic.exe'
@@ -99,29 +103,35 @@ def _cpp_sends_begin(conn, team_number, whole_map, soldier_number, soldier):
 					if whole_map[i][j].kind == basic.MIRROR:
 						conn.send(str(i)+' '+str(j)+' '+str(whole_map[i][j].out[0]) + ' '+str(whole_map[i][j].out[1]))
 						conn.recv(3)
-		
-		conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
-		conn.recv(3)
+		if FREE_CHOOSE == 0:
+			conn.send(str(soldier_number[0])+' '+str(soldier_number[1]))
+			conn.recv(3)
+			for i in range(soldier_number[0]):
+					conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
+							   +str(soldier[0][i].strength)+' '
+							   +str(soldier[0][i].defence)+' '
+							   +str(soldier[0][i].move_range)+' '
+							   +str(soldier[0][i].attack_range[0])+' '
+							   +str(soldier[0][i].attack_range[1])+' '
+							   +str(soldier[0][i].up)+' '
+							   +str(soldier[0][i].position[0])+' '
+							   +str(soldier[0][i].position[1]))
+					conn.recv(3)
+			for i in range(soldier_number[1]):
+					conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
+							   +str(soldier[1][i].strength)+' '
+							   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
+							   +str(soldier[1][i].attack_range[0])+' '
+							   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
+							   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
+					conn.recv(3)
 
-		for i in range(soldier_number[0]):
-				conn.send( str(soldier[0][i].kind)+' '+str(soldier[0][i].life)+' '
-						   +str(soldier[0][i].strength)+' '
-						   +str(soldier[0][i].defence)+' '
-						   +str(soldier[0][i].move_range)+' '
-						   +str(soldier[0][i].attack_range[0])+' '
-						   +str(soldier[0][i].attack_range[1])+' '
-						   +str(soldier[0][i].up)+' '
-						   +str(soldier[0][i].position[0])+' '
-						   +str(soldier[0][i].position[1]))
-				conn.recv(3)
-		for i in range(soldier_number[1]):
-				conn.send( str(soldier[1][i].kind)+' '+str(soldier[1][i].life)+' '
-						   +str(soldier[1][i].strength)+' '
-						   +str(soldier[1][i].defence)+' '+str(soldier[1][i].move_range)+' '
-						   +str(soldier[1][i].attack_range[0])+' '
-						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
-						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
-				conn.recv(3)
+#向cpp客户端传输兵种选择信息
+def _cpp_sends_choose(conn, enemy_inc, choice, self_inc, id):
+	conn.send(str(enemy_inc)+' '+str(choice[0])+' '+str(choice[1])
+		+' '+str(self_inc)+' '+str(id[0])+' '+str(id[1]))
+
+
 #向cpp客户端AI传输每回合信息
 def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, turn, score,):
 		conn.send(str(move_id)+' '+str(temple_number)+' '+str(turn)+' '+str(score[0])+' '+str(score[1]))
@@ -146,6 +156,7 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
 				conn.recv(3)
 
+#从cpp客户端AI接收初始信息
 def _cpp_recvs_begin(conn):
 	result = []
 	recvbuf = conn.recv(40)
@@ -156,10 +167,18 @@ def _cpp_recvs_begin(conn):
 	result.append(int(recvbuf))
 	return result
 				
+#从cpp客户端AI接收兵种选择信息
+def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
+	for i in range(self_inc):
+		temp = basic.Base_Unit(int(conn.recv(1)), soldier[team_number][id[i]].position)
+		soldier[team_number][id[i]] = temp
+
+
+
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
-	rbuf = recvbuf.split()
+	rbuf x recvbuf.split()
 	order = int(rbuf[0])
 	target_id = int(rbuf[1])
 	move = (int(rbuf[2]), int(rbuf[3]))
@@ -231,8 +250,8 @@ def Prog_Run(progPath,isAI=False):
 	if SINGLE_PROCESS:
 		progPath=progPath.encode('gbk')
 		if RELEASE_MODE or (isAI and USE_CPP_AI):	
-			result = subprocess.Popen(progPath, stderr = devnull)
-			#result = subprocess.Popen(progPath)
+			#result = subprocess.Popen(progPath, stderr = devnull)
+			result = subprocess.Popen(progPath)
 		else: 
 			result = subprocess.Popen('python ' + progPath)
 	else:

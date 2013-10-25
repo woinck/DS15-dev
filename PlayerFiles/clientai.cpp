@@ -1,6 +1,7 @@
 #include<winsock2.h>
 #include<stdio.h>
 #include"basic.h"
+#include <Windows.h>
 #pragma comment(lib,"WS2_32.lib")
 
 extern game_info info;
@@ -12,7 +13,6 @@ char recvbuf[128] = {}; //从平台接收信息
 char sendbuf[128] = {}; //向平台发送信息
 
 SOCKET client; //声明client，用于下面的get_soldier_info()的调用
-
 
 command AI_main();
 
@@ -49,8 +49,13 @@ int main()
 	cliaddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 	cliaddr.sin_family = AF_INET;
 	cliaddr.sin_port = htons(8803);
-	connect(client, (sockaddr*)&cliaddr, sizeof(sockaddr));
-	//send(client, "AI has connected.", 17, 0);
+	if(connect(client, (sockaddr*)&cliaddr, sizeof(sockaddr)) == -1)
+	{
+		printf("\n==============欢迎参加队式十五==============\n\n");
+		printf("没有检测到平台端口，请确认平台程序已经运行再运行本程序\n");
+		system("pause>nul");
+		exit(0);
+	}
 	//建立socket连接
 	
 	
@@ -87,12 +92,16 @@ int main()
 		sscanf(recvbuf, "%d %d %d %d", &info.mir[i].inPos.x, &info.mir[i].inPos.y, &info.mir[i].outPos.x, &info.mir[i].outPos.y);
 		send(client, "ok", 3, 0);
 	}
-	memset(recvbuf, 0, sizeof(char)*128);
-	recv(client, recvbuf, 127, 0);
-	sscanf(recvbuf, "%d %d", &info.soldier_number[0], &info.soldier_number[1]);
-	send(client, "ok", 3, 0);
-	get_soldier_info();
-	//读取初始信息
+
+	///////////////////////////////////以下为自由选择兵种模式关闭和开启的处理
+	
+		memset(recvbuf, 0, sizeof(char)*128);
+		recv(client, recvbuf, 127, 0);
+		sscanf(recvbuf, "%d %d", &info.soldier_number[0], &info.soldier_number[1]);
+		send(client, "ok", 3, 0);
+		get_soldier_info();
+		//读取初始信息
+
 
 	send(client, (char *) teamName, sizeof teamName, 0);
 	recv(client, recvbuf, 3, 0);
@@ -104,12 +113,12 @@ int main()
 	while(1)
 	{
 		memset(recvbuf, 0, sizeof(char)*128);		
-		printf("%d\n",recv(client, recvbuf, 127, 0));
+		recv(client, recvbuf, 127, 0);
 
 		if(recvbuf[0] == '|') break; //以|作为游戏结束标志
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
 		send(client, "ok", 3, 0);
-		//printf("%d++++++\n",info.turn);
+
 		for(int i = 0; i < info.temple_number; i++)
 		{
 			memset(recvbuf, 0, sizeof(char)*128);

@@ -1,18 +1,19 @@
 Bugs:
-	朴Basic版本问题
-
-	弓手离开炮塔攻击距离不变
+	attack takes 4 parameter
 	
-	cpp move_range
-	
-	cpp Sample AI
-
+	hero score = 3? 5?
 
 Platform:
+
+	界面第一回合要额外接收一个排序后的地图
+
+	回放文件增加版本号
 
 	AI崩溃情况的处理功能未经过大量测试，可能有问题
 	
 	c++的Sample AI!!
+	
+	测试赛
 	
 	AI崩溃判胜负情况
 	
@@ -27,6 +28,3 @@ Platform:
 	完善给选手的log文件
 	
 	确定给展示组的回放文件格式
-	
-	
-

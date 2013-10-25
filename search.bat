@@ -1,1 +1,0 @@
-for /R %I in (*.py) do echo %I >>re.txt && find /I "dragon" %I >>re.txt

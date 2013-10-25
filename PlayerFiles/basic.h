@@ -29,20 +29,20 @@ const int MIRROR = 6;   // 魔镜
 // 数组的第i，j个元素对应着第i种元素的第j种效果
 const int FIELD_EFFECT[][5] = {{1, 0, 0, 0},
                                {2, 0, 0, 1},
-                               {2, 0, 0, 0},
+                               {3, 0, 0, 0},
                                {1, 0, 0, 0},
                                {1, 2, 0, 0},
                                {1, 3, 0, 0},
                                {1, 1, 0, 0}};
 
-const int TEMPLE_UP_TIME = 10;     // 遗迹出现神符的回合间隔
+const int TEMPLE_UP_TIME = 5;     // 遗迹出现神符的回合间隔
 const int TURRET_SCORE_TIME = 5;   // 连续占有炮塔触发积分奖励的回合数
 const int TURRET_RANGE = 10;       // 炮塔最大射程                          
 
 const int HERO_UP_LIMIT = 5;      // 英雄通过遗迹获得神符的加成次数上限
 const int BASE_UP_LIMIT = 3;      // 普通单位通过遗迹获得神符的加成次数上限
-const int HERO_SCORE = 3;         // 英雄剩余血量的分数加成
-const int BASE_SCORE = 1;         // 普通单位剩余血量的分数加成
+const int HERO_SCORE = 5;         // 英雄剩余血量的分数加成
+const int BASE_SCORE = 3;         // 普通单位剩余血量的分数加成
 
 
 /////////////////////////////////////////////////////////////
@@ -119,13 +119,12 @@ typedef struct game_info { // 游戏信息结构体，每回合选手从中获取必要的信息
     int move_id;                                  // 移动单位，表示本队伍中第move_id个人
     int score[2];                                 // 两队当前积分(不包括存活士兵所占）
     int turn;                                     // 当前总回合数
-    int temple_number;
+    int temple_number;                            // 神庙数量
     Temple temple[TEMPLE_MAX];                    // 各神庙的位置及状态
     Soldier_Basic soldier[SOLDIERS_NUMBER][2];    // 双方单位的信息
 }Game_Info;
 
-typedef enum cmd_order
-{
+typedef enum cmd_order { //command order的枚举类型
 	wait, attack, skill
 }Cmd_Order;
 
