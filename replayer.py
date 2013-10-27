@@ -88,6 +88,11 @@ class Replayer(QWidget, Ui_Replayer):
 										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
 		self.playSpeedSlider.setStyleSheet("QSlider::groove:horizontal {background-color:darkgrey;margin: 2px 0;}"
 											"QSlider::handle:horizontal {background:white;border: 1px solid #5c5c5c;border-radius:3px; width: 18px;}")
+		self.roundSlider.setStyleSheet("QSlider::groove:horizontal {background:darkgrey;}"
+										"QSlider::handle:horizontal {background:blue; border:1px; border-radius:4px;width:18px;}"
+										"QSlider::add-page:horizontal {background: darkgrey;}"
+										"QSlider::sub-page:horizontal {background: lightblue;}")
+		self.roundLabel.setStyleSheet("border-image:url(:roundLabel.png)")
 		#信息变量
 		self.isPaused = False
 		self.started = False
@@ -109,6 +114,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.connect(self.playBackwardButton, SIGNAL("toggled(bool)"), self.on_playBackwardButton_toggled)#for test
 		self.connect(self.playForwardButton, SIGNAL("toggled(bool)"), self.on_playForwardButton_toggled)#for test
 		self.connect(self.playSpeedSlider, SIGNAL("valueChanged(int)"), self.on_playSpeedSlider_valueChanged)
+		self.connect(self.roundSlider, SIGNAL("valueChanged(int)"), self.on_roundSlider_valueChanged)
 		#self.connect(se
 		self.replayWidget.moveAnimEnd.connect(self.on_animEnd)
 		self.replayWidget.HUMAN_REPLAY = 0
@@ -157,6 +163,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.checkTimer()
 		if self.started:
 			self.replayWidget.GoToRound(0, 0)
+			self.synRoundSlider()
 			self.roundLabel.setText("Round 0")
 			self.infoWidget.setRoundInfo(0)
 			if not self.isPaused:
@@ -168,11 +175,12 @@ class Replayer(QWidget, Ui_Replayer):
 			for roundInfo in self.fileInfo[2:]:
 				self.replayWidget.UpdateBeginData(roundInfo[0])
 				self.replayWidget.UpdateEndData(*roundInfo[1:])
-				lifes = [x.life for x in roundInfo[2].base[1]]
 
+			self.roundSlider.setRange(0, len(self.fileInfo) - 2)
 			#开始播放
 			self.pauseButton.setChecked(False)
 			self.replayWidget.GoToRound(0, 0)
+			self.synRoundSlider()
 			self.roundLabel.setText("Round 0")
 			self.infoWidget.setRoundInfo(0)
 			self.replayWidget.Play()
@@ -184,6 +192,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.replayWidget.reset()
 		self.started = False
 		self.pauseButton.setChecked(False)
+		self.roundSlider.setRange(0, 0)
 		self.updateUi()
 
 	@pyqtSlot()
@@ -200,6 +209,7 @@ class Replayer(QWidget, Ui_Replayer):
 			if self.replayWidget.nowStatus:
 				try:
 					self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
+					self.synRoundSlider()
 					self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 					self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 				except:
@@ -214,6 +224,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.checkTimer()
 		try:
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
+			self.synRoundSlider()
 			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 			self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 		except:
@@ -227,6 +238,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.checkTimer()
 		try:
 			self.replayWidget.GoToRound(self.replayWidget.nowRound -1 , 0)
+			self.synRoundSlider()
 			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 			self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 		except:
@@ -272,12 +284,21 @@ class Replayer(QWidget, Ui_Replayer):
 			#	self.pauseButton.setChecked(False)
 				self.replayWidget.Play()
 
+	def on_roundSlider_valueChanged(self, round_):
+		if self.started:
+			if not round_ == self.replayWidget.nowRound:
+				self.replayWidget.GoToRound(round_, 0)
+				self.roundLabel.setText("Round %d" %round_)
+				if not self.isPaused:
+					self.replayWidget.Play()
+
 	def timerEvent(self, event):
 		if event.timerId() == self.timer:
 			print "recv timer event!!!"#for test
 			change = 1 if self.BorF == 'f' else -1
 			try:
 				self.replayWidget.GoToRound(self.replayWidget.nowRound + change, 0)
+				self.synRoundSlider()
 				self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 				self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 			except:
@@ -294,6 +315,7 @@ class Replayer(QWidget, Ui_Replayer):
 		try:
 			#print "call go to round on animEnd::",self.replayWidget.nowRound#for test
 			self.replayWidget.GoToRound(self.replayWidget.nowRound + 1, 0)
+			self.synRoundSlider()
 			self.roundLabel.setText("Round %d" %self.replayWidget.nowRound)
 			self.infoWidget.setRoundInfo(self.replayWidget.nowRound)
 		except:
@@ -308,6 +330,12 @@ class Replayer(QWidget, Ui_Replayer):
 				self.playBackwardButton.setChecked(False)
 			else:
 				self.playForwardButton.setChecked(False)
+				
+	def synRoundSlider(self):
+		print "blabla"
+		self.roundSlider.blockSignals(True)
+		self.roundSlider.setValue(self.replayWidget.nowRound)
+		self.roundSlider.blockSignals(False)
 #test
 if __name__ == "__main__":
 	import sys
