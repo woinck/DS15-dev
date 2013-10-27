@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_replayer.ui'
 #
-# Created: Fri Oct 11 10:23:51 2013
+# Created: Sun Oct 27 16:40:11 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -191,6 +191,11 @@ class Ui_Replayer(object):
         self.returnButton.setText(_fromUtf8(""))
         self.returnButton.setCheckable(False)
         self.returnButton.setObjectName(_fromUtf8("returnButton"))
+        self.playSpeedSlider = QtGui.QSlider(Replayer)
+        self.playSpeedSlider.setGeometry(QtCore.QRect(80, 630, 160, 19))
+        self.playSpeedSlider.setMaximum(80)
+        self.playSpeedSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.playSpeedSlider.setObjectName(_fromUtf8("playSpeedSlider"))
 
         self.retranslateUi(Replayer)
         QtCore.QMetaObject.connectSlotsByName(Replayer)

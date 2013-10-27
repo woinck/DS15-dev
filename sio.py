@@ -1,7 +1,7 @@
  #-*- coding:UTF-8 -*-
 
 
-RELEASE_MODE = 1
+RELEASE_MODE = 0
 
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
@@ -178,7 +178,7 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
-	rbuf x recvbuf.split()
+	rbuf = recvbuf.split()
 	order = int(rbuf[0])
 	target_id = int(rbuf[1])
 	move = (int(rbuf[2]), int(rbuf[3]))

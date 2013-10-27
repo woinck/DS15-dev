@@ -86,6 +86,8 @@ class Replayer(QWidget, Ui_Replayer):
 		self.nextStepButton.setStyleSheet("#nextStepButton{border-image:url(:nextStep0.png); border:0;}"
 										"#nextStepButton:hover{border-image:url(:nextStep1.png);border:0;}"
 										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
+		self.playSpeedSlider.setStyleSheet("QSlider::groove:horizontal {background-color:darkgrey;margin: 2px 0;}"
+											"QSlider::handle:horizontal {background:white;border: 1px solid #5c5c5c;border-radius:3px; width: 18px;}")
 		#信息变量
 		self.isPaused = False
 		self.started = False
@@ -106,6 +108,7 @@ class Replayer(QWidget, Ui_Replayer):
 		self.connect(self.pauseButton, SIGNAL("toggled(bool)"), self.on_pauseButton_toggled)#for test
 		self.connect(self.playBackwardButton, SIGNAL("toggled(bool)"), self.on_playBackwardButton_toggled)#for test
 		self.connect(self.playForwardButton, SIGNAL("toggled(bool)"), self.on_playForwardButton_toggled)#for test
+		self.connect(self.playSpeedSlider, SIGNAL("valueChanged(int)"), self.on_playSpeedSlider_valueChanged)
 		#self.connect(se
 		self.replayWidget.moveAnimEnd.connect(self.on_animEnd)
 		self.replayWidget.HUMAN_REPLAY = 0
@@ -123,6 +126,10 @@ class Replayer(QWidget, Ui_Replayer):
 		self.preStepButton.setEnabled(self.started)
 		self.playForwardButton.setEnabled(self.started)
 		self.playBackwardButton.setEnabled(self.started)
+
+	@pyqtSlot()
+	def on_playSpeedSlider_valueChanged(self, speed):
+		self.replayWidget.TIME_PER_GRID = 500 - speed * 5
 
 	@pyqtSlot()
 	def on_returnButton_clicked(self):
