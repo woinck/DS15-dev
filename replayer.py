@@ -88,8 +88,8 @@ class Replayer(QWidget, Ui_Replayer):
 										"QToolTip{opacity: 200; border-radius:3;color:rgb(255,255,0);background-color:darkgray;}")
 		self.playSpeedSlider.setStyleSheet("QSlider::groove:horizontal {background-color:darkgrey;margin: 2px 0;}"
 											"QSlider::handle:horizontal {background:white;border: 1px solid #5c5c5c;border-radius:3px; width: 18px;}")
-		self.roundSlider.setStyleSheet("QSlider::groove:horizontal {background:darkgrey;}"
-										"QSlider::handle:horizontal {background:blue; border:1px; border-radius:4px;width:18px;}"
+		self.roundSlider.setStyleSheet("QSlider::groove:horizontal {background:darkgrey;height:10px;}"
+										"QSlider::handle:horizontal {background:#008f8f;height:15px;margin:-3px 0; border-radius:4px;width:15px;}"
 										"QSlider::add-page:horizontal {background: darkgrey;}"
 										"QSlider::sub-page:horizontal {background: lightblue;}")
 		self.roundLabel.setStyleSheet("border-image:url(:roundLabel.png)")
