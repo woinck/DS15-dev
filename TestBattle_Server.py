@@ -78,8 +78,8 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 
 
 if __name__ == "__main__":
-	HOST, PORT = "127.0.0.1", 10086
+	HOST, PORT = "127.0.0.1", 8086
 
 	# Create the server
-	server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
+	server = SocketServer.ThreadingTCPServer((HOST, PORT), MyTCPHandler)
 	server.serve_forever()

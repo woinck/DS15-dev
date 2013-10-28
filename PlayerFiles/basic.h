@@ -41,8 +41,8 @@ const int TURRET_RANGE = 10;       // 炮塔最大射程
 
 const int HERO_UP_LIMIT = 5;      // 英雄通过遗迹获得神符的加成次数上限
 const int BASE_UP_LIMIT = 3;      // 普通单位通过遗迹获得神符的加成次数上限
-const int HERO_SCORE = 3;         // 英雄剩余血量的分数加成
-const int BASE_SCORE = 1;         // 普通单位剩余血量的分数加成
+const int HERO_SCORE = 5;         // 英雄剩余血量的分数加成
+const int BASE_SCORE = 3;         // 普通单位剩余血量的分数加成
 
 
 /////////////////////////////////////////////////////////////

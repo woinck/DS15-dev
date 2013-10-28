@@ -95,6 +95,7 @@ int main()
 	}
 
 	///////////////////////////////////以下为自由选择兵种模式关闭和开启的处理
+	int FREE_CHOOSE = 0;
 	if (FREE_CHOOSE == 0)   
 	{
 		memset(recvbuf, 0, sizeof(char)*128);
@@ -157,11 +158,13 @@ int main()
 			sscanf(recvbuf, "%d %d %d", &info.temple[i].pos.x, &info.temple[i].pos.y, &info.temple[i].state);
 			send(client, "ok", 3, 0);
 		}
+		printf("senttttttttt");
 		get_soldier_info();
   		cmd = AI_main();
 		memset(sendbuf, 0, sizeof(char)*128);
 		sprintf(sendbuf, "%d %d %d %d", (int)cmd.order, cmd.target_id, cmd.destination.x, cmd.destination.y);
 		send(client, sendbuf, strlen(sendbuf), 0); 
+		printf("sentTTTTTTTTTTTTTTTTTTTTTTTT");
 	} //游戏按回合进行，直到分出胜负
 
 	closesocket(client);

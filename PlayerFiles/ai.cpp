@@ -31,9 +31,11 @@ void ChooseSoldier(int num_inc, int id[])
 Command AI_main()
 {
 	Command cmd;
-	//选手在这里写自己的AI主函数
+	//选手在这里写自己的AI主函�?
 	
-	
+	cmd.destination = info.soldier[info.move_id][info.team_number].pos;
+	cmd.order = wait;
+	cmd.target_id = 0;
 
 	return cmd;
 }

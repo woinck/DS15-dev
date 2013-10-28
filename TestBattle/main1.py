@@ -116,9 +116,8 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
         if base[j][i].position == (0,0):
                 over = True
 	return basic.Round_End_Info(base, route, (attack_1, attack_2), trans, score, over)
-	
 def end_score(score, base, turn):
 	'''结束后计算积分返回胜队，（1表示通过0为未通过）'''
-	score[1] = (TURN_MAX - turn) * 5
+	score[1] = (basic.TURN_MAX - turn) * 5
         if turn < basic.TURN_MAX:
                 return 1
