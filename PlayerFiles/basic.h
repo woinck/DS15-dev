@@ -29,13 +29,13 @@ const int MIRROR = 6;   // 魔镜
 // 数组的第i，j个元素对应着第i种元素的第j种效果
 const int FIELD_EFFECT[][5] = {{1, 0, 0, 0},
                                {2, 0, 0, 1},
-                               {2, 0, 0, 0},
+                               {3, 0, 0, 0},
                                {1, 0, 0, 0},
                                {1, 2, 0, 0},
                                {1, 3, 0, 0},
                                {1, 1, 0, 0}};
 
-const int TEMPLE_UP_TIME = 10;     // 遗迹出现神符的回合间隔
+const int TEMPLE_UP_TIME = 5;     // 遗迹出现神符的回合间隔
 const int TURRET_SCORE_TIME = 5;   // 连续占有炮塔触发积分奖励的回合数
 const int TURRET_RANGE = 10;       // 炮塔最大射程                          
 
