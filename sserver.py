@@ -270,6 +270,9 @@ class Slogic(threading.Thread):
 			if gp.gProcess < sio.HERO_TYPE_SET:
 				gp.gProc.wait()
 			else:
+				sio._sends(connLogic,gp.gameMode)
+				if gp.gameMode == sio.TEST_BATTLE:
+					sio._sends(connLogic,gp.testBattleStage)
 				sio._sends(connLogic,basic.Begin_Info(gp.mapInfo,gp.base,gp.heroType))
 				gp.gProc.release()
 				break
@@ -446,7 +449,7 @@ class Sai(threading.Thread):
 						tempScore = gp.reInfo.score
 					
 					#发送回合信息
-					if gp.gameMode != sio.TEST_BATTLE:
+					if gp.gameMode != sio.TEST_BATTLE or gp.rbInfo.id[0] == 1:
 						try:
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								sio._cpp_sends(connAI[gp.rbInfo.id[0]],gp.rbInfo.id[1],len(gp.rbInfo.temple),gp.rbInfo.temple,(len(gp.rbInfo.base[0]),len(gp.rbInfo.base[1])),gp.rbInfo.base,roundNum,tempScore)

@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import socket, cPickle, sio, time, basic, main, threading, sys
+import TestBattle_main
 
 print 'logic'
 
@@ -12,6 +13,27 @@ except:
 	sys.exit(1)
 	
 print 'platform connected'
+
+TestMain = main
+
+gameMode = sio._recvs(conn)
+if (gameMode == sio.TEST_BATTLE):
+	level = sio._recvs(conn)
+	if level == 1:
+		TestMain = TestBattle_main.main1()
+	elif level == 2:
+		TestMain = TestBattle_main.main2()
+	elif level == 3:
+		TestMain = TestBattle_main.main3()
+	elif level == 4:
+		TestMain = TestBattle_main.main4()
+	elif level == 5:
+		TestMain = TestBattle_main.main5()
+	elif level == 6:
+		TestMain = TestBattle_main.main6()
+	elif level == 7:
+		TestMain = TestBattle_main.main7()
+
 
 begin_Info = sio._recvs(conn)
 base = begin_Info.base
@@ -35,19 +57,19 @@ for i in range(0, 2):
 			whole_map[base[i][j].position[0]][base[i][j].position[1]].effect(base, whole_map, (i, j), score)
 while not over and turn < basic.TURN_MAX:
 	turn += 1
-	main.perparation(whole_map, base, score, map_temple)
+	TestMain.perparation(whole_map, base, score, map_temple)
 	for i in range(0, basic.SOLDIERS_NUMBER):
 		for j in range(0,2):
 			if i >= len(base[j]):
 				continue
 			if base[j][i].life > 0:
-				move_range = main.available_spots(whole_map, base, (j, i))
+				move_range = TestMain.available_spots(whole_map, base, (j, i))
 				roundBeginInfo = basic.Round_Begin_Info((j,i), move_range, base, map_temple)
 				#发送每回合的开始信息：
 				sio._sends(conn, roundBeginInfo)
 				#接收AI的命令：
 				roundCommand = sio._recvs(conn)
-				roundEndInfo = main.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
+				roundEndInfo = TestMain.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
 				over = True
 				if turn == basic.TURN_MAX and j == 1:
 					for k in range(i + 1, len(base[j])):
@@ -55,7 +77,7 @@ while not over and turn < basic.TURN_MAX:
 							over = False
 					if over:
 						roundEndInfo.over = over
-						main.end_score(score,base,turn)
+						TestMain.end_score(score,base,turn)
 						roundEndInfo.score = score
 				#发送每回合结束时的信息：
 				sio._sends(conn, roundEndInfo)
@@ -65,7 +87,7 @@ while not over and turn < basic.TURN_MAX:
 		if over:
 			break
 		
-winner = main.end_score(score, base, turn)
+winner = TestMain.end_score(score, base, turn)
 print 'winner:',winner
 sio._sends(conn, winner)
 conn.close()
