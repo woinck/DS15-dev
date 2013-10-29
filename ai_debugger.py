@@ -111,13 +111,14 @@ class ai_debugger(QMainWindow):
 		self.gameEndInfo = []
 
 		#composite replay widget
-		self.replayScene = QGraphicsScene()
+		self.replayScene = QGraphicsScene(self)
 		self.replayWindow = AiReplayWidget(self.replayScene)
 		self.setCentralWidget(self.replayWindow)
 
 		#add a dock widget to show infomations of the running AI and loaded files
 
 		self.infoDockWidget = QDockWidget("Infos", self)
+		self.infoDockWidget.setFeatures(QDockWidget.DockWidgetClosable)
 		self.infoDockWidget.setObjectName("InfoDockWidget")
 		self.infoDockWidget.setAllowedAreas(Qt.RightDockWidgetArea)
 		self.infoWidget = InfoWidget(self)
@@ -180,6 +181,17 @@ class ai_debugger(QMainWindow):
 								  self.gameEndAction, self.gameLoadAction1, self.gameLoadAction2,None,self.debugAction1, self.debugAction2))
 
 		self.connect(self.infoWidget, SIGNAL("hided()"), self.synhide)
+		
+		#slider
+		self.playSpeedSlider = QSlider(Qt.Horizontal)
+		self.playSpeedSlider.setRange(0, 40)
+		self.playSpeedSlider.setFixedSize(QSize(120, 18))
+		self.playSpeedSlider.setValue(0)
+		self.playSpeedSlider.setStyleSheet("QSlider::groove:horizontal {background-color:darkgrey;margin: 2px 0;}"
+											"QSlider::handle:horizontal {background:white;border: 1px solid #5c5c5c;border-radius:3px; width: 18px;}")
+		self.connect(self.playSpeedSlider, SIGNAL("valueChanged(int)"), self.on_playSpeedSlider_valueChanged)
+		speedToolbar = self.addToolBar("Play Speed")
+		speedToolbar.addWidget(self.playSpeedSlider)
 		#to show messages
 		self.connect(self.replayWindow.replayWidget, SIGNAL("unitSelected"),
 					 self.infoWidget.newUnitInfo)
@@ -315,6 +327,9 @@ class ai_debugger(QMainWindow):
 		global DEBUG_MODE
 		DEBUG_MODE[1] = debug_mode
 			
+	def on_playSpeedSlider_valueChanged(self, speed):
+		self.replayWindow.replayWidget.TIME_PER_GRID = 500 - 10 * speed;
+
 	def on_firstRecv(self, mapInfo, frInfo, aiInfo, baseInfo):
 		print "fisrtRecv"
 		self.replayWindow.updateIni(basic.Begin_Info(mapInfo, baseInfo), frInfo)
@@ -348,7 +363,7 @@ class ai_debugger(QMainWindow):
 		self.dockAction.setChecked(False)
 		self.info_visible = False
 	def setInfoWidget(self):
-		if (self.info_visible):
+		if self.info_visible:
 			self.infoDockWidget.close()
 			self.info_visible = False
 		else:

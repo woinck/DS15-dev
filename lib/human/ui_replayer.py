@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_replayer.ui'
 #
-# Created: Fri Oct 11 10:23:51 2013
+# Created: Sun Oct 27 19:12:04 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,7 +51,7 @@ class Ui_Replayer(object):
         self.replayLayout.setMargin(0)
         self.replayLayout.setObjectName(_fromUtf8("replayLayout"))
         self.horizontalLayoutWidget_2 = QtGui.QWidget(Replayer)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(420, 670, 491, 42))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(420, 690, 491, 42))
         self.horizontalLayoutWidget_2.setObjectName(_fromUtf8("horizontalLayoutWidget_2"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout.setSpacing(0)
@@ -158,7 +158,7 @@ class Ui_Replayer(object):
         self.nextStepButton.setObjectName(_fromUtf8("nextStepButton"))
         self.horizontalLayout.addWidget(self.nextStepButton)
         self.roundLabel = QtGui.QLabel(Replayer)
-        self.roundLabel.setGeometry(QtCore.QRect(560, 90, 141, 40))
+        self.roundLabel.setGeometry(QtCore.QRect(610, 100, 141, 40))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -191,6 +191,30 @@ class Ui_Replayer(object):
         self.returnButton.setText(_fromUtf8(""))
         self.returnButton.setCheckable(False)
         self.returnButton.setObjectName(_fromUtf8("returnButton"))
+        self.playSpeedSlider = QtGui.QSlider(Replayer)
+        self.playSpeedSlider.setGeometry(QtCore.QRect(80, 660, 160, 19))
+        self.playSpeedSlider.setMaximum(80)
+        self.playSpeedSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.playSpeedSlider.setObjectName(_fromUtf8("playSpeedSlider"))
+        self.roundSlider = QtGui.QSlider(Replayer)
+        self.roundSlider.setGeometry(QtCore.QRect(330, 660, 661, 20))
+        self.roundSlider.setMaximum(0)
+        self.roundSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.roundSlider.setObjectName(_fromUtf8("roundSlider"))
+        self.label = QtGui.QLabel(Replayer)
+        self.label.setGeometry(QtCore.QRect(130, 630, 81, 21))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        self.label.setPalette(palette)
+        self.label.setObjectName(_fromUtf8("label"))
 
         self.retranslateUi(Replayer)
         QtCore.QMetaObject.connectSlotsByName(Replayer)
@@ -209,4 +233,5 @@ class Ui_Replayer(object):
         self.nextStepButton.setToolTip(_translate("Replayer", "下一回合", None))
         self.roundLabel.setText(_translate("Replayer", "Round 0", None))
         self.returnButton.setToolTip(_translate("Replayer", "返回上级", None))
+        self.label.setText(_translate("Replayer", "播放速度", None))
 

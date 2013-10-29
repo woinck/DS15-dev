@@ -82,6 +82,8 @@ class HumanReplay(QGraphicsView):
 		self.gameBegInfo = []
 		self.gameEndInfo = []
 		self.templeList = None
+		#游戏播放信息
+		self.TIME_PER_GRID = 500
 		#鼠标选定单位
 		self.focusUnit = MouseFocusUnit(0, 0)
 		self.scene.addItem(self.focusUnit)
@@ -428,11 +430,10 @@ class HumanReplay(QGraphicsView):
 		self.animationItem = []
 
 	def moveAnimation(self, move_unit, route):
-		TIME_PER_GRID = 500
 
 		steps = len(route)
 		movAnim = QPropertyAnimation(move_unit, "pos")
-		movAnim.setDuration(steps * TIME_PER_GRID)
+		movAnim.setDuration(steps * self.TIME_PER_GRID)
 		movAnim.setStartValue(GetPos(move_unit.obj.position[0], move_unit.obj.position[1]))
 
 		for i in range(steps):

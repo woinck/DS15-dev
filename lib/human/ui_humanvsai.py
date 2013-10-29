@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_humanvsai.ui'
 #
-# Created: Sun Oct 13 20:42:33 2013
+# Created: Sun Oct 27 17:16:41 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -176,6 +176,28 @@ class Ui_HumanvsAi(object):
         self.debugButton.setText(_fromUtf8(""))
         self.debugButton.setCheckable(True)
         self.debugButton.setObjectName(_fromUtf8("debugButton"))
+        self.playSpeedSlider = QtGui.QSlider(self.backFrame)
+        self.playSpeedSlider.setGeometry(QtCore.QRect(460, 640, 160, 19))
+        self.playSpeedSlider.setMaximum(80)
+        self.playSpeedSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.playSpeedSlider.setObjectName(_fromUtf8("playSpeedSlider"))
+        self.label_speed = QtGui.QLabel(self.backFrame)
+        self.label_speed.setGeometry(QtCore.QRect(370, 630, 81, 41))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        self.label_speed.setPalette(palette)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Adobe Arabic"))
+        self.label_speed.setFont(font)
+        self.label_speed.setObjectName(_fromUtf8("label_speed"))
 
         self.retranslateUi(HumanvsAi)
         QtCore.QMetaObject.connectSlotsByName(HumanvsAi)
@@ -192,4 +214,5 @@ class Ui_HumanvsAi(object):
         self.roundLabel.setText(_translate("HumanvsAi", "Round 0", None))
         self.exitButton.setToolTip(_translate("HumanvsAi", "中止游戏", None))
         self.debugButton.setToolTip(_translate("HumanvsAi", "调试模式", None))
+        self.label_speed.setText(_translate("HumanvsAi", "亲 你太慢了", None))
 

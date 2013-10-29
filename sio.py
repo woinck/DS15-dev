@@ -181,7 +181,6 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 def _cpp_recvs(conn):
 	print 'bbbb'
 	recvbuf = conn.recv(10)
-	print 'recvbuf:::::::::::',recvbuf
 	rbuf = recvbuf.split()
 	order = int(rbuf[0])
 	target_id = int(rbuf[1])

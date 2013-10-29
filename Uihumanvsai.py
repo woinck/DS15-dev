@@ -302,6 +302,8 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.info_ai.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;}")
 		self.info_map.setStyleSheet("*{border: 1px solid gray; border-radius: 8; background-color:rgba(44, 100, 208,220);selection-background-color: darkgray;	}")
 		self.roundLabel.setStyleSheet("*{border-image: url(:roundLabel.png);}")
+		self.playSpeedSlider.setStyleSheet("QSlider::groove:horizontal {background-color:darkgrey;margin: 2px 0;}"
+											"QSlider::handle:horizontal {background:white;border: 1px solid #5c5c5c;border-radius:3px; width: 18px;}")
 		self.setCursor(QCursor(QPixmap(":normal_cursor.png").scaled(30,30),0,0))
 		self.aiPath = ""
 		self.mapPath = ""
@@ -338,6 +340,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.connect(self.replayWindow, SIGNAL("errorOperation"), self.on_errOpr)
 		self.connect(self, SIGNAL("ableToPlay()"), self.on_ablePlay, Qt.QueuedConnection)
 		self.connect(self.debugButton, SIGNAL("toggled(bool)"), self.on_debugButton_toggled)
+		self.connect(self.playSpeedSlider, SIGNAL("valueChanged(int)"), self.on_playSpeedSlider_valueChanged)
 
 		self.setWindowTitle("Human_Vs_Ai")
 		self.setWindowIcon(QIcon(QPixmap(":hero_11.png")))
@@ -347,6 +350,10 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			self.startButton.setEnabled(True)
 		else:
 			self.startButton.setEnabled(False)
+
+	@pyqtSlot()
+	def on_playSpeedSlider_valueChanged(self, speed):
+		self.replayWindow.TIME_PER_GRID = 500 - 5 * speed
 
 	@pyqtSlot()
 	def on_aiButton_clicked(self):
@@ -407,7 +414,6 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 		self.updateUi()
 	@pyqtSlot()
 	def on_debugButton_toggled(self, check):
-		print "dafdasfdsfasf"
 		global DEBUG_MODE
 		DEBUG_MODE = check
 
