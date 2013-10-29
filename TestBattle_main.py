@@ -411,6 +411,7 @@ class main3():
 		
 	def end_score(self, score, base, turn):
 		'''结束后计算积分返回胜队，（-1表示平局）'''
+		score[1] += (basic.TURN_MAX - turn) * 10
 		if turn >= basic.TURN_MAX:
 			return 0
 		for i in [0,1]:

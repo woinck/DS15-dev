@@ -68,7 +68,10 @@ while not over and turn < basic.TURN_MAX:
 				#发送每回合的开始信息：
 				sio._sends(conn, roundBeginInfo)
 				#接收AI的命令：
-				roundCommand = sio._recvs(conn)
+				try:
+					roundCommand = sio._recvs(conn)
+				except socket.timeout:
+					sys.exit(1)
 				roundEndInfo = TestMain.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
 				over = True
 				if turn == basic.TURN_MAX and j == 1:
