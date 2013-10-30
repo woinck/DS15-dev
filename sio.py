@@ -10,9 +10,11 @@ reload(sys)
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 
+
 if RELEASE_MODE == 1:
 	logF = open('log.log','w')
 	sys.stdout = logF
+
 
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 1
@@ -31,6 +33,7 @@ AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
 AI_VS_AI = 0
 PLAYER_VS_AI = 1
 PLAYER_VS_PLAYER = 2
+TEST_BATTLE = 3
 
 #一些常量
 HOST = '127.0.0.1' # 主机地址
@@ -70,7 +73,6 @@ REINFO_SET = 4
 CONTINUE = 0
 NORMAL_OVER = 1
 AI_BREAKDOWN = 2
-
 
 
 class MapInfo:
@@ -177,6 +179,7 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
+	print 'bbbb'
 	recvbuf = conn.recv(10)
 	rbuf = recvbuf.split()
 	order = int(rbuf[0])
@@ -205,8 +208,8 @@ def _recvs(conn):
 		c = conn.recv(1)
 	except socket.timeout:
 		raise socket.timeout
-	except:
-		raise ConnException()
+	#except:
+	#	raise ConnException()
 		
 	while c != '|':
 		result = result + c

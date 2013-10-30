@@ -2,11 +2,11 @@
 #include <stdio.h>
 
 game_info info = {};
-char teamName[20]="Player";        //ÔÚÕâÀïÉè¶¨¶ÓÎéÃû×Ö£¬¾¡Á¿ÓÃÓ¢ÎÄ
+char teamName[20]="Player";        //åœ¨è¿™é‡Œè®¾å®šé˜Ÿä¼åå­—ï¼Œå°½é‡ç”¨è‹±æ–‡
 
 int GetHeroType()
 {
-	return ASSASSIN;   //Ñ¡ÔñÓ¢ĞÛ
+	return ASSASSIN;   //é€‰æ‹©è‹±é›„
 }
 
 int move_range(Game_Info &gameInfo, int team, int id, Position tmp[]);
@@ -14,7 +14,7 @@ int move_range(Game_Info &gameInfo, int team, int id, Position tmp[]);
 Command AI_main()
 {
 	Command cmd = {};
-	//Ñ¡ÊÖÔÚÕâÀïĞ´×Ô¼ºµÄAIÖ÷º¯Êı
+	//é€‰æ‰‹åœ¨è¿™é‡Œå†™è‡ªå·±çš„AIä¸»å‡½æ•°
 	int num = 0;
 	Position range[300] = {};
 	num = move_range(info, info.team_number, info.move_id, range);
