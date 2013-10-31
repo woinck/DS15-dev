@@ -31,6 +31,7 @@ AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
 AI_VS_AI = 0
 PLAYER_VS_AI = 1
 PLAYER_VS_PLAYER = 2
+TEST_BATTLE = 3
 
 #一些常量
 HOST = '127.0.0.1' # 主机地址
@@ -178,7 +179,7 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
-	rbuf x recvbuf.split()
+	rbuf = recvbuf.split()
 	order = int(rbuf[0])
 	target_id = int(rbuf[1])
 	move = (int(rbuf[2]), int(rbuf[3]))

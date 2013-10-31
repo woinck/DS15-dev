@@ -9,7 +9,18 @@ int GetHeroType()
 	return ASSASSIN;   //—°‘Ò”¢–€
 }
 
-int move_range(Game_Info &gameInfo, int team, int id, Position tmp[]);
+void ChooseSoldier(int num_inc, int id[])
+{
+
+	for (int i=0; i<num_inc; i++)
+	{
+		if (info.soldier[0][1-info.team_number].kind == ARCHMAGE) info.soldier[id[i]][info.team_number].kind = 4;
+		else info.soldier[id[i]][info.team_number].kind = 3;	
+	}
+
+}
+
+int move_range(Game_Info &gameInfo, int team, int id, Position *tmp);
 
 Command AI_main()
 {

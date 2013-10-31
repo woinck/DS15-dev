@@ -356,7 +356,65 @@ class Sai(threading.Thread):
 						print 'fail to receive AI',i,'\'s information, default settings will be used...'
 						gp.aiInfo.append('Player'+str(i))
 						gp.heroType.append(6)
-						
+				if (gp.gameMode != TEST_BATTLE) and (sio.FREE_CHOOSE == 1):
+					choice = [[0, 0], [-1, 0]]
+					select = [[0, -1], [0, -1]]
+					cnum = [0, 0]
+					trn = 0
+					nsoldier = len(gp.base[0]) - 1
+					while (choice[0][cnum[0]-1] < nsoldier) or (choice[1][cnum[1]-1] < nsoldier):
+						if trn == 0:
+							if choice[0][0] == 0:
+								choice[0] = [1, -1]	
+								cnum[0] = 1	
+							elif choice[0][0] == 1:
+								choice[0] = [2, 3]
+								cnum[0] = 2
+							else:
+								choice[0][0] += 2
+								choice[0][1] += 2
+								cnum[0] = 2
+							if choice[0][1] > nsoldier:
+								choice[0][1] = -1
+								cnum[0] = 1
+							if gp.gameAIPath[i] != None:
+								sio._cpp_sends_choose(connAI[0], cnum[1], select[1], cnum[0], choice[0])
+								sio._cpp_recvs_choose(connAI[0], cnum[0], gp.base, 0, choice[0])
+								select[0] = [0, -1]
+								for j in range(cnum[0]):
+									select[0][j] = gp.base[0][choice[0][j]].kind
+							else:
+								sio._sends(connAI[0], gp.base)
+								gp.base = sio._recvs(connAI[0])
+								select[0] = [0, -1]
+								for j in range(cnum[0]):
+									select[0][j] = gp.base[0][choice[0][j]].kind
+						else:
+							choice[1][0] += 2
+							choice[1][1] += 2
+							cnum[1] = 2
+							if choice[1][1] > nsoldier:
+								choice[1][1] = -1
+								cnum[1] = 1
+							if gp.gameAIPath[i] != None:
+								sio._cpp_sends_choose(connAI[1], cnum[0], select[0], cnum[1], choice[1])
+								sio._cpp_recvs_choose(connAI[1], cnum[1], gp.base, 1, choice[1])
+								select[1] = [0, -1]
+								for j in range(cnum[1]):
+									select[1][j] = gp.base[1][choice[1][j]].kind
+							else:
+								sio._sends(connAI[1], gp.base)
+								gp.base = sio._recvs(connAI[1])
+								select[1] = [0, -1]
+								for j in range(cnum[1]):
+									select[1][j] = gp.base[1][choice[1][j]].kind
+						trn = 1 - trn
+					if gp.gameAIPath[i] != None:
+						connAI[0].send('|')
+						connAI[0].recv(3)
+
+
+
 				#调节游戏进度标记
 				gp.gProcess = sio.HERO_TYPE_SET
 				#print 'gp.heroType set'#for test
