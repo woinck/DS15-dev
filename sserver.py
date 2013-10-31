@@ -276,7 +276,7 @@ class Slogic(threading.Thread):
 			else:
 				sio._sends(connLogic,gp.gameMode)
 				if gp.gameMode == sio.TEST_BATTLE:
-					sio._sends(connLogic,gp.TestBattleStage)
+					sio._sends(connLogic,gp.testBattleStage)
 				sio._sends(connLogic,basic.Begin_Info(gp.mapInfo,gp.base,gp.heroType))
 				gp.gProc.release()
 				break
