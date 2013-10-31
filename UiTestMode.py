@@ -6,7 +6,7 @@ from PyQt4 import QtGui, QtCore
 from ui_buttonwithdisplay import *
 import sys
 import test_TestMode_rc
-from Testbattle_Client import ConnectWithWebsite, ConnectWithLogic, CloseSocket, OpenSocket
+from Testbattle_Client import ConnectWithWebsite, ConnectWithLogic, CloseSocket, OpenSocket, ConnectionError
 import ui_TestWidget
 import ui_ResultDialog
 import ui_StartDialog
@@ -77,7 +77,7 @@ class Ui_ScoreDialog(QtGui.QDialog, ui_ScoreDialog.Ui_ScoreDialog):
 							self.label9, self.label10]
 		for i in range(MAX_LEVEL_NUM):
 			self.scoreLabels[i].setText(str(data[i]))
-		self.label.setText(_tr("战士 ")+name+_tr(" 的战绩："))
+		self.label.setText(_tr("战士 ")+_tr(name)+_tr(" 的战绩："))
 
 	def on_okBtn_released(self):
 		self.close()
@@ -137,27 +137,26 @@ class Ui_StartDialog(QtGui.QWidget, ui_StartDialog.Ui_StartDialog):
 		if (str(self.aiPathEdit.text())==""):
 			QtGui.QMessageBox.warning(self, "Warning", _tr("没有选择AI。"))
 		else:
-#			self.logicThread = UiD_LogicThread(lv, str(self.aiPathEdit.text()), self)
-#			self.logicThread.LogicResult.connect(self._showResult)
-#			self.logicThread.run()
-#			# link to platform
-#			for i in range(MAX_LEVEL_NUM):
-#				self.levelBtns[i].setEnabled(False)
-			aiPath = str(self.aiPathEdit.text())
-			winner, score = ConnectWithLogic(lv, aiPath)
-			if (winner!=0):
-				self.data[lv-1] = max(self.data[lv-1], score)
-				self.scoreLabels[lv-1].setText(_tr("最高分")+str(self.data[lv-1]))
-			if (self.isVisible()):
-				dialog = Ui_ResultDialog(winner, score, self.data[lv-1], self) # winner?
-				dialog.exec_()
-			# show waiting widget?
+			self.logicThread = UiD_LogicThread(lv, str(self.aiPathEdit.text()), self)
+			self.logicThread.LogicResult.connect(self._showResult)
+			self.connect(self.logicThread, QtCore.SIGNAL("connectionError()"), self.on_connectionError)
+			self.connect(self.logicThread, QtCore.SIGNAL("finished()"), self.logicThread, QtCore.SLOT("deleteLater()"))
+			for i in range(MAX_LEVEL_NUM):
+				self.levelBtns[i].setEnabled(False)
+			self.logicThread.start()
+			# link to platform
+
+
+	def on_connectionError(self):
+		QMessageBox.warning(self, _tr("连接错误"), _tr("不能连接到平台"), QMessageBox.Ok, QMessageBox.NoButton)
+		for i in range(MAX_LEVEL_NUM):
+			self.levelBtns[i].setEnabled(True)
 
 	def _showResult(self, lv, winner, score):
 		if (winner!=0):
 			self.data[lv-1] = max(self.data[lv-1], score)
-			self.scoreLabels[lv-1].setText(_tr("最高分")+str(data[lv-1]))
-		if (self.visible()):
+			self.scoreLabels[lv-1].setText(_tr("最高分")+str(self.data[lv-1]))
+		if (self.isVisible()):
 		   dialog = Ui_ResultDialog(winner, score, self.data[lv-1], self) # winner?
 		   dialog.exec_()
 		for i in range(MAX_LEVEL_NUM):
@@ -177,6 +176,7 @@ class Ui_StartDialog(QtGui.QWidget, ui_StartDialog.Ui_StartDialog):
 #------------------------------------------------------#
 
 class UiD_LogicThread(QtCore.QThread):
+	LogicResult = QtCore.pyqtSignal(int, int, int)
 	def __init__(self, lv, aiPath, parent):
 		QtCore.QThread.__init__(self, parent)
 		self.lv = lv
@@ -184,11 +184,13 @@ class UiD_LogicThread(QtCore.QThread):
 	def run(self):
 		print "nimei"#for test
 		print self.lv, self.aiPath#for test
-		winner, score = ConnectWithLogic(self.lv, self.aiPath)
-		print "nimei!"#for test
-		self.LogicResult.emit(self.lv, winner, score)
-
-	LogicResult = QtCore.pyqtSignal(int, int, int)
+		try:
+			winner, score = ConnectWithLogic(self.lv, self.aiPath)
+		except ConnectionError:
+			self.emit(QtCore.SIGNAL("connectionError()"))
+		else:
+			self.LogicResult.emit(self.lv, winner, score)
+	
 
 if __name__=="__main__":
 	app = QtGui.QApplication(sys.argv)
