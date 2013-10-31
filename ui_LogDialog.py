@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'LogDialog.ui'
 #
-# Created: Mon Oct 28 01:30:48 2013
+# Created: Thu Oct 31 00:17:22 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,8 +27,10 @@ class Ui_LogDialog(object):
     def setupUi(self, LogDialog):
         LogDialog.setObjectName(_fromUtf8("LogDialog"))
         LogDialog.resize(400, 300)
+        LogDialog.setStyleSheet(_fromUtf8("QWidget{\n"
+"    background-color: rgb(255, 255, 255);}"))
         self.gridLayoutWidget = QtGui.QWidget(LogDialog)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(120, 80, 160, 80))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(70, 80, 251, 111))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setMargin(0)
@@ -43,6 +45,7 @@ class Ui_LogDialog(object):
         self.nameEdit.setObjectName(_fromUtf8("nameEdit"))
         self.gridLayout.addWidget(self.nameEdit, 0, 1, 1, 1)
         self.pwEdit = QtGui.QLineEdit(self.gridLayoutWidget)
+        self.pwEdit.setEchoMode(QtGui.QLineEdit.Password)
         self.pwEdit.setObjectName(_fromUtf8("pwEdit"))
         self.gridLayout.addWidget(self.pwEdit, 1, 1, 1, 1)
         self.horizontalLayoutWidget = QtGui.QWidget(LogDialog)
@@ -64,9 +67,9 @@ class Ui_LogDialog(object):
         QtCore.QMetaObject.connectSlotsByName(LogDialog)
 
     def retranslateUi(self, LogDialog):
-        LogDialog.setWindowTitle(_translate("LogDialog", "Dialog", None))
+        LogDialog.setWindowTitle(_translate("LogDialog", "LogIn", None))
         self.pwLabel.setText(_translate("LogDialog", "密码：", None))
         self.nameLabel.setText(_translate("LogDialog", "用户名：", None))
-        self.okBtn.setText(_translate("LogDialog", "PushButton", None))
-        self.cancelBtn.setText(_translate("LogDialog", "PushButton", None))
+        self.okBtn.setText(_translate("LogDialog", "确认", None))
+        self.cancelBtn.setText(_translate("LogDialog", "退出", None))
 

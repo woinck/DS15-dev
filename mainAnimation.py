@@ -132,9 +132,10 @@ def WindowToMenuAnimation(formerWidget, aimWidget):
 def WindowAnimation(formerWidget, aimWidget):
 	if formerWidget:
 		DisWidget =  QPropertyAnimation(formerWidget.widget(), "windowOpacity")
-		DisWidget.setDuration(500)
+		DisWidget.setDuration(800)
 		DisWidget.setStartValue(1)
 		DisWidget.setKeyValueAt(0.00001,1)
+		DisWidget.setKeyValueAt(0.8, 0.5)
 		DisWidget.setKeyValueAt(1,0)
 		DisWidget.setEasingCurve(QEasingCurve.InOutQuad)
 		

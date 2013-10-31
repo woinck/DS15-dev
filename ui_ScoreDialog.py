@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ScoreDialog.ui'
 #
-# Created: Mon Oct 28 23:11:50 2013
+# Created: Thu Oct 31 00:17:45 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,15 +27,20 @@ class Ui_ScoreDialog(object):
     def setupUi(self, ScoreDialog):
         ScoreDialog.setObjectName(_fromUtf8("ScoreDialog"))
         ScoreDialog.resize(502, 602)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(ScoreDialog.sizePolicy().hasHeightForWidth())
+        ScoreDialog.setSizePolicy(sizePolicy)
         ScoreDialog.setStyleSheet(_fromUtf8("QDialog#ScoreDialog{\n"
-"background-image: url(:/TestMode/startBack.jpg);}\n"
+"    border-image: url(:/TestMode/start.png);}\n"
 "QLabel{\n"
 "font: 75 28pt \"Adobe Arabic\";\n"
 "color: rgb(255, 0, 0);}\n"
 ""))
         self.label = QtGui.QLabel(ScoreDialog)
-        self.label.setGeometry(QtCore.QRect(20, 20, 321, 31))
-        self.label.setStyleSheet(_fromUtf8("font: 36pt \"黑体\";\n"
+        self.label.setGeometry(QtCore.QRect(10, 10, 411, 41))
+        self.label.setStyleSheet(_fromUtf8("font: 20pt \"黑体\";\n"
 "color: rgb(255, 255, 0);"))
         self.label.setObjectName(_fromUtf8("label"))
         self.okBtn = QtGui.QPushButton(ScoreDialog)
@@ -129,7 +134,7 @@ class Ui_ScoreDialog(object):
         QtCore.QMetaObject.connectSlotsByName(ScoreDialog)
 
     def retranslateUi(self, ScoreDialog):
-        ScoreDialog.setWindowTitle(_translate("ScoreDialog", "Dialog", None))
+        ScoreDialog.setWindowTitle(_translate("ScoreDialog", "记录", None))
         self.label.setText(_translate("ScoreDialog", "TextLabel", None))
         self.okBtn.setToolTip(_translate("ScoreDialog", "退出", None))
         self.okBtn.setWhatsThis(_translate("ScoreDialog", "退出", None))

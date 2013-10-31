@@ -9,6 +9,8 @@ from Uibackwindow import BackWidget
 from Uiteamwidget import TeamWidget
 from Uiaivsai import AivsAi
 import time#for test
+from UiTestMode import Ui_TestModeWidget as TestWidget
+from UiloginWidget import LoginWidget
 from Uihumanvsai import HumanvsAi
 from lib.editor.mapeditor import Mapeditor
 from replayer import Replayer
@@ -18,7 +20,29 @@ from PyQt4.QtWebKit import *
 #QPushButton {background-image: url(image/button.jpg);}
 #"""
 
+ALREADY_LOGIN = False
+
+class LoginTransition(QSignalTransition):
+	def __init__(self, sender, signal, targetState1, targetState2, parent = None):
+		super(LoginTransition, self).__init__(sender, signal)
+		
+		#self.setTargetState(targetState)
+		self.targetState1 = targetState1
+		self.targetState2 = targetState2
+
+	def eventTest(self, event):
+		if not QSignalTransition.eventTest(self, event):
+			return False
+		if ALREADY_LOGIN:
+			self.setTargetState(self.targetState2)
+		else:
+			self.setTargetState(self.targetState1)
+		return True
+		
+		
 class MainWindow(QGraphicsView):
+	trigTransition = pyqtSignal()
+	logout = pyqtSignal()
 	def __init__(self, parent = None):
 		super(MainWindow, self).__init__(parent)
 		
@@ -134,25 +158,26 @@ class MainWindow(QGraphicsView):
 		self.webWindow.setZValue(0.5)
 		self.scene1.addItem(self.webWindow)
 		
-		
-		#登陆
-		self.LogInWindow =  QGraphicsProxyWidget()
-		self.logInwidget =  LogInWidget()
-		self.LogInWindow.setWidget(self.logInwidget)
-		self.LogInWindow.setZValue(0.5)
-		self.LogInWindow.setX(0)
-		self.LogInWindow.setY(0)
-		self.scene1.addItem(self.LogInWindow)
 
 		#测试赛
 		self.testWindow =  QGraphicsProxyWidget()
-		self.testwidget =  TestWidget()
-		self.testWindow.setWidget(self.testwidget)
-		self.testWindow.widget().setWindowOpacity(1)
+		self.testWidget =  TestWidget()
+		self.testWindow.setWidget(self.testWidget)
+		self.testWindow.widget().setWindowOpacity(0)
 		self.testWindow.setZValue(0.5)
 		self.testWindow.setX(0)
 		self.testWindow.setY(0)
 		self.scene1.addItem(self.testWindow)
+
+		#登陆
+		self.LoginWindow = QGraphicsProxyWidget()
+		self.loginWidget = LoginWidget(self.testWidget)
+		self.LoginWindow.setWidget(self.loginWidget)
+		self.LoginWindow.widget().setWindowOpacity(0)
+		self.LoginWindow.setZValue(0.5)
+		self.LoginWindow.setX(0)
+		self.LoginWindow.setY(0)
+		self.scene1.addItem(self.LoginWindow)
 
 #		  self.beginWindow.close()
 		self.aiWindow.widget().close()
@@ -161,11 +186,11 @@ class MainWindow(QGraphicsView):
 		self.teamWindow.widget().close()
 		self.mapEditWindow.widget().close()
 		self.humanaiWindow.widget().close()
-		self.LogInWindow.widget().close()
+		self.LoginWindow.widget().close()
 		self.testWindow.widget().close()
 		self.webWindow.widget().close()
 		self.windowList = [self.aiWindow, self.replayWindow, self.mapEditWindow,
-							self.humanaiWindow, self.LogInWindow, self.testWindow]
+							self.humanaiWindow, self.LoginWindow, self.testWindow]
 		self.link = "http://duishi.eekexie.org/"
 
 #		self.menuList = [beginWindow, singleWindow]
@@ -201,8 +226,10 @@ class MainWindow(QGraphicsView):
 		self.HumanaiState =  QState(self.stateMachine)
 		#single menu state
 		self.SingleState=  QState(self.stateMachine)
-		#login state
-		self.LogState =  QState(self.stateMachine)
+		#Login state
+		self.LoginState =  QState(self.stateMachine)
+		#test state
+		self.TestState = QState(self.stateMachine)
 		#ai state
 		self.AiState = QState(self.stateMachine)
 		#final state
@@ -211,7 +238,7 @@ class MainWindow(QGraphicsView):
 		#states和windows映射的dict
 		self.stateDict = {self.MainState:self.beginWindow, self.TeamState:self.teamWindow,
 						  self.ReplayState:self.replayWindow, self.MapState:self.mapEditWindow, self.AiState:self.aiWindow,
-						  self.HumanaiState:self.humanaiWindow, self.LogState:self.LogInWindow,
+						  self.HumanaiState:self.humanaiWindow, self.LoginState:self.LoginWindow,self.TestState:self.testWindow,
 						  self.SingleState:self.singleWindow, self.WebState:self.webWindow}
 		#存下上一个state
 		self.preState = None
@@ -289,26 +316,49 @@ class MainWindow(QGraphicsView):
 		self.trans_WebToMain = self.WebState.addTransition(self.webWidget.returnButton, SIGNAL("clicked()"), self.MainState)
 		self.ani_WebToMain = WindowToMenuAnimation(self.webWindow, self.singleWindow)
 		self.trans_WebToMain.addAnimation(self.ani_WebToMain)
+		self.trans_SingleToTest = LoginTransition(self, SIGNAL("trigTransition()"), self.LoginState, self.TestState)
+		self.SingleState.addTransition(self.trans_SingleToTest)
+		self.ani_SingleToLogin = MenuToWindowAnimation(self.singleWindow, self.LoginWindow)
+		self.ani_SingleToTest = MenuToWindowAnimation(self.singleWindow, self.testWindow)
+		
+		self.trans_LoginToTest = self.LoginState.addTransition(self.loginWidget, SIGNAL("loginS()"), self.TestState)
+		self.connect(self.loginWidget, SIGNAL("loginS()"), self.on_loginS)
+		self.ani_LoginToTest = WindowAnimation(self.LoginWindow, self.testWindow)
+		self.trans_LoginToTest.addAnimation(self.ani_LoginToTest)
+		
+		self.trans_LoginToSingle = self.LoginState.addTransition(self.loginWidget.backButton, SIGNAL("clicked()"), self.SingleState)
+		self.ani_LoginToSingle = WindowToMenuAnimation(self.LoginWindow, self.singleWindow)
+		self.trans_LoginToSingle.addAnimation(self.ani_LoginToSingle)
 
+		self.trans_TestToSingle = self.TestState.addTransition(self.testWidget.exitBtn, SIGNAL("clicked()"), self.SingleState)
+		self.ani_TestToSingle = WindowToMenuAnimation(self.testWindow, self.singleWindow)
+		self.trans_TestToSingle.addAnimation(self.ani_TestToSingle)
+		
+		self.trans_TestToLogin = self.TestState.addTransition(self, SIGNAL("logout()"), self.LoginState)
+		self.ani_TestToLogin = WindowAnimation(self.testWindow, self.LoginWindow)
+		self.trans_TestToLogin.addAnimation(self.ani_TestToLogin)
+		self.connect(self.testWidget, SIGNAL("logOut()"), self.logOut)
 #		self.trans_SingleToLogin = self.SingleState.addTransition(self.singleWidget.levelmode,SIGNAL("clicked()"),
  #					self.LoginState)
   #	  self.trans_SingleToLogin.addAnimation(MenuToWindowAnimation(self.singleWindow, self.LoginInWindow))
-   #	 self.trans_LoginToSingle = self.LoginState.addTransition(self.LogInwidget.pushButton_2,SIGNAL("clicked()"),
+   #	 self.trans_LoginToSingle = self.LoginState.addTransition(self.Loginwidget.pushButton_2,SIGNAL("clicked()"),
 	#															 self.SingleState)
-	 #   self.trans_LoginToSingle.addAnimation(WindowToMenuAnimation(self.LogInWindow, self.singleWindow))
+	 #   self.trans_LoginToSingle.addAnimation(WindowToMenuAnimation(self.LoginWindow, self.singleWindow))
 
-	#	self.connect(self.logInwidget,SIGNAL("login_success(QString)"),
-	 #				self.LogInToTest(QString))
+	#	self.connect(self.Loginwidget,SIGNAL("Login_success(QString)"),
+	 #				self.LoginToTest(QString))
 	 #   self.connect(self.testwidget.pushButton,SIGNAL("clicked()"),
-	  #			   self.TestToLogIn)
+	  #			   self.TestToLogin)
 		#self.connect(self.beginWidget.websiteButton, SIGNAL("clicked()"), self.goToWebsite)
+		self.connect(self.singleWidget.levelmode, SIGNAL("clicked()"), self.judgeTransition)
 		for state in self.stateDict.keys():
 			self.connect(state, SIGNAL("entered()"), self.closeWindow)
 		self.transitionList = [self.trans_MainToQuit, self.trans_MainToSingle, self.trans_SingleToMain,
 							   self.trans_SingleToAi, self.trans_AiToSingle, self.trans_MainToTeam, self.trans_TeamToMain,
 							   self.trans_SingleToHumanai, self.trans_HumanaiToSingle, self.trans_SingleToReplay,
 							   self.trans_ReplayToSingle,self.trans_MainToWeb, self.trans_SingleToMap, self.trans_MapToSingle,
-							   self.trans_WebToMain]
+							   self.trans_WebToMain, self.trans_LoginToTest, self.trans_LoginToSingle, self.trans_TestToSingle,
+							   self.trans_TestToLogin]
 		for transition in self.transitionList:
 			self.connect(transition, SIGNAL("triggered()"), self.showWindow)
 
@@ -339,6 +389,9 @@ class MainWindow(QGraphicsView):
 			if target in self.stateDict:
 				self.stateDict[target].widget().show()
 
+	def on_loginS(self):
+		global ALREADY_LOGIN
+		ALREADY_LOGIN = True
 	"""def Music(self):
 		if not self.sourceList:
 			QMessageBox.information(this, tr("no music files"), tr("no files to play"))
@@ -357,6 +410,31 @@ class MainWindow(QGraphicsView):
 		self.media.play()
 		pass
 	"""
+	def judgeTransition(self):
+		nowAni = self.trans_SingleToTest.animations()
+		if ALREADY_LOGIN:
+			self.testWindow.widget().show()
+			if nowAni:
+				if not nowAni[0] == self.ani_SingleToTest:
+					self.trans_SingleToTest.removeAnimation(nowAni[0])
+					self.trans_SingleToTest.addAnimation(self.ani_SingleToTest)
+			else:
+				self.trans_SingleToTest.addAnimation(self.ani_SingleToTest)
+		else:
+			self.LoginWindow.widget().show()
+			if nowAni:
+				if not nowAni[0] == self.ani_SingleToLogin:
+					self.trans_SingleToTest.removeAnimation(nowAni[0])
+					self.trans_SingleToTest.addAnimation(self.ani_SingleToLogin)
+			else:
+				self.trans_SingleToTest.addAnimation(self.ani_SingleToLogin)
+		self.trigTransition.emit()
+
+	def logOut(self):
+		global ALREADY_LOGIN
+		ALREADY_LOGIN = False
+		self.logout.emit()
+
 	def goToWebsite(self):
 		QDesktopServices.openUrl(QUrl(self.link))
 	

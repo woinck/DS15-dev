@@ -5,9 +5,10 @@ RELEASE_MODE = 0
 
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
+#reload(sys)
 reload(sys)
-
-sys.setdefaultencoding('gbk')
+sys.setdefaultencoding('utf8')
+#sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 
 

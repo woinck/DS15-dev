@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'temp_TestMode.ui'
 #
-# Created: Mon Oct 28 23:18:01 2013
+# Created: Thu Oct 31 04:11:37 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,15 @@ class Ui_TestModeWidget(object):
     def setupUi(self, TestModeWidget):
         TestModeWidget.setObjectName(_fromUtf8("TestModeWidget"))
         TestModeWidget.resize(1024, 768)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(TestModeWidget.sizePolicy().hasHeightForWidth())
+        TestModeWidget.setSizePolicy(sizePolicy)
         TestModeWidget.setMouseTracking(False)
         TestModeWidget.setStyleSheet(_fromUtf8("QWidget#frame{\n"
 "background-image: url(:/TestMode/back.jpg);}\n"
+"QMwssageBox{}\n"
 "QWidget{background-color: rgba(0, 0, 0, 0);}"))
         self.frame = QtGui.QFrame(TestModeWidget)
         self.frame.setGeometry(QtCore.QRect(0, 0, 1024, 768))
@@ -51,20 +57,20 @@ class Ui_TestModeWidget(object):
 "border-image: url(:/TestMode/score1.png);}"))
         self.scoreBtn.setText(_fromUtf8(""))
         self.scoreBtn.setObjectName(_fromUtf8("scoreBtn"))
-        self.startBtn = QtGui.QPushButton(self.frame)
-        self.startBtn.setGeometry(QtCore.QRect(140, 30, 80, 80))
+        self.logOutBtn = QtGui.QPushButton(self.frame)
+        self.logOutBtn.setGeometry(QtCore.QRect(140, 30, 80, 80))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.startBtn.sizePolicy().hasHeightForWidth())
-        self.startBtn.setSizePolicy(sizePolicy)
-        self.startBtn.setMouseTracking(True)
-        self.startBtn.setStyleSheet(_fromUtf8("QPushButton{\n"
-"    border-image: url(:/TestMode/temp_start0.png);}\n"
+        sizePolicy.setHeightForWidth(self.logOutBtn.sizePolicy().hasHeightForWidth())
+        self.logOutBtn.setSizePolicy(sizePolicy)
+        self.logOutBtn.setMouseTracking(True)
+        self.logOutBtn.setStyleSheet(_fromUtf8("QPushButton{\n"
+"border-image: url(:/TestMode/logout0.png);}\n"
 "QPushButton:hover{\n"
-"    border-image: url(:/TestMode/temp_start1.png);}"))
-        self.startBtn.setText(_fromUtf8(""))
-        self.startBtn.setObjectName(_fromUtf8("startBtn"))
+"    border-image: url(:/TestMode/logout1.png);}"))
+        self.logOutBtn.setText(_fromUtf8(""))
+        self.logOutBtn.setObjectName(_fromUtf8("logOutBtn"))
         self.exitBtn = QtGui.QPushButton(self.frame)
         self.exitBtn.setGeometry(QtCore.QRect(240, 30, 80, 80))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -77,6 +83,27 @@ class Ui_TestModeWidget(object):
 "border-image: url(:/TestMode/exit1.png);}"))
         self.exitBtn.setText(_fromUtf8(""))
         self.exitBtn.setObjectName(_fromUtf8("exitBtn"))
+        self.startFrame = QtGui.QFrame(self.frame)
+        self.startFrame.setGeometry(QtCore.QRect(210, 110, 803, 528))
+        self.startFrame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.startFrame.setFrameShadow(QtGui.QFrame.Raised)
+        self.startFrame.setObjectName(_fromUtf8("startFrame"))
+        self.aiPathEdit = QtGui.QLineEdit(self.frame)
+        self.aiPathEdit.setGeometry(QtCore.QRect(40, 670, 321, 41))
+        self.aiPathEdit.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255, 200);"))
+        self.aiPathEdit.setObjectName(_fromUtf8("aiPathEdit"))
+        self.loadAiBtn = QtGui.QPushButton(self.frame)
+        self.loadAiBtn.setGeometry(QtCore.QRect(410, 659, 61, 61))
+        self.loadAiBtn.setStyleSheet(_fromUtf8("QPushButton{\n"
+"border-image: url(:/TestMode/openAi0.png);}\n"
+"QPushButton:hover{\n"
+"border-image: url(:/TestMode/openAi1.png);}"))
+        self.loadAiBtn.setText(_fromUtf8(""))
+        self.loadAiBtn.setObjectName(_fromUtf8("loadAiBtn"))
+        self.movieLabel = QtGui.QLabel(self.frame)
+        self.movieLabel.setGeometry(QtCore.QRect(670, 30, 251, 80))
+        self.movieLabel.setText(_fromUtf8(""))
+        self.movieLabel.setObjectName(_fromUtf8("movieLabel"))
 
         self.retranslateUi(TestModeWidget)
         QtCore.QMetaObject.connectSlotsByName(TestModeWidget)
@@ -85,9 +112,11 @@ class Ui_TestModeWidget(object):
         TestModeWidget.setWindowTitle(_translate("TestModeWidget", "Form", None))
         self.scoreBtn.setToolTip(_translate("TestModeWidget", "最高分", None))
         self.scoreBtn.setWhatsThis(_translate("TestModeWidget", "最高分", None))
-        self.startBtn.setToolTip(_translate("TestModeWidget", "进入测试赛", None))
-        self.startBtn.setWhatsThis(_translate("TestModeWidget", "进入测试赛", None))
+        self.logOutBtn.setToolTip(_translate("TestModeWidget", "注销并退出", None))
+        self.logOutBtn.setWhatsThis(_translate("TestModeWidget", "注销并退出", None))
         self.exitBtn.setToolTip(_translate("TestModeWidget", "退出", None))
         self.exitBtn.setWhatsThis(_translate("TestModeWidget", "退出", None))
+        self.loadAiBtn.setToolTip(_translate("TestModeWidget", "载入AI", None))
+        self.loadAiBtn.setWhatsThis(_translate("TestModeWidget", "载入AI", None))
 
 import test_TestMode_rc

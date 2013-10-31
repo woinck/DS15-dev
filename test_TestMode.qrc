@@ -1,16 +1,20 @@
 <RCC>
   <qresource prefix="TestMode">
+    <file alias="youlose.png">images/youlose.png</file>
     <file alias="help1.png">images/help1.png</file>
     <file alias="help0.png">images/help0.png</file>
-    <file alias="startBack.jpg">images/startBack.jpg</file>
+    <file alias="logout0.png">images/logout0.png</file>
+    <file alias="logout1.png">images/logout1.png</file>
+    <file alias="startBack.png">images/startBack.png</file>
     <file alias="exit1.png">images/exit1.png</file>
     <file alias="exit0.png">images/exit0.png</file>
     <file alias="score1.png">images/debug_mode1.png</file>
     <file alias="score0.png">images/debug_mode0.png</file>
     <file alias="back.jpg">images/back_testmode2.jpg</file>
-    <file alias="start.jpg">images/test_start_level.png</file>
+    <file alias="start.png">images/test_start_level.png</file>
     <file alias="level0.png">images/level0.png</file>
     <file alias="level1.png">images/level1.png</file>
+    <file alias="level2.png">images/level2.png</file>
     <file alias="openAi0.png">images/openAI0.png</file>
     <file alias="openAi1.png">images/openAI1.png</file>
     <file alias="temp_start0.png">images/start0.png</file>

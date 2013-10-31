@@ -40,16 +40,17 @@
 
 	
    <!--ai debugger-->
-   <file alias="gameStart.png">icons/gameStart.png</file>
-<file alias="gamePause.png">icons/gamePause.png</file>
-<file alias="gameEnd.png">icons/gameEnd.png</file>
-<file alias="loadAI.png">icons/loadAI.png</file>
-<file alias="loadMap.png">icons/loadMap.png</file>
-<file alias="debug_mode.png">icons/modeDebug.png</file>
-<file alias="reset.png">icons/reset.png</file>
-<file alias="icon.png">icons/icon.png</file>
-<file alias="debug_mode0.png">image/debug_mode0.png</file>
+	<file alias="gameStart.png">icons/gameStart.png</file>
+	<file alias="gamePause.png">icons/gamePause.png</file>
+	<file alias="gameEnd.png">icons/gameEnd.png</file>
+	<file alias="loadAI.png">icons/loadAI.png</file>
+	<file alias="loadMap.png">icons/loadMap.png</file>
+	<file alias="debug_mode.png">icons/modeDebug.png</file>
+	<file alias="reset.png">icons/reset.png</file>
+	<file alias="icon.png">icons/icon.png</file>
+	<file alias="debug_mode0.png">image/debug_mode0.png</file>
 	<file alias="debug_mode1.png">image/debug_mode1.png</file>
-
+<!-- test mode -->
+	<file alias="login_back.png">image/login_back.png</file>
   </qresource>
 </RCC>
