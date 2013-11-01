@@ -133,6 +133,7 @@ class Sui(threading.Thread):
 					connUI.shutdown(socket.SHUT_RDWR)
 					sys.exit(1)
 				gp.replayInfo.append((gp.mapInfo,gp.base,gp.aiInfo))
+				gp.displayInfo += sio._display_begin(gp.mapInfo, gp.base, gp.aiInfo)
 				gp.gProcess = sio.ROUND
 				gp.gProc.notifyAll()
 				gp.gProc.release()
@@ -175,6 +176,7 @@ class Sui(threading.Thread):
 						sys.exit(1)
 					#回合信息存至回放列表中
 					gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
+					gp.displayInfo += sio._display_round(gp.rbInfo, gp.rCommand, gp.reInfo)
 					gp.rProcess = sio.START
 					gp.rProc.notifyAll()
 					#若游戏结束则跳出循环
@@ -212,7 +214,7 @@ class Sui(threading.Thread):
 				pass
 			#写入回放
 			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
-			
+			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
 		connUI.shutdown(socket.SHUT_RDWR)
 		
 class Slogic(threading.Thread):
@@ -377,7 +379,7 @@ class Sai(threading.Thread):
 							if choice[0][1] > nsoldier:
 								choice[0][1] = -1
 								cnum[0] = 1
-							if gp.gameAIPath[i] != None:
+							if gp.gameAIPath[0] != None:
 								sio._cpp_sends_choose(connAI[0], cnum[1], select[1], cnum[0], choice[0])
 								sio._cpp_recvs_choose(connAI[0], cnum[0], gp.base, 0, choice[0])
 								select[0] = [0, -1]
@@ -396,7 +398,7 @@ class Sai(threading.Thread):
 							if choice[1][1] > nsoldier:
 								choice[1][1] = -1
 								cnum[1] = 1
-							if gp.gameAIPath[i] != None:
+							if gp.gameAIPath[1] != None:
 								sio._cpp_sends_choose(connAI[1], cnum[0], select[0], cnum[1], choice[1])
 								sio._cpp_recvs_choose(connAI[1], cnum[1], gp.base, 1, choice[1])
 								select[1] = [0, -1]
@@ -409,9 +411,11 @@ class Sai(threading.Thread):
 								for j in range(cnum[1]):
 									select[1][j] = gp.base[1][choice[1][j]].kind
 						trn = 1 - trn
-					if gp.gameAIPath[i] != None:
-						connAI[0].send('|')
-						connAI[0].recv(3)
+					connAI[0].send('|')
+					connAI[0].recv(3)
+					if gp.gameAIPath[1] != None:	
+						connAI[1].send('|')
+						connAI[1].recv(3)
 
 
 
@@ -525,6 +529,7 @@ class gameParameter():
 		self.gameAIPath = []
 		self.gameMapPath = None
 		self.replayInfo=[] #定义回放列表用于生成回放文件，每个元素储存一个回合的信息
+		self.displayInfo = '' #展示组的回放文件
 		self.timeoutSwitch = [1,1]
 		self.AI_Debug = [False,False]
 		

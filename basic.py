@@ -223,6 +223,6 @@ class Round_End_Info:
 		self.route = route#行动路线，点列表
 		self.score = score #二元数组，表示当前两队积分
 		self.over = over #布尔型，True为结束
-		self.trans = trans#added by ning表明有没有镜子传送成功方便播放动画
-		self.timeused = -1
+		self.trans = trans #布尔型，added by ning表明有没有镜子传送成功方便播放动画
+		self.timeused = -1  
 		self.effect = attack_effect #二元组表示攻击与反击方是否命中,1表示命中，0表示未命中，-1表示未攻击(超出攻击范围或已死亡),如(1,-1)表示攻击命中，目标未反击
