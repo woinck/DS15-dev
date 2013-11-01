@@ -344,7 +344,7 @@ class Slogic(threading.Thread):
 		if gp.reInfo.over == sio.AI_BREAKDOWN:
 			for i in range(2):
 				if gp.aiConnErr[i] == True:
-					gp.winner = i
+					gp.winner = 1 - i
 		
 		#接收胜利方信息
 		gp.gProc.acquire()
