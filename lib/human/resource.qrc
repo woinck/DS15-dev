@@ -1,5 +1,11 @@
 <RCC>
   <qresource>
+	<file alias="soldier0.png">image/saber1.png</file>
+	<file alias="soldier1.png">image/lancer1.png</file>
+	<file alias="soldier2.png">image/archer1.png</file>
+	<file alias="soldier3.png">image/dragon_rider1.png</file>
+	<file alias="soldier4.png">image/warrior1.png</file>
+	<file alias="soldier5.png">image/wizard1.png</file>
     <file alias="saber1.png">image/saber1.png</file>
     <file alias="lancer1.png">image/lancer1.png</file>
     <file alias="archer1.png">image/archer1.png</file>

@@ -9,6 +9,7 @@ from lib.human.Humanai_Replay_event import HumanReplay
 from lib.human.info_widget import *
 import basic, sio, select, os, socket, time, subprocess
 from lib.human.herotypedlg import GetHeroTypeDlg
+from lib.human.soldierdlg import GetSoldierTypeDlg
 from lib.human.helpDlg import HelpDlg
 from functools import partial
 #from AI_debugger import AiThread
@@ -28,6 +29,7 @@ WaitForHero=QWaitCondition()
 WaitForAni=QWaitCondition()
 WaitForIni=QWaitCondition()
 WaitForReplay=QWaitCondition()
+WaitForSoldier=QWaitCondition()
 mutex = QMutex()
 #tmp
 #for debug
@@ -142,6 +144,7 @@ class Ui_Player(QThread):
 		self.cmdNum = 0
 		self.flag = 1
 		self.result = ("Player", (6,6))
+		self.base = None
 	@pyqtSlot()
 	def on_shut(self):
 		self.conn.shutdown(socket.SHUT_RDWR)
@@ -208,13 +211,27 @@ class Ui_Player(QThread):
 		self.lock.unlock()
 		return self.command
 
+	def GetSoldierType(self, base_list):
+		self.emit(SIGNAL("getSoldierType"), base_list)
+		global WaitForSoldier
+		self.lock.lockForRead()
+		WaitForSoldier.wait(self.lock)
+		self.lock.unlock()
+		return self.base
+		
 	def run(self):
 		mapInfo,base = sio._recvs(self.conn)
+		self.base = base
 	#	mapInfo = mapReverse(mapInfo)#debugging
 		self.emit(SIGNAL("mapRecv"), mapInfo, base)
 		result = self.GetHeroType(mapInfo)
 		sio._sends(self.conn, (result[0],result[1][0]))
 		#time.sleep(5)
+		now_base_list = sio._recvs(self.conn)
+		self.base = now_base_list[0]
+		while now_base_list != "|":
+			self.GetSoldierType(now_base_list)
+			now_base_list = sio._recvs(self.conn)
 		while True and not self.isStopped():
 			try:
 				rBeginInfo = sio._recvs(self.conn)
@@ -434,6 +451,7 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 
 		else:
 			self.connect(self.playThread, SIGNAL("getHeroType()"), self.on_getHero)
+			self.connect(self.playThread, SIGNAL("getSoldierType"), self.on_getSoldier)
 			self.connect(self.playThread, SIGNAL("firstCmd()"), self.on_firstCmd)
 			self.connect(self.playThread, SIGNAL("mapRecv"), self.on_mapRecv)
 			#self.connect(self.playThread, SIGNAL("finished()"), self.playThread,
@@ -543,9 +561,28 @@ class HumanvsAi(QWidget, lib.human.ui_humanvsai.Ui_HumanvsAi):
 			WaitForHero.wakeAll()	
 		finally:
 			self.playThread.lock.unlock()
+		
+	def on_getSoldier(self, base_list):
+		self.replayWindow.setSoldier(base_list[0])
+		self.replayWindow.ShowSoldierChoosed(base_list[2], [])
+		self.dialog = GetSoldierTypeDlg(base_list[1], base_list[2], self)
+		self.connect(self.dialog, SIGNAL("soldierChoosed"), self.replayWindow.ShowSoldierChoosed)
+		result = [0, 0]
+		if self.dialog.exec_():
+			if len(dialog.choice) == 1:
+				result[0] = dialog.choice[0]
+			elif len(dialog.choice) == 2:
+				result = dialog.choice
+		try:
+			self.playThread.lock.lockForWrite()
+			for i in range(base_list[1]):
+				self.playThread.base[1][base_list[2][i]] = basic.Base_Unit(result[i], self.playThread.base[1][base_list[2][i]].position)
+		finally:
+			self.playThread.lock.unlock()
+		global WaitForSoldier
+		WaitForSoldier.wakeAll()
 
-
-
+			
 	def on_firstRecv(self, mapInfo, frInfo, aiInfo, baseInfo):
 		self.replayWindow.Initialize(basic.Begin_Info(mapInfo, baseInfo), frInfo)
 
@@ -704,4 +741,5 @@ if __name__ == "__main__":
 	form = HumanvsAi()
 	#form.showFullScreen()
 	form.show()
+#	form.on_getSoldier([[[],[]],1,[1,-1]])
 	app.exec_()

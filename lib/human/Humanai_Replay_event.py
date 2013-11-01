@@ -391,6 +391,33 @@ class HumanReplay(QGraphicsView):
 		self.scene.setSceneRect(rect)
 		self.fitInView(self.scene.sceneRect())
 
+	def ShowSoldierChoosed(self, ids, kinds):
+		if len(kinds) == 0:
+			for i in range(2):
+				if ids[i] == -1:
+					break
+				self.UnitBase[1][ids[i]].setNowChoose(False)
+				self.UnitBase[1][ids[i]].setWaitChoose(True)
+				self.UnitBase[1][ids[i]].update()
+				if not self.UnitBase[1][ids[i]].scene() == self.scene:
+					self.scene.addItem(self.UnitBase[1][ids[i]])
+					self.UnitBase[1][ids[i]].setPos(self.UnitBase[1][ids[i]].obj.position)					
+		elif len(kinds) == 1:
+			self.UnitBase[1][ids[0]].setWaitChoose(False)
+			self.UnitBase[1][ids[0]].obj.kind = kinds[i]
+			self.UnitBase[1][ids[0]].setNowChoose(True)
+			self.UnitBase[1][ids[0]].update()
+			if not ids[1] == -1:
+				self.UnitBase[1][ids[1]].setNowChoose(False)
+				self.UnitBase[1][ids[1]].setWaitChoose(True)
+				sefl.UnitBase[1][ids[1]].update()
+		else:
+			for i in range(2):
+				self.UnitBase[1][ids[i]].setWaitChoose(False)
+				self.UnitBase[1][ids[i]].setNowChoose(True)
+				self.UnitBase[1][ids[i]].obj.kind = kinds[i]
+				self.UnitBase[1][ids[i]].update()
+		
 	def Initialize(self, begInfo,frInfo):
 		self.setMap(begInfo.map)
 		self.templeList = frInfo.temple
@@ -854,6 +881,8 @@ class HumanReplay(QGraphicsView):
 		self.mouseUnit.setVis(False)
 		self.mouseUnit.setVisible(False)
 		self.focusUnit.setVisible(False)
+		
+
 #test
 if __name__ == "__main__":
 	app = QApplication(sys.argv)

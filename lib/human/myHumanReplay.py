@@ -76,28 +76,42 @@ class SoldierUnit(AbstractUnit):
 		self.idNum = id_
 		self.obj = unit
 		self.nowMove = False
+		self.nowChoose = False
+		self.waitChoose = False
 		self.setZValue(0.5)
 
 	def setNowMove(self, now_move):
 		self.nowMove = now_move
 		self.update()
-			
+	def setNowChoose(self, now_choose):
+		self.nowChoose = now_choose
+	def setWaitChoose(self, wait_choose):
+		self.waitChoose = wait_choose
+
 	def paint(self, painter, option, widget = None):
 #		painter = QPainter()
 		painter.save()
-		filename = ":" + FILE_UNIT[self.obj.kind] + "%d.png"%(self.idNum[0])
-		image = QImage(filename).convertToFormat(QImage.Format_ARGB32)
-	   # painter.setCompositionMode(QPainter.CompositionMode_Multiply)
-		painter.drawImage(QPoint(EDGE_WIDTH/2, EDGE_WIDTH/2), image.scaled(UNIT_WIDTH, UNIT_HEIGHT,
-																		   Qt.IgnoreAspectRatio))
-		if self.nowMove:
+		if not self.waitChoose:
+			filename = ":" + FILE_UNIT[self.obj.kind] + "%d.png"%(self.idNum[0])
+			image = QImage(filename).convertToFormat(QImage.Format_ARGB32)
+			# painter.setCompositionMode(QPainter.CompositionMode_Multiply)
+			painter.drawImage(QPoint(EDGE_WIDTH/2, EDGE_WIDTH/2), image.scaled(UNIT_WIDTH, UNIT_HEIGHT,
+																			Qt.IgnoreAspectRatio))
+		if self.nowMove or self.nowChoose:
 			brush = QBrush(Qt.SolidPattern)
 			brush.setColor(QColor(180,250,0,120))
 			pen = QPen(Qt.NoPen)
 			painter.setBrush(brush)
 			painter.setPen(pen)
 			painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
-#		
+		elif self.waitChoose:
+			brush = QBrush(Qt.SolidPattern)
+			brush.setColor(QColor(0, 0, 255, 120))
+			pen = QPen(Qt.NoPen)
+			painter.setBrush(brush)
+			painter.setPen(pen)
+			painter.drawRect(QRect(0, 0, UNIT_WIDTH + EDGE_WIDTH, UNIT_HEIGHT + EDGE_WIDTH))
+			
 
 		painter.restore()
 
