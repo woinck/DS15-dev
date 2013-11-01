@@ -77,8 +77,3 @@ class WebWidget(QWidget, ui_website.Ui_webWidget):
 		self.verticalLayout.addWidget(self.webWidget)
 		self.returnButton.setStyleSheet("*{border-image: url(:return0.png);}"
 										"*:hover{border-image: url(:return1.png);}")
-
-class TestWidget(QWidget):
-	pass
-class LogInWidget(QWidget):
-	pass

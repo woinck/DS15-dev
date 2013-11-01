@@ -80,8 +80,9 @@ while not over and turn < basic.TURN_MAX:
 							over = False
 					if over:
 						roundEndInfo.over = over
-						TestMain.end_score(score,base,turn)
-						roundEndInfo.score = score
+				if roundEndInfo.over:		
+					TestMain.end_score(score,base,turn)
+					roundEndInfo.score = score
 				#发送每回合结束时的信息：
 				sio._sends(conn, roundEndInfo)
 				over = roundEndInfo.over

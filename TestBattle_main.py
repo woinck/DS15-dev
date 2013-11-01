@@ -111,7 +111,7 @@ class main1():
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1:
+				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 			if base[j][i].position == (0,0):
@@ -122,6 +122,8 @@ class main1():
 		score[1] = (basic.TURN_MAX - turn) * 5
 		if turn < basic.TURN_MAX:
 			return 1
+		else:
+			return 0
 
 
 class main2():
@@ -249,7 +251,7 @@ class main2():
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1:
+				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 
@@ -396,7 +398,7 @@ class main3():
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1:
+				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 
@@ -551,7 +553,7 @@ class main4():
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1:
+				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能 
 		if whole_map[base[1][0].position[0]][base[1][0].position[1]].kind == basic.TEMPLE:
@@ -701,7 +703,7 @@ class main5():
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1:
+				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 
@@ -859,7 +861,7 @@ class main6():
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1:
+				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 
@@ -1014,7 +1016,7 @@ class main7():
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1:
+				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 

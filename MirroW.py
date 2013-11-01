@@ -3,7 +3,6 @@
 
 from mainWindow import *
 import sys,time
-import mainStyle
 
 #def singleShot(main_window):
 	
