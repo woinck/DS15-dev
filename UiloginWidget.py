@@ -16,8 +16,8 @@ class LoginWidget(QWidget, ui_loginwidget.Ui_loginWidget):
         self.setStyleSheet("#frame{border-image:url(:login_back.png);}"
                             "#backButton{border-image:url(:return0.png);}"
                             "#backButton:hover{border-image:url(:return1.png);}")
-        self.userNameEdit.setText("LindexWindy")
-        self.passwordEdit.setText("ds15ourwonder")
+        #self.userNameEdit.setText("LindexWindy")
+        #self.passwordEdit.setText("ds15ourwonder")
         self.connect(self.loginButton, SIGNAL("released()"), self.testLogin)
         #QTextCodec.setCodecForCStrings(QTextCodec.codecForName("UTF-8"))
         #self.passwordEdit.setEchoMode(QLineEdit.Password)

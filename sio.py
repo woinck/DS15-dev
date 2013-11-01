@@ -1,7 +1,7 @@
  #-*- coding:UTF-8 -*-
 
 
-RELEASE_MODE = 0
+RELEASE_MODE = 1
 
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'temp_TestMode.ui'
 #
-# Created: Fri Nov 01 01:44:24 2013
+# Created: Fri Nov 01 21:44:36 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,7 +34,7 @@ class Ui_TestModeWidget(object):
         TestModeWidget.setSizePolicy(sizePolicy)
         TestModeWidget.setMouseTracking(False)
         TestModeWidget.setStyleSheet(_fromUtf8("QWidget#testModeFrame{\n"
-"background-image: url(:/TestMode/back.jpg);}\n"
+"background-image: url(:/TestMode/back.png);}\n"
 ""))
         self.testModeFrame = QtGui.QFrame(TestModeWidget)
         self.testModeFrame.setGeometry(QtCore.QRect(0, 0, 1024, 768))

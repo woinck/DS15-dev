@@ -13,8 +13,8 @@ import ui_StartDialog
 import ui_ScoreDialog
 import ui_LogDialog
 
-MAX_LEVEL_NUM = 10
-AVAILABLE_LEVEL = [True, True, True, True, False, False, False, False, False, False]
+MAX_LEVEL_NUM = 7
+AVAILABLE_LEVEL = [True, True, True, True, False, False, False]
 
 print "hello!"#for test
 
@@ -57,6 +57,7 @@ class Ui_ResultDialog(QtGui.QDialog, ui_ResultDialog.Ui_ResultDialog):
     def __init__(self, winner, score, maxScore, parent = None):
         super(Ui_ResultDialog, self).__init__(parent)
         self.setupUi(self)
+        
         if (winner==0):
             self.loseLabel.setPixmap(QtGui.QPixmap(":\\TestMode\\youlose.png"))
         self.scoreLabel.setText(str(score))
@@ -76,11 +77,15 @@ class Ui_ScoreDialog(QtGui.QDialog, ui_ScoreDialog.Ui_ScoreDialog):
         self.scoreLabels = [self.label1, self.label2,
                             self.label3, self.label4,
                             self.label5, self.label6,
-                            self.label7, self.label8,
-                            self.label9, self.label10]
+                            self.label7]
         for i in range(MAX_LEVEL_NUM):
             self.scoreLabels[i].setText(str(data[i]))
         self.label.setText(_tr("战士 ")+QtCore.QString.fromUtf8(name)+_tr(" 的战绩："))
+        self.label.setStyleSheet("font: 15pt \"黑体\";color: rgb(255, 255, 0);")
+        if (20<=len(name)<40):
+            self.label.setStyleSheet("font: 15pt \"黑体\";color: rgb(255, 255, 0);")
+        elif (len(name)>=40):
+            self.label.setText(_tr("战士 ")+_tr("名字太长")+_tr(" 的战绩："))
         print "hello~"#for test
 
     def on_okBtn_released(self):
@@ -98,13 +103,11 @@ class Ui_StartDialog(QtGui.QWidget, ui_StartDialog.Ui_StartDialog):
         self.scoreLabels = [self.label1, self.label2,
                             self.label3, self.label4,
                             self.label5, self.label6,
-                            self.label7, self.label8,
-                            self.label9, self.label10]
+                            self.label7]
         self.levelBtns = [self.button1, self.button2,
                           self.button3, self.button4,
                           self.button5, self.button6,
-                          self.button7, self.button8,
-                          self.button9, self.button10]
+                          self.button7]
         for i in range(MAX_LEVEL_NUM):
             self.scoreLabels[i].setText(_tr("最高分")+str(data[i]))
             self.scoreLabels[i].hide()
