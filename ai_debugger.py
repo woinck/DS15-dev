@@ -372,9 +372,12 @@ class ai_debugger(QMainWindow):
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
+	import ctypes
+	myappid = 'ds15.ai_debugger.2.71828' # arbitrary string
+	ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 	form = ai_debugger()
 	rect = QApplication.desktop().availableGeometry()
 	form.resize(rect.size())
-	form.setWindowIcon(QIcon(":/icon.png"))
+	form.setWindowIcon(QIcon(":/aidebugger.ico"))
 	form.show()
 	app.exec_()
