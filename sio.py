@@ -75,6 +75,7 @@ NORMAL_OVER = 1
 AI_BREAKDOWN = 2
 
 
+
 class MapInfo:
 	def __init__(self,whole_map):
 		self.mapInfo = whole_map
@@ -179,7 +180,6 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
-	print 'bbbb'
 	recvbuf = conn.recv(10)
 	rbuf = recvbuf.split()
 	order = int(rbuf[0])
