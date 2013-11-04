@@ -8,11 +8,11 @@ extern game_info info;
 extern char teamName[20];
 extern int GetHeroType();
 
-Command cmd;  //Ñ¡ÊÖ²Ù×÷,Ã¿»ØºÏ´«¸øÂß¼­
-char recvbuf[128] = {}; //´ÓÆ½Ì¨½ÓÊÕĞÅÏ¢
-char sendbuf[128] = {}; //ÏòÆ½Ì¨·¢ËÍĞÅÏ¢
+Command cmd;  //é€‰æ‰‹æ“ä½œ,æ¯å›åˆä¼ ç»™é€»è¾‘
+char recvbuf[128] = {}; //ä»å¹³å°æ¥æ”¶ä¿¡æ¯
+char sendbuf[128] = {}; //å‘å¹³å°å‘é€ä¿¡æ¯
 
-SOCKET client; //ÉùÃ÷client£¬ÓÃÓÚÏÂÃæµÄget_soldier_info()µÄµ÷ÓÃ
+SOCKET client; //å£°æ˜clientï¼Œç”¨äºä¸‹é¢çš„get_soldier_info()çš„è°ƒç”¨
 
 command AI_main();
 
@@ -32,7 +32,7 @@ void get_soldier_info()
 		sscanf(recvbuf, "%d %d %d %d %d %d %d %d %d %d", &info.soldier[i][1].kind, &info.soldier[i][1].life, &info.soldier[i][1].strength,    &info.soldier[i][1].defence,  &info.soldier[i][1].move_range,    &info.soldier[i][1].attack_range[0], &info.soldier[i][1].attack_range[1],&info.soldier[i][1].duration,  &info.soldier[i][1].pos.x,  &info.soldier[i][1].pos.y);
 		send(client, "ok", 3, 0);
 	}
-} //ÓÃÓÚÃ¿»ØºÏ¸üĞÂË«·½µ¥Î»ĞÅÏ¢
+} //ç”¨äºæ¯å›åˆæ›´æ–°åŒæ–¹å•ä½ä¿¡æ¯
 
 int main()
 {
@@ -51,12 +51,12 @@ int main()
 	cliaddr.sin_port = htons(8803);
 	if(connect(client, (sockaddr*)&cliaddr, sizeof(sockaddr)) == -1)
 	{
-		printf("\n==============»¶Ó­²Î¼Ó¶ÓÊ½Ê®Îå==============\n\n");
-		printf("Ã»ÓĞ¼ì²âµ½Æ½Ì¨¶Ë¿Ú£¬ÇëÈ·ÈÏÆ½Ì¨³ÌĞòÒÑ¾­ÔËĞĞÔÙÔËĞĞ±¾³ÌĞò\n");
+		printf("\n==============æ¬¢è¿å‚åŠ é˜Ÿå¼åäº”==============\n\n");
+		printf("æ²¡æœ‰æ£€æµ‹åˆ°å¹³å°ç«¯å£ï¼Œè¯·ç¡®è®¤å¹³å°ç¨‹åºå·²ç»è¿è¡Œå†è¿è¡Œæœ¬ç¨‹åº\n");
 		system("pause>nul");
 		exit(0);
 	}
-	//½¨Á¢socketÁ¬½Ó
+	//å»ºç«‹socketè¿æ¥
 	
 	
 	recv(client, recvbuf, 127, 0);
@@ -93,14 +93,14 @@ int main()
 		send(client, "ok", 3, 0);
 	}
 
-	///////////////////////////////////ÒÔÏÂÎª×ÔÓÉÑ¡Ôñ±øÖÖÄ£Ê½¹Ø±ÕºÍ¿ªÆôµÄ´¦Àí
+	///////////////////////////////////ä»¥ä¸‹ä¸ºè‡ªç”±é€‰æ‹©å…µç§æ¨¡å¼å…³é—­å’Œå¼€å¯çš„å¤„ç†
 
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
 		sscanf(recvbuf, "%d %d", &info.soldier_number[0], &info.soldier_number[1]);
 		send(client, "ok", 3, 0);
 		get_soldier_info();
-		//¶ÁÈ¡³õÊ¼ĞÅÏ¢
+		//è¯»å–åˆå§‹ä¿¡æ¯
 
 
 	send(client, (char *) teamName, sizeof teamName, 0);
@@ -115,7 +115,7 @@ int main()
 		memset(recvbuf, 0, sizeof(char)*128);		
 		recv(client, recvbuf, 127, 0);
 
-		if(recvbuf[0] == '|') break; //ÒÔ|×÷ÎªÓÎÏ·½áÊø±êÖ¾
+		if(recvbuf[0] == '|') break; //ä»¥|ä½œä¸ºæ¸¸æˆç»“æŸæ ‡å¿—
 		sscanf(recvbuf, "%d %d %d %d %d", &info.move_id, &info.temple_number, &info.turn, &info.score[0], &info.score[1]);
 		send(client, "ok", 3, 0);
 
@@ -133,7 +133,7 @@ int main()
 		sprintf(sendbuf, "%d %d %d %d", (int)cmd.order, cmd.target_id, cmd.destination.x, cmd.destination.y);
 		send(client, sendbuf, strlen(sendbuf), 0); 
 		printf("sentTTTTTTTTTTTTTTTTTTTTTTTT");
-	} //ÓÎÏ·°´»ØºÏ½øĞĞ£¬Ö±µ½·Ö³öÊ¤¸º
+	} //æ¸¸æˆæŒ‰å›åˆè¿›è¡Œï¼Œç›´åˆ°åˆ†å‡ºèƒœè´Ÿ
 
 	closesocket(client);
 	WSACleanup();

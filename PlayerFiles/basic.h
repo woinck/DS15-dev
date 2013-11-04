@@ -2,31 +2,31 @@
 #define _BASIC_H
 
 /////////////////////////////////////////////////////////////
-// ÓÎÏ·»ù±¾²ÎÊı
+// æ¸¸æˆåŸºæœ¬å‚æ•°
 /////////////////////////////////////////////////////////////
 
-const int TURN_MAX = 30;         // ×î´ó»ØºÏÊı
-const int COORDINATE_X_MAX = 20; // µØÍ¼×î´ó·¶Î§
+const int TURN_MAX = 30;         // æœ€å¤§å›åˆæ•°
+const int COORDINATE_X_MAX = 20; // åœ°å›¾æœ€å¤§èŒƒå›´
 const int COORDINATE_Y_MAX = 20;
-const int SOLDIERS_NUMBER = 10;  // µ¥Î»ÊıÁ¿ÉÏÏŞ
-const int MIRROR_MAX = 20;       // Ä§¾µÊıÁ¿ÉÏÏŞ
-const int TEMPLE_MAX = 10;       // ÒÅ¼£ÊıÁ¿ÉÏÏŞ
+const int SOLDIERS_NUMBER = 10;  // å•ä½æ•°é‡ä¸Šé™
+const int MIRROR_MAX = 20;       // é­”é•œæ•°é‡ä¸Šé™
+const int TEMPLE_MAX = 10;       // é—è¿¹æ•°é‡ä¸Šé™
 
 /////////////////////////////////////////////////////////////
-// ÓÎÏ·µØÍ¼²ÎÊı
+// æ¸¸æˆåœ°å›¾å‚æ•°
 /////////////////////////////////////////////////////////////
 
-// µØÍ¼ÀàĞÍ±àºÅ
-const int PLAIN = 0;    // Æ½Ô­
-const int MOUNTAIN = 1; // É½µØ
-const int FOREST = 2;   // É­ÁÖ
-const int BARRIER = 3;  // ÆÁÕÏ
-const int TURRET = 4;   // ÅÚËş
-const int TEMPLE = 5;   // ÒÅ¼£
-const int MIRROR = 6;   // Ä§¾µ
+// åœ°å›¾ç±»å‹ç¼–å·
+const int PLAIN = 0;    // å¹³åŸ
+const int MOUNTAIN = 1; // å±±åœ°
+const int FOREST = 2;   // æ£®æ—
+const int BARRIER = 3;  // å±éšœ
+const int TURRET = 4;   // ç‚®å¡”
+const int TEMPLE = 5;   // é—è¿¹
+const int MIRROR = 6;   // é­”é•œ
 
-// µØĞÎĞ§¹û¾ØÕó: ÒÆ¶¯Á¦ÏûºÄ, »ı·Ö½±Àø, ¹¥»÷¼Ó³É, ·ÀÓù¼Ó³É¡£
-// Êı×éµÄµÚi£¬j¸öÔªËØ¶ÔÓ¦×ÅµÚiÖÖÔªËØµÄµÚjÖÖĞ§¹û
+// åœ°å½¢æ•ˆæœçŸ©é˜µ: ç§»åŠ¨åŠ›æ¶ˆè€—, ç§¯åˆ†å¥–åŠ±, æ”»å‡»åŠ æˆ, é˜²å¾¡åŠ æˆã€‚
+// æ•°ç»„çš„ç¬¬iï¼Œjä¸ªå…ƒç´ å¯¹åº”ç€ç¬¬iç§å…ƒç´ çš„ç¬¬jç§æ•ˆæœ
 const int FIELD_EFFECT[][5] = {{1, 0, 0, 0},
                                {2, 0, 0, 1},
                                {3, 0, 0, 0},
@@ -35,35 +35,35 @@ const int FIELD_EFFECT[][5] = {{1, 0, 0, 0},
                                {1, 3, 0, 0},
                                {1, 1, 0, 0}};
 
-const int TEMPLE_UP_TIME = 5;     // ÒÅ¼£³öÏÖÉñ·ûµÄ»ØºÏ¼ä¸ô
-const int TURRET_SCORE_TIME = 5;   // Á¬ĞøÕ¼ÓĞÅÚËş´¥·¢»ı·Ö½±ÀøµÄ»ØºÏÊı
-const int TURRET_RANGE = 10;       // ÅÚËş×î´óÉä³Ì                          
+const int TEMPLE_UP_TIME = 5;     // é—è¿¹å‡ºç°ç¥ç¬¦çš„å›åˆé—´éš”
+const int TURRET_SCORE_TIME = 5;   // è¿ç»­å æœ‰ç‚®å¡”è§¦å‘ç§¯åˆ†å¥–åŠ±çš„å›åˆæ•°
+const int TURRET_RANGE = 10;       // ç‚®å¡”æœ€å¤§å°„ç¨‹                          
 
-const int HERO_UP_LIMIT = 5;      // Ó¢ĞÛÍ¨¹ıÒÅ¼£»ñµÃÉñ·ûµÄ¼Ó³É´ÎÊıÉÏÏŞ
-const int BASE_UP_LIMIT = 3;      // ÆÕÍ¨µ¥Î»Í¨¹ıÒÅ¼£»ñµÃÉñ·ûµÄ¼Ó³É´ÎÊıÉÏÏŞ
-const int HERO_SCORE = 5;         // Ó¢ĞÛÊ£ÓàÑªÁ¿µÄ·ÖÊı¼Ó³É
-const int BASE_SCORE = 3;         // ÆÕÍ¨µ¥Î»Ê£ÓàÑªÁ¿µÄ·ÖÊı¼Ó³É
+const int HERO_UP_LIMIT = 5;      // è‹±é›„é€šè¿‡é—è¿¹è·å¾—ç¥ç¬¦çš„åŠ æˆæ¬¡æ•°ä¸Šé™
+const int BASE_UP_LIMIT = 3;      // æ™®é€šå•ä½é€šè¿‡é—è¿¹è·å¾—ç¥ç¬¦çš„åŠ æˆæ¬¡æ•°ä¸Šé™
+const int HERO_SCORE = 5;         // è‹±é›„å‰©ä½™è¡€é‡çš„åˆ†æ•°åŠ æˆ
+const int BASE_SCORE = 3;         // æ™®é€šå•ä½å‰©ä½™è¡€é‡çš„åˆ†æ•°åŠ æˆ
 
 
 /////////////////////////////////////////////////////////////
-// ÓÎÏ·µ¥Î»²ÎÊı
+// æ¸¸æˆå•ä½å‚æ•°
 /////////////////////////////////////////////////////////////
 
-const int SABER = 0;              // ½£Ê¿
-const int SOLDIER = 1;            // Í»»÷±ø
-const int ARCHER = 2;             // ¾Ñ»÷ÊÖ
-const int AIRPLANE = 3;           // Õ½»ú
-const int TANK = 4;               // Ì¹¿Ë
-const int WIZARD = 5;             // ÖÎÁÆÊ¦
-const int BERSERKER = 6;          // ¿ñÕ½Ê¿
-const int ASSASSIN = 7;           // °µÉ±Õß
-const int ARCHMAGE = 8;           // ´ó·¨Ê¦
+const int SABER = 0;              // å‰‘å£«
+const int SOLDIER = 1;            // çªå‡»å…µ
+const int ARCHER = 2;             // ç‹™å‡»æ‰‹
+const int AIRPLANE = 3;           // æˆ˜æœº
+const int TANK = 4;               // å¦å…‹
+const int WIZARD = 5;             // æ²»ç–—å¸ˆ
+const int BERSERKER = 6;          // ç‹‚æˆ˜å£«
+const int ASSASSIN = 7;           // æš—æ€è€…
+const int ARCHMAGE = 8;           // å¤§æ³•å¸ˆ
 
-const int LIFE_COST = 5;          // Ó¢ĞÛ1ÔÚÊÍ·Å¼¼ÄÜÊ±ÏûºÄµÄÉúÃüÖµ
-const int CRITICAL_HIT_RATE = 10; // Ó¢ĞÛ2µÄ±©»÷ÂÊ 
-const int UP_DURANCE = 5;         // Ó¢ĞÛ3µÄ¼¼ÄÜ¼Ó³ÉµÄÊ±¼äÏŞÖÆ   
+const int LIFE_COST = 5;          // è‹±é›„1åœ¨é‡Šæ”¾æŠ€èƒ½æ—¶æ¶ˆè€—çš„ç”Ÿå‘½å€¼
+const int CRITICAL_HIT_RATE = 10; // è‹±é›„2çš„æš´å‡»ç‡ 
+const int UP_DURANCE = 5;         // è‹±é›„3çš„æŠ€èƒ½åŠ æˆçš„æ—¶é—´é™åˆ¶   
 
-// µ¥Î»ÊôĞÔ²ÎÊı£ºÉúÃüÖµ¡¢¹¥»÷Á¦¡¢·ÀÓù¡¢ÒÆ¶¯Á¦
+// å•ä½å±æ€§å‚æ•°ï¼šç”Ÿå‘½å€¼ã€æ”»å‡»åŠ›ã€é˜²å¾¡ã€ç§»åŠ¨åŠ›
 const int ABILITY[][6] = {{25, 18, 12, 6},
                           {25, 17, 13, 7},
                           {25, 17, 12, 6},
@@ -74,7 +74,7 @@ const int ABILITY[][6] = {{25, 18, 12, 6},
                           {40, 20, 13, 6},
                           {45, 18, 14, 7}};
 
-// ¹¥»÷µÄÏà¿ËĞÔĞ§¹û
+// æ”»å‡»çš„ç›¸å…‹æ€§æ•ˆæœ
 const float ATTACK_EFFECT[][9] = {{1,   0.5, 1, 0.5, 1.5, 1, 1, 1, 1},
                                   {1.5, 1,   1, 1,   0.5, 1, 1, 1, 1},
                                   {1,   1,   1, 2,   2,   1, 1, 1, 1},
@@ -86,51 +86,51 @@ const float ATTACK_EFFECT[][9] = {{1,   0.5, 1, 0.5, 1.5, 1, 1, 1, 1},
                                   {1,   1,   1, 1,   1,   1, 1, 1, 1}};
 
 /////////////////////////////////////////////////////////////
-// ½á¹¹Ìå¶¨Òå
+// ç»“æ„ä½“å®šä¹‰
 /////////////////////////////////////////////////////////////
 
-typedef struct position { // Î»ÖÃ½á¹¹Ìå£¬°üº¬xy×ø±ê
+typedef struct position { // ä½ç½®ç»“æ„ä½“ï¼ŒåŒ…å«xyåæ ‡
     int x, y;
 }Position;
 
-typedef struct soldier_basic { // »ù±¾µ¥Î»½á¹¹Ìå£¬°üº¬ËùÓĞ»ù±¾µÄÊôĞÔ
+typedef struct soldier_basic { // åŸºæœ¬å•ä½ç»“æ„ä½“ï¼ŒåŒ…å«æ‰€æœ‰åŸºæœ¬çš„å±æ€§
     int kind, life, strength, defence, move_range;
-    int attack_range[2]; // attack_range[1][0]±íÊ¾¹¥»÷·¶Î§ÉÏÏÂÏŞ
-    int duration; // µ¥Î»±»Ó¢ĞÛ3µÄ¼¼ÄÜÇ¿»¯µÄÊ±¼ä
+    int attack_range[2]; // attack_range[1][0]è¡¨ç¤ºæ”»å‡»èŒƒå›´ä¸Šä¸‹é™
+    int duration; // å•ä½è¢«è‹±é›„3çš„æŠ€èƒ½å¼ºåŒ–çš„æ—¶é—´
     Position pos;
 }Soldier_Basic;
 
-typedef struct temple { // ÉñÃí½á¹¹Ìå
+typedef struct temple { // ç¥åº™ç»“æ„ä½“
     Position pos;
-    int state; // ±íÊ¾ÉñÃíÉñ·û×´Ì¬£¬0£ºÎŞËéÆ¬£»1£º¹¥»÷+1£»2£ºÒÆ¶¯+1£»3£º·ÀÓù+1£»
+    int state; // è¡¨ç¤ºç¥åº™ç¥ç¬¦çŠ¶æ€ï¼Œ0ï¼šæ— ç¢ç‰‡ï¼›1ï¼šæ”»å‡»+1ï¼›2ï¼šç§»åŠ¨+1ï¼›3ï¼šé˜²å¾¡+1ï¼›
 }Temple;
 
-typedef struct mirror { // Ä§¾µ½á¹¹Ìå
-  Position inPos, outPos; // ½øÈëºÍ´«³öµÄÎ»ÖÃ 
+typedef struct mirror { // é­”é•œç»“æ„ä½“
+  Position inPos, outPos; // è¿›å…¥å’Œä¼ å‡ºçš„ä½ç½® 
 } Mirror; 
 
-typedef struct game_info { // ÓÎÏ·ĞÅÏ¢½á¹¹Ìå£¬Ã¿»ØºÏÑ¡ÊÖ´ÓÖĞ»ñÈ¡±ØÒªµÄĞÅÏ¢
-    int team_number;                              // ¶ÓÎéºÅ(0»ò1)
-    int map[COORDINATE_X_MAX][COORDINATE_Y_MAX];  // µØÍ¼¸÷µãÀàĞÍ
-	int map_size[2];                              // µØÍ¼ĞĞ[0]¡¢ÁĞ[1]
-    int mirror_number;                            // Ä§¾µÊıÁ¿
-    Mirror mir[MIRROR_MAX];                       // ¸÷´¦µÄ¾µ×ÓÎ»ÖÃ¼°³ö¿Ú
-    int soldier_number[2];                        // ¸÷·½µ¥Î»ÊıÁ¿
-    int move_id;                                  // ÒÆ¶¯µ¥Î»£¬±íÊ¾±¾¶ÓÎéÖĞµÚmove_id¸öÈË
-    int score[2];                                 // Á½¶Óµ±Ç°»ı·Ö(²»°üÀ¨´æ»îÊ¿±øËùÕ¼£©
-    int turn;                                     // µ±Ç°×Ü»ØºÏÊı
-    int temple_number;                            // ÉñÃíÊıÁ¿
-    Temple temple[TEMPLE_MAX];                    // ¸÷ÉñÃíµÄÎ»ÖÃ¼°×´Ì¬
-    Soldier_Basic soldier[SOLDIERS_NUMBER][2];    // Ë«·½µ¥Î»µÄĞÅÏ¢
+typedef struct game_info { // æ¸¸æˆä¿¡æ¯ç»“æ„ä½“ï¼Œæ¯å›åˆé€‰æ‰‹ä»ä¸­è·å–å¿…è¦çš„ä¿¡æ¯
+    int team_number;                              // é˜Ÿä¼å·(0æˆ–1)
+    int map[COORDINATE_X_MAX][COORDINATE_Y_MAX];  // åœ°å›¾å„ç‚¹ç±»å‹
+	int map_size[2];                              // åœ°å›¾è¡Œ[0]ã€åˆ—[1]
+    int mirror_number;                            // é­”é•œæ•°é‡
+    Mirror mir[MIRROR_MAX];                       // å„å¤„çš„é•œå­ä½ç½®åŠå‡ºå£
+    int soldier_number[2];                        // å„æ–¹å•ä½æ•°é‡
+    int move_id;                                  // ç§»åŠ¨å•ä½ï¼Œè¡¨ç¤ºæœ¬é˜Ÿä¼ä¸­ç¬¬move_idä¸ªäºº
+    int score[2];                                 // ä¸¤é˜Ÿå½“å‰ç§¯åˆ†(ä¸åŒ…æ‹¬å­˜æ´»å£«å…µæ‰€å ï¼‰
+    int turn;                                     // å½“å‰æ€»å›åˆæ•°
+    int temple_number;                            // ç¥åº™æ•°é‡
+    Temple temple[TEMPLE_MAX];                    // å„ç¥åº™çš„ä½ç½®åŠçŠ¶æ€
+    Soldier_Basic soldier[SOLDIERS_NUMBER][2];    // åŒæ–¹å•ä½çš„ä¿¡æ¯
 }Game_Info;
 
-typedef enum cmd_order { //command orderµÄÃ¶¾ÙÀàĞÍ
+typedef enum cmd_order { //command orderçš„æšä¸¾ç±»å‹
 	wait, attack, skill
 }Cmd_Order;
 
-typedef struct command {  // Ñ¡ÊÖ²Ù×÷,Ã¿»ØºÏ´«¸øÂß¼­
-    Position destination; // ÒªÒÆ¶¯µÄÄ¿µÄµØ
-    Cmd_Order order;            // wait:´ı»ú£¬attack:¹¥»÷£¬skill:¼¼ÄÜ
-    int target_id;        // Ä¿±êµ¥Î»
+typedef struct command {  // é€‰æ‰‹æ“ä½œ,æ¯å›åˆä¼ ç»™é€»è¾‘
+    Position destination; // è¦ç§»åŠ¨çš„ç›®çš„åœ°
+    Cmd_Order order;            // wait:å¾…æœºï¼Œattack:æ”»å‡»ï¼Œskill:æŠ€èƒ½
+    int target_id;        // ç›®æ ‡å•ä½
 } Command;
 #endif
