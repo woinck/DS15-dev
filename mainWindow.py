@@ -205,6 +205,7 @@ class MainWindow(QGraphicsView):
 	  #  file.open(QFile.ReadOnly)
 	  #  styleSheet = QLatin1String(file.readAll())
 		self.setBackgroundBrush(QBrush(QColor(0,0,0)))
+		self.setWindowFlags(Qt.FramelessWindowHint)
 	 #   self.beginWindow.widget().setStyleSheet(styleSheet)
 	 #   self.singleWindow.widget().setStyleSheet(styleSheet)
 	 #   for window in self.windowList:

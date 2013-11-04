@@ -8,7 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-
+from web-fight.cont_pwdedit import PassWordEdit
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -39,9 +39,8 @@ class Ui_loginWidget(object):
         self.userNameEdit = QtGui.QLineEdit(self.frame)
         self.userNameEdit.setGeometry(QtCore.QRect(430, 340, 131, 31))
         self.userNameEdit.setObjectName(_fromUtf8("userNameEdit"))
-        self.passwordEdit = QtGui.QLineEdit(self.frame)
+        self.passwordEdit = PassWordEdit(self.frame)
         self.passwordEdit.setGeometry(QtCore.QRect(430, 410, 131, 31))
-        self.passwordEdit.setEchoMode(QtGui.QLineEdit.PasswordEchoOnEdit)
         self.passwordEdit.setObjectName(_fromUtf8("passwordEdit"))
         self.label = QtGui.QLabel(self.frame)
         self.label.setGeometry(QtCore.QRect(320, 340, 100, 40))

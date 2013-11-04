@@ -55,5 +55,7 @@
 <!-- icon -->
 	<file alias="mirror.ico">image/mirror.ico</file>
 	<file alias="aidebugger.ico">image/aidebugger.ico</file>
+<!-- web fight -->
+	<file alias="loading.gif">image/loading.GIF</file>
   </qresource>
 </RCC>
