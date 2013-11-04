@@ -27,11 +27,13 @@ SINGLE_PROCESS = 1 #此常量为1时各命令窗口合并，只会产生一个�
 AI_CMD_TIMEOUT = 1 # AI命令最长等待时间，超过则不再接收
 AI_CONNECT_TIMEOUT = 3 # 与AI程序进行对接时的最长等待时间
 
-#游戏模式,界面组请关注!
+#游戏模式
 AI_VS_AI = 0
 PLAYER_VS_AI = 1
 PLAYER_VS_PLAYER = 2
 TEST_BATTLE = 3
+NET_GAME_SERVER = 4
+NET_GAME_CLIENT = 5
 
 #一些常量
 HOST = '127.0.0.1' # 主机地址
