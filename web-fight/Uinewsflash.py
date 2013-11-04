@@ -6,9 +6,9 @@ from PyQt4.QtCore import *
 from functools import partial
 
 import os,sys
-
-IMPORT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(IMPORT_PATH)
+if __name__ == "__main__":
+	IMPORT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	sys.path.append(IMPORT_PATH)
 import qrc_resource
 FLASH_WIDTH = 400
 FLASH_HEIGHT = 200
