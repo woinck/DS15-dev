@@ -1,7 +1,7 @@
  #-*- coding:UTF-8 -*-
 
 
-RELEASE_MODE = 1
+RELEASE_MODE = 0
 
 
 import cPickle, basic, threading, os, time, subprocess, socket, sys
@@ -182,9 +182,14 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
 	rbuf = recvbuf.split()
-	order = int(rbuf[0])
-	target_id = int(rbuf[1])
-	move = (int(rbuf[2]), int(rbuf[3]))
+	try:
+		order = int(rbuf[0])
+		target_id = int(rbuf[1])
+		move = (int(rbuf[2]), int(rbuf[3]))
+	except IndexError:
+		order = None
+		target_id = None
+		move = None
 	return basic.Command(order,move,target_id)
 
 #连接异常
