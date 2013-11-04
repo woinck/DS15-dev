@@ -90,8 +90,9 @@ class Sui(threading.Thread):
 			
 		#读取地图
 		(gp.mapInfo,gp.base)=sio._ReadFile(gp.gameMapPath)
-		gp.base[0].sort()
-		gp.base[1].sort()
+		for i in range(2):
+			for soldier in gp.base[i]:
+				soldier.life = 0
 		
 		#运行AI线程及文件
 		AIProg = []
@@ -386,7 +387,7 @@ class Sai(threading.Thread):
 								for j in range(cnum[0]):
 									select[0][j] = gp.base[0][choice[0][j]].kind
 							else:
-								sio._sends(connAI[0], gp.base)
+								sio._sends(connAI[0], [gp.base, cnum[0], choice[0]])
 								gp.base = sio._recvs(connAI[0])
 								select[0] = [0, -1]
 								for j in range(cnum[0]):
@@ -405,7 +406,7 @@ class Sai(threading.Thread):
 								for j in range(cnum[1]):
 									select[1][j] = gp.base[1][choice[1][j]].kind
 							else:
-								sio._sends(connAI[1], gp.base)
+								sio._sends(connAI[1], [gp.base, cnum[1], choice[1]])
 								gp.base = sio._recvs(connAI[1])
 								select[1] = [0, -1]
 								for j in range(cnum[1]):
@@ -416,9 +417,10 @@ class Sai(threading.Thread):
 					if gp.gameAIPath[1] != None:	
 						connAI[1].send('|')
 						connAI[1].recv(3)
-
-
-
+					else:
+						connAI[1].send('|')
+				gp.base[0].sort()
+				gp.base[1].sort()
 				#调节游戏进度标记
 				gp.gProcess = sio.HERO_TYPE_SET
 				#print 'gp.heroType set'#for test
