@@ -15,15 +15,20 @@ class GetHeroTypeDlg(QDialog, ui_herotypedlg.Ui_HeroTypeDlg):
 		self.setupUi(self)
 		self.choice = []
 		self.buttons = [self.heroButton1, self.heroButton2, self.heroButton3]
+		#self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
 		#pal = self.heroButton1.palette()
 		for button in self.buttons:
 			pixmap = QPixmap(":hero_%d3.png"%(self.buttons.index(button)+1))
 			button.setIcon(QIcon(pixmap))
 			button.setIconSize(button.size())
 			self.connect(button, SIGNAL("toggled(bool)"), self.updateUi,Qt.QueuedConnection)
+			button.setStyleSheet("QPushButton{border-radius:3px;}"
+							"QPushButton:hover{background: lightgrey;}"
+							"QPushButton:checked{background: grey;}")
 		self.vali = QRegExpValidator()
 		self.vali.setRegExp(QRegExp("[^|]*"))
 		self.nameEdit.setValidator(self.vali)
+		self.setWindowIcon(QIcon(QPixmap(":hero_11.png")))
 
 	def updateUi(self, checked):
 		button = self.sender()
@@ -46,5 +51,5 @@ if __name__ == "__main__":
 	import sys
 	app = QApplication(sys.argv)
 	form = GetHeroTypeDlg()
-	form.show()
-	app.exec_()
+	form.exec_()
+

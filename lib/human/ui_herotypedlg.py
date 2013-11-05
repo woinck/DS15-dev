@@ -23,6 +23,7 @@ class Ui_HeroTypeDlg(object):
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.buttonBox.setStyleSheet("background:lightgrey")
         self.heroButton1 = QtGui.QPushButton(HeroTypeDlg)
         self.heroButton1.setGeometry(QtCore.QRect(20, 60, 80, 80))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
