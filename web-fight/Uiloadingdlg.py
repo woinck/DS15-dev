@@ -7,9 +7,7 @@ import os,sys
 if __name__ == "__main__":
 	IMPORT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	sys.path.append(IMPORT_PATH)
-	print "hello"
 	import qrc_resource
-	print "hi"
 
 class LoadingDialog(QDialog):
 	def __init__(self, text, parent = None):
