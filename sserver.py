@@ -59,7 +59,7 @@ class Sui(threading.Thread):
 	def run_AI(self, conn, AIPath, num):
 
 		if AIPath == None:
-			if gp.gameMode == sio.TEST_BATTLE:
+			if gp.gameMode == sio.TEST_BATTLE or sio.NET_GAME_CLIENT:
 				while gp.gProc.acquire():
 					gp.gProcess += 1
 					gp.gProc.notifyAll()
@@ -68,6 +68,7 @@ class Sui(threading.Thread):
 				return None
 			try:
 				conn.send('|')
+				return None
 			except:
 				conn.shutdown(socket.SHUT_RDWR)
 				sys.exit(1)
@@ -84,11 +85,13 @@ class Sui(threading.Thread):
 		connUI.settimeout(1)
 		
 		#接收游戏模式、地图和AI信息
-		gp.gameMode, gp.gameMapPath, gp.gameAIPath, gp.AI_Debug=sio._recvs(connUI)
+		gp.gameMode, gp.gameMapPath, gp.gameAIPath, gp.AI_Debug = sio._recvs(connUI)
 
 		if gp.gameMode == sio.TEST_BATTLE:
 			gp.testBattleStage = sio._recvs(connUI)
 			gp.TestBattleStageInit()
+		elif gq.gameMode == sio.NET_GAME_CLIENT:
+			gp.serverInfo = sio._recvs(connUI)
 
 		#设置AI超时开关
 		for i in range(2):
@@ -97,7 +100,7 @@ class Sui(threading.Thread):
 			else:
 				gp.timeoutSwitch[i] = 1
 		
-		if gp.gameMode <= sio.PLAYER_VS_PLAYER or gp.gameMode == sio.TEST_BATTLE:
+		if gp.gameMode == sio.AI_VS_AI or sio.PLAYER_VS_AI or sio.PLAYER_VS_PLAYER or sio.TEST_BATTLE or sio.NET_GAME_SERVER:
 			if not sio.DEBUG_MODE:
 				LogicProg = sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 				time.sleep(0.1)
@@ -105,7 +108,7 @@ class Sui(threading.Thread):
 			
 		#读取地图
 
-		if gp.gameMode <= sio.PLAYER_VS_PLAYER:
+		if gp.gameMode <= sio.AI_VS_AI or sio.PLAYER_VS_AI or sio.PLAYER_VS_PLAYER or sio.NET_GAME_SERVER:
 			(gp.mapInfo,gp.base)=sio._ReadFile(gp.gameMapPath)
 		elif gp.gameMode == sio.TEST_BATTLE:
 			fieldTest.get_map(TestBattle_Map.testBattleMap[gp.testBattleStage],gp.mapInfo,gp.base)
@@ -159,7 +162,7 @@ class Sui(threading.Thread):
 				gp.gProc.release()
 				break
 			gp.gProc.release()
-		
+		待完成
 		#初始化完毕，进入回合==============================================================
 		#print 'ui in game'#for test
 		gp.uiOverFlag = False
@@ -525,6 +528,7 @@ class gameParameter():
 		self.gameAIPath = []
 		self.gameMapPath = None
 		self.testBattleStage = 0
+		self.serverInfo = ['127.0.0.1',sio.AI_PORT]
 		self.replayInfo=[] #定义回放列表用于生成回放文件，每个元素储存一个回合的信息
 		self.timeoutSwitch = [1,1]
 		self.AI_Debug = [False,False]

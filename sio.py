@@ -1,20 +1,19 @@
  #-*- coding:UTF-8 -*-
+import cPickle, basic, threading, os, time, subprocess, socket, sys
 
 
 RELEASE_MODE = 0
 
 
-import cPickle, basic, threading, os, time, subprocess, socket, sys
-reload(sys)
 
+reload(sys)
 sys.setdefaultencoding('gbk')
 #os.system("chcp 936")
 
-
+#重定向
 if RELEASE_MODE == 1:
 	logF = open('log.log','w')
 	sys.stdout = logF
-
 
 #AI模式 0：py 1：cpp
 USE_CPP_AI = 1
@@ -34,12 +33,15 @@ AI_VS_AI = 0
 PLAYER_VS_AI = 1
 PLAYER_VS_PLAYER = 2
 TEST_BATTLE = 3
+NET_GAME_SERVER = 4
+NET_GAME_CLIENT = 5
 
 #一些常量
 HOST = '127.0.0.1' # 主机地址
 LOGIC_PORT = 8801 # logic 连接端口
 UI_PORT = 8802 # UI 连接端口
 AI_PORT = 8803 # AI 连接端口
+
 #error
 #devnull = open(os.devnull, 'w')
 if RELEASE_MODE:
