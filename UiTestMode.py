@@ -14,7 +14,7 @@ import ui_ScoreDialog
 import ui_LogDialog
 
 MAX_LEVEL_NUM = 7
-AVAILABLE_LEVEL = [True, True, True, True, False, False, False]
+AVAILABLE_LEVEL = [True, True, True, True, True, True, True]
 
 print "hello!"#for test
 

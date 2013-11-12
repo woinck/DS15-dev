@@ -209,6 +209,7 @@ class Ui_Player(QThread):
 		return self.command
 
 	def run(self):
+		print 'in ai!!!!!'
 		mapInfo,base = sio._recvs(self.conn)
 	#	mapInfo = mapReverse(mapInfo)#debugging
 		self.emit(SIGNAL("mapRecv"), mapInfo, base)

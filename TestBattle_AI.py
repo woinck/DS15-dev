@@ -38,6 +38,14 @@ def find_position(whole_map, base, unit_id, target_id, distance, move):
 		if main.distance(i, target_position) in distance:
 			return i
 	return (-1,-1)
+
+def find_person(base, position):
+	for i in range(2):
+		for j in range(len(base[i])):
+			if base[i][j].position == position and base[i][j].life > 0:
+				return (i,j)
+	return (-1,-1)
+
 def GetHeroType_1(mapInfo,base):
 	return basic.HERO_1
 def AI_1(whole_map, Info):
@@ -93,6 +101,72 @@ def AI_5(whole_map,Info):
 	team=Info.id[0]
 	unit=Info.id[1]
 	self=Info.base[team][unit]
+	move=Info.range
+	if (9,2) in move:
+		return basic.Command(0, (9, 2), (0, 0))
+	if self.kind == basic.ARCHER:
+		t = find_person(Info.base, (8,14))
+		if t != (-1,-1):
+			d = attack_id(whole_map, Info.base, (team,unit), move)
+			t = 0
+			for i in d:
+				if Info.base[1-team][i].life > 0 and m < (self.strength - Info.base[1-team][i].defence) * basic.ATTACK_EFFECT[self.kind][Info.base[1-team][i].kind]:
+					m = (self.strength - Info.base[1-team][i].defence) * basic.ATTACK_EFFECT[self.kind][Info.base[1-team][i].kind]
+					t = i
+			return basic.Command(1,find_position(whole_map, Info.base, (team, unit),(1-team,t),2,move), (1-team,t))
+		m = 2 * basic.COORIDINATE_X_MAX
+		for i in move:
+			d = main.distance(i, (8,14))
+			if m > d:
+				d = m
+				j = i
+		d = []; t = 0
+		if m == 0:
+			for i in range(Info.base[1-team]):
+				if main.distance(Info.base[1-team][i].position, self.position) in range(2,11):
+					if Info.base[1-team][i].life > 0 and Info.base[1-team][i].position == (9, 2):
+						return basic.Command(1, j, (1-team,i))
+					d += [i]
+					if Info.base[1-team][i].life > 0 and m < (self.strength - Info.base[1-team][i].defence) * basic.ATTACK_EFFECT[self.kind][Info.base[1-team][i].kind]:
+						m = (self.strength - Info.base[1-team][i].defence) * basic.ATTACK_EFFECT[self.kind][Info.base[1-team][i].kind]
+						t = i
+			for i in d:
+				if Info.base[1-team][i].kind == basic.WIZARD:
+					return basic.Command(1, j, (1-team,i))
+			return basic.Command(1, j, (1-team,t))
+		else:
+			return basic.Command(0, j, (0, 0))
+	elif self.kind == basic.DRAGON_RIDER:
+		d = 2 * basic.COORIDINATE_X_MAX; t = 0
+		for i in move:
+			if i[1]==9 and 5 <= i[0] <= 9:
+				return basic.Command(0, i, (0, 0))
+			if main.distance(i, (9,8)) < d:
+				d = main.distance(i, (9,8))
+				t = i
+		i = 0
+		for d in attack_id(whole_map, Info.base, (team,unit),move):
+			if main.distance(t,Info.base[1-team][d]) == 1:
+				if Info.base[1-team][d].kind==basic.SABER or Info.base[1-team][d].kind == basic.ARCHER:
+					i = d; break;
+		return basic.Command(1, t, (1-team,i))
+	else:
+		if not(self.position[1]<=2 or self.position[1]>=5) and find_person(Info.base,(3,0))!=(-1,-1):
+			if (0,2) in move:
+				return basic.Command(1, (0,2), (1-team,0))
+			d = 2 * basic.COORIDINATE_X_MAX; t = 0
+			for i in move:
+				if main.distance(i, (0,2)) < d:
+					d = main.distance(i, (0,2))
+					t = i
+			return basic.Command(1,t,(1-team,0))
+		m = 0; c = 0
+		for i in attack_id(whole_map, Info.base, (team,unit),move):
+			t = (self.strength - Info.base[1-team][i].defence) * basic.ATTACK_EFFECT[self.kind][Info.base[1-team][i].kind]
+			if m < t:
+				m = t; c = i;
+		return basic.Command(1,find_position(whole_map, Info.base, (team, unit),(1-team,c),self.attack_range[1],move), (1-team,c))
+	
 
 def GetHeroType_6(mapInfo,base):
 	return basic.HERO_2

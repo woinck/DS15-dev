@@ -65,7 +65,7 @@ class Sui(threading.Thread):
 					gp.gProc.notifyAll()
 					gp.gProc.release()
 					break
-				return None
+				#return None
 			try:
 				conn.send('|')
 				return None
@@ -90,7 +90,7 @@ class Sui(threading.Thread):
 		if gp.gameMode == sio.TEST_BATTLE:
 			gp.testBattleStage = sio._recvs(connUI)
 			gp.TestBattleStageInit()
-		elif gq.gameMode == sio.NET_GAME_CLIENT:
+		elif gp.gameMode == sio.NET_GAME_CLIENT:
 			gp.serverInfo = sio._recvs(connUI)
 
 		#设置AI超时开关
@@ -105,7 +105,7 @@ class Sui(threading.Thread):
 				LogicProg = sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 				time.sleep(0.1)
 			logic_thread.start()
-			
+
 		#读取地图
 
 		if gp.gameMode <= sio.AI_VS_AI or sio.PLAYER_VS_AI or sio.PLAYER_VS_PLAYER or sio.NET_GAME_SERVER:
@@ -128,8 +128,8 @@ class Sui(threading.Thread):
 					if not ai_thread.isAlive():
 						ai_thread.start()
 					#运行AI1
+					print gp.gameAIPath[i]
 					AIProg.append(self.run_AI(connUI,gp.gameAIPath[i],i))
-					
 					gp.gProc.release()
 					break
 				gp.gProc.release()
@@ -162,7 +162,9 @@ class Sui(threading.Thread):
 				gp.gProc.release()
 				break
 			gp.gProc.release()
-		待完成
+		#待完成
+
+		
 		#初始化完毕，进入回合==============================================================
 		#print 'ui in game'#for test
 		gp.uiOverFlag = False

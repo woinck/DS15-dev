@@ -737,10 +737,10 @@ class main5():
 
 
 class main6():
-	def distance(self, i,j):
+	def distance(i,j):
 		return abs(i[0]-j[0])+abs(i[1]-j[1])
 
-	def available_spots(self, map_list, unit_list, source_num, move_target = (-1,-1)):
+	def available_spots(map_list, unit_list, source_num, move_target = (-1,-1)):
 		'''该函数用于计算当前地图下某单位的活动范围。
 		   传入参量map_list，为基本地图单元的二维数组
 		   储存了地图的全部信息。unit_list同样记录了所有
@@ -801,7 +801,7 @@ class main6():
 							break
 			d_spots.reverse()
 		return d_spots	
-	def perparation(self, whole_map, base, score, map_temple):
+	def preparation(whole_map, base, score, map_temple):
 		'''每回合前准备阶段'''
 		for i in map_temple:
 			m = whole_map[i[0][0]][i[0][1]]
@@ -825,7 +825,7 @@ class main6():
 						base[i][j].defence -= 1
 						base[i][j].strength -= 1
 				#英雄3技能持续时间判断
-	def calculation(self, command, base, whole_map, move_range, map_temple, score, unit_id):
+	def calculation(command, base, whole_map, move_range, map_temple, score, unit_id):
 		'''将传入指令计算后传出'''
 		move_position = command.move
 		order = command.order
@@ -837,7 +837,7 @@ class main6():
 		trans = False
 		if move_position in move_range:
 			sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
-			route += self.available_spots(whole_map, base, unit_id, move_position)
+			route += available_spots(whole_map, base, unit_id, move_position)
 			if not sc:
 				whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))		
 				base[j][i].move(move_position)
@@ -855,13 +855,13 @@ class main6():
 			if order != 0 and w[1] >= len(base[w[0]]):
 				order == 0
 			if order == 1 and w[0] == 1 - j:
-				if base[j][i].attack_range[0] <= self.distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
+				if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
 					attack_1 = base[j][i].attack(base, (1 - j, w[1]))
-				if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= self.distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
+				if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
+				if distance(base[j][i].position, base[j][w[1]].position) == 1:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 
@@ -876,26 +876,28 @@ class main6():
 			over = True
 		return basic.Round_End_Info(base, route, (attack_1, attack_2), trans, score, over)
 		
-	def end_score(self, score, base, turn):
+	def end_score(score, base, turn):
 		'''结束后计算积分返回胜队，（-1表示平局）'''
 		if base[1][-1].life <= 0:
 			return 0
 		for i in [0,1]:
 			for j in range(0, len(base[i])):
-				if base[i][j].life > 0:
+				if base[i][j].life > 0 and i == 1:
 					if base[i][j].kind < 6:
 						score[i] += base[i][j].life * basic.BASE_SCORE
 					else:
 						score[i] += base[i][j].life * basic.HERO_SCORE
-		score[1] += (basic.TURN_MAX - turn) * 5
+				else:
+					score[i] += (base[i][j].life > 0)
+		score[1] += (basic.TURN_MAX - turn) * 5 - score[0]
 		return 1
 
 
 class main7():
-	def distance(self, i,j):
+	def distance(i,j):
 		return abs(i[0]-j[0])+abs(i[1]-j[1])
 
-	def available_spots(self, map_list, unit_list, source_num, move_target = (-1,-1)):
+	def available_spots(map_list, unit_list, source_num, move_target = (-1,-1)):
 		'''该函数用于计算当前地图下某单位的活动范围。
 		   传入参量map_list，为基本地图单元的二维数组
 		   储存了地图的全部信息。unit_list同样记录了所有
@@ -956,7 +958,7 @@ class main7():
 							break
 			d_spots.reverse()
 		return d_spots	
-	def perparation(self, whole_map, base, score, map_temple):
+	def preparation(whole_map, base, score, map_temple):
 		'''每回合前准备阶段'''
 		for i in map_temple:
 			m = whole_map[i[0][0]][i[0][1]]
@@ -980,7 +982,7 @@ class main7():
 						base[i][j].defence -= 1
 						base[i][j].strength -= 1
 				#英雄3技能持续时间判断
-	def calculation(self, command, base, whole_map, move_range, map_temple, score, unit_id):
+	def calculation(command, base, whole_map, move_range, map_temple, score, unit_id):
 		'''将传入指令计算后传出'''
 		move_position = command.move
 		order = command.order
@@ -992,7 +994,7 @@ class main7():
 		trans = False
 		if move_position in move_range:
 			sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
-			route += self.available_spots(whole_map, base, unit_id, move_position)
+			route += available_spots(whole_map, base, unit_id, move_position)
 			if not sc:
 				whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))		
 				base[j][i].move(move_position)
@@ -1010,13 +1012,13 @@ class main7():
 			if order != 0 and w[1] >= len(base[w[0]]):
 				order == 0
 			if order == 1 and w[0] == 1 - j:
-				if base[j][i].attack_range[0] <= self.distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
+				if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
 					attack_1 = base[j][i].attack(base, (1 - j, w[1]))
-				if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= self.distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
+				if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
 					attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 				#攻击及反击
 			elif order == 2 and w[0] == j:
-				if self.distance(base[j][i].position, base[j][w[1]].position) == 1 and base[j][w[1]].life > 0:
+				if distance(base[j][i].position, base[j][w[1]].position) == 1:
 					base[j][i].skill(base, (j,w[1]))
 					#使用技能
 
@@ -1029,20 +1031,17 @@ class main7():
 				break   
 		return basic.Round_End_Info(base, route, (attack_1, attack_2), trans, score, over)
 		
-	def end_score(self, score, base, turn):
+	def end_score(score, base, turn):
 		'''结束后计算积分返回胜队，（-1表示平局）'''
+		for i in [0,1]:
+			for j in range(0, len(base[i])):
+				if base[i][j].life > 0:
+					if base[i][j].kind < 6:
+						score[i] += base[i][j].life * basic.BASE_SCORE
+					else:
+						score[i] += base[i][j].life * basic.HERO_SCORE
 		if turn >= basic.TURN_MAX:
-			for i in [0,1]:
-				for j in range(0, len(base[i])):
-					if base[i][j].life > 0:
-						if base[i][j].kind < 6:
-							score[i] += base[i][j].life * basic.BASE_SCORE
-						else:
-							score[i] += base[i][j].life * basic.HERO_SCORE
-			if score[1] != score[0]:
-				return int(score[1] > score[0])
-			else:
-				return -1
+			return 0
 		for i in [0,1]:
 			over = True
 			for j in base[i]:
