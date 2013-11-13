@@ -106,7 +106,7 @@ class Sui(threading.Thread):
 
 		#读取地图
 
-		if gp.gameMode <= sio.NET_GAME_SERVER:
+		if gp.gameMode <= sio.PLAYER_VS_PLAYER or gp.gameMode == sio.NET_GAME_SERVER:
 			(gp.mapInfo,gp.base) = sio._ReadFile(gp.gameMapPath)
 		elif gp.gameMode == sio.TEST_BATTLE:
 			fieldTest.get_map(TestBattle_Map.testBattleMap[gp.testBattleStage],gp.mapInfo,gp.base)
