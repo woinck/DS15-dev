@@ -57,18 +57,16 @@ class Sui(threading.Thread):
 		self.name = 'Thread-UI'
 		
 	def run_AI(self, conn, AIPath, num):
-
 		if AIPath == None:
-			if gp.gameMode == sio.TEST_BATTLE or sio.NET_GAME_CLIENT:
+			if gp.gameMode == sio.TEST_BATTLE or gp.gameMode == sio.NET_GAME_CLIENT:
 				while gp.gProc.acquire():
 					gp.gProcess += 1
 					gp.gProc.notifyAll()
 					gp.gProc.release()
 					break
-				#return None
+				return None
 			try:
 				conn.send('|')
-				return None
 			except:
 				conn.shutdown(socket.SHUT_RDWR)
 				sys.exit(1)
@@ -100,7 +98,7 @@ class Sui(threading.Thread):
 			else:
 				gp.timeoutSwitch[i] = 1
 		
-		if gp.gameMode == sio.AI_VS_AI or sio.PLAYER_VS_AI or sio.PLAYER_VS_PLAYER or sio.TEST_BATTLE or sio.NET_GAME_SERVER:
+		if gp.gameMode <= sio.NET_GAME_SERVER:
 			if not sio.DEBUG_MODE:
 				LogicProg = sio.Prog_Run(os.getcwd() + sio.LOGIC_FILE_NAME)
 				time.sleep(0.1)
@@ -108,14 +106,15 @@ class Sui(threading.Thread):
 
 		#读取地图
 
-		if gp.gameMode <= sio.AI_VS_AI or sio.PLAYER_VS_AI or sio.PLAYER_VS_PLAYER or sio.NET_GAME_SERVER:
-			(gp.mapInfo,gp.base)=sio._ReadFile(gp.gameMapPath)
+		if gp.gameMode <= sio.NET_GAME_SERVER:
+			(gp.mapInfo,gp.base) = sio._ReadFile(gp.gameMapPath)
 		elif gp.gameMode == sio.TEST_BATTLE:
 			fieldTest.get_map(TestBattle_Map.testBattleMap[gp.testBattleStage],gp.mapInfo,gp.base)
 
 		gp.base[0].sort()
 		gp.base[1].sort()
 		
+
 		#运行AI线程及文件
 		AIProg = []
 		
