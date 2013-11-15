@@ -156,7 +156,7 @@ class Ui_StartDialog(QtGui.QWidget, ui_StartDialog.Ui_StartDialog):
 
 
     def on_connectionError(self):
-        QMessageBox.warning(self, _tr("连接错误"), _tr("不能连接到平台"), QMessageBox.Ok, QMessageBox.NoButton)
+        QtGui.QMessageBox.warning(self, _tr("连接错误"), _tr("不能连接到平台"), QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
         for i in range(MAX_LEVEL_NUM):
             self.levelBtns[i].setEnabled(True)
 

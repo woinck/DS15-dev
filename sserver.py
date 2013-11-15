@@ -571,6 +571,15 @@ class gameParameter():
 		elif (self.testBattleStage == 4):
 			self.testBattleAI = TestBattle_AI.AI_4
 			self.testBattleGetHeroType = TestBattle_AI.GetHeroType_4
+		elif (self.testBattleStage == 5):
+			self.testBattleAI = TestBattle_AI.AI_5
+			self.testBattleGetHeroType = TestBattle_AI.GetHeroType_5
+		elif (self.testBattleStage == 6):
+			self.testBattleAI = TestBattle_AI.AI_6
+			self.testBattleGetHeroType = TestBattle_AI.GetHeroType_6
+		elif (self.testBattleStage == 7):
+			self.testBattleAI = TestBattle_AI.AI_7
+			self.testBattleGetHeroType = TestBattle_AI.GetHeroType_7
 if __name__ == "__main__":
 	
 	gp = gameParameter()
