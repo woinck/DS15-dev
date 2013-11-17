@@ -231,7 +231,7 @@ class Sui(threading.Thread):
 					replay_mode = False
 				else:
 					replay_mode = sio._recvs(connUI)
-				
+
 				gp.gProc.notifyAll()
 				gp.gProc.release()
 				break

@@ -5,7 +5,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from Ui_mapeditor import *
 from basic import *
-import sio
+# import sio
 from Ui_Map import *
 import qrc_resource
 #reload(sys)
@@ -261,9 +261,8 @@ class Mapeditor(QtGui.QMainWindow):
 	def Save(self):
 		if self.couldSave():
 			if not self.isSaved():
-				if self.filename == "Untitled.map":
-					self.filename = QFileDialog.getSaveFileName(self, "Save",
-															"/.", "*.map")
+				if self.filename == "Untitled.map" or self.filename==QString(""):
+					self.filename = QFileDialog.getSaveFileName(self, "Save", "/.", "*.map")
 				if self.filename != QString(""):
 					self.SetMap()
 					self.view.SetClean()

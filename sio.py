@@ -2,7 +2,7 @@
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 
 
-RELEASE_MODE = 0
+RELEASE_MODE = 1
 
 
 
