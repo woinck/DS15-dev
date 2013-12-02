@@ -89,7 +89,12 @@ class Sui(threading.Thread):
 			gp.testBattleStage = sio._recvs(connUI)
 			gp.TestBattleStageInit()
 		elif gp.gameMode == sio.NET_GAME_CLIENT:
-			gp.serverInfo = sio._recvs(connUI)
+			gp.serverInfo = sio._recvs(connUI) #[IP,PORT]
+			try:
+				gp.netClient.connect(serverInfo)
+			except:
+				print 'Connecting to game host failed'
+
 
 		#设置AI超时开关
 		for i in range(2):
@@ -161,7 +166,7 @@ class Sui(threading.Thread):
 				gp.gProc.release()
 				break
 			gp.gProc.release()
-		#待完成
+		
 
 		
 		#初始化完毕，进入回合==============================================================
@@ -316,7 +321,6 @@ class Slogic(threading.Thread):
 				
 			#将命令发送至AI
 			while gp.rProc.acquire():
-				#print 'logic acquired',gp.rProcess
 				if gp.rProcess != sio.RCOMMAND_SET:
 					gp.rProc.wait()
 				else:	
