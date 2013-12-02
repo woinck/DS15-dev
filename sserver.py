@@ -427,7 +427,7 @@ class Sai(threading.Thread):
 
 		#初始化完毕，进入回合==============================================================
 
-		print 'ai in game'#for test 
+		#print 'ai in game'#for test 
 
 		#游戏回合阶段
 		roundNum = 0

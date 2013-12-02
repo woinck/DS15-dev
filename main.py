@@ -118,13 +118,13 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 				tp[1] = 0
 		if order != 0 and w[1] >= len(base[w[0]]):
 			order == 0
-		if order == 1 and w[0] == 1 - j:
+		if order == 1 and w[0] == 1 - j and base[w[0]][w[1]].life > 0:
 			if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
 				attack_1 = base[j][i].attack(base, (1 - j, w[1]))
 			if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
 				attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
 			#攻击及反击
-		elif order == 2 and w[0] == j:
+		elif order == 2 and w[0] == j and base[w[0]][w[1]].life > 0:
 			if distance(base[j][i].position, base[j][w[1]].position) == 1:
 				base[j][i].skill(base, (j,w[1]))
 				#使用技能
