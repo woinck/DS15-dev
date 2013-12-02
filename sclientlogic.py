@@ -92,6 +92,7 @@ while not over and turn < basic.TURN_MAX:
 			break
 		
 winner = TestMain.end_score(score, base, turn)
+
 print 'winner:',winner
 sio._sends(conn, winner)
 conn.close()

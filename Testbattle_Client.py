@@ -106,7 +106,7 @@ def ConnectWithLogic(lv, aiPath):
 	newScore = [str(lv),str(score)]
 	newScore = ' '.join(newScore)
 
-	sock.sendall(newScore)
+	#sock.sendall(newScore)
 	return winner, score
 
 
