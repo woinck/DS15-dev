@@ -240,7 +240,7 @@ def _cpp_recvs_begin(conn):
     recvbuf = conn.recv(10)
     result.append(int(recvbuf))
     return result
-                
+    
 #从cpp客户端AI接收兵种选择信息
 def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
     for i in range(self_inc):

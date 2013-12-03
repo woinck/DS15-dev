@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'part_replayer.ui'
 #
-# Created: Sun Oct 27 19:12:04 2013
+# Created: Tue Dec 03 00:32:52 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -215,6 +215,12 @@ class Ui_Replayer(object):
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
         self.label.setPalette(palette)
         self.label.setObjectName(_fromUtf8("label"))
+        self.threeDReplayBtn = QtGui.QPushButton(Replayer)
+        self.threeDReplayBtn.setGeometry(QtCore.QRect(369, 40, 131, 40))
+        self.threeDReplayBtn.setStyleSheet(_fromUtf8("background-color: rgba(255, 255, 255, 0);\n"
+"color: rgb(255, 255, 0);\n"
+"font: 75 20pt \"黑体\";"))
+        self.threeDReplayBtn.setObjectName(_fromUtf8("threeDReplayBtn"))
 
         self.retranslateUi(Replayer)
         QtCore.QMetaObject.connectSlotsByName(Replayer)
@@ -234,4 +240,5 @@ class Ui_Replayer(object):
         self.roundLabel.setText(_translate("Replayer", "Round 0", None))
         self.returnButton.setToolTip(_translate("Replayer", "返回上级", None))
         self.label.setText(_translate("Replayer", "播放速度", None))
+        self.threeDReplayBtn.setText(_translate("Replayer", "3D回放-〉", None))
 
