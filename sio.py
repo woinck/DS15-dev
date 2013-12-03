@@ -270,6 +270,8 @@ class ConnException(Exception):
 		
 #将对象以字符串形式通过指定连接发送
 def _sends(conn,data):
+	if conn == None:
+		return
 	#try:
 	conn.send(cPickle.dumps(data))
 	conn.send('|')
@@ -277,6 +279,8 @@ def _sends(conn,data):
 
 #接收字符串并将其转换为对象返回，空则返回'|'
 def _recvs(conn):
+	if conn == None:
+		return
 	result = ''
 	
 	try:

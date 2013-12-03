@@ -65,11 +65,12 @@ class Sui(threading.Thread):
 					gp.gProc.release()
 					break
 				return None
-			try:
-				conn.send('|')
-			except:
-				conn.shutdown(socket.SHUT_RDWR)
-				sys.exit(1)
+			if conn != None:
+				try:
+					conn.send('|')
+				except:
+					conn.shutdown(socket.SHUT_RDWR)
+					sys.exit(1)
 		else:
 			if sio.DEBUG_MODE or gp.AI_Debug[num]:
 				return None
@@ -78,22 +79,30 @@ class Sui(threading.Thread):
 	def run(self):
 		global gp
 		
-		#与UI连接
-		connUI,address = _SocketConnect(sio.HOST,sio.UI_PORT,'UI')
-		connUI.settimeout(1)
-		
-		#接收游戏模式、地图和AI信息
-		gp.gameMode, gp.gameMapPath, gp.gameAIPath, gp.AI_Debug = sio._recvs(connUI)
+		if len(sys.argv) > 1:
+			if gp.gProc.acquire():
+				gp.gProcess += 1
+				gp.gProc.notifyAll()
+				gp.gProc.release()
+			connUI = None
 
-		if gp.gameMode == sio.TEST_BATTLE:
-			gp.testBattleStage = sio._recvs(connUI)
-			gp.TestBattleStageInit()
-		elif gp.gameMode == sio.NET_GAME_CLIENT:
-			gp.serverInfo = sio._recvs(connUI) #[IP,PORT]
-			try:
-				gp.netClient.connect(serverInfo)
-			except:
-				print 'Connecting to game host failed'
+		else:
+			#与UI连接
+			connUI,address = _SocketConnect(sio.HOST,sio.UI_PORT,'UI')
+			connUI.settimeout(1)
+		
+			#接收游戏模式、地图和AI信息
+			gp.gameMode, gp.gameMapPath, gp.gameAIPath, gp.AI_Debug = sio._recvs(connUI)
+
+			if gp.gameMode == sio.TEST_BATTLE:
+				gp.testBattleStage = sio._recvs(connUI)
+				gp.TestBattleStageInit()
+			elif gp.gameMode == sio.NET_GAME_CLIENT:
+				gp.serverInfo = sio._recvs(connUI) #[IP,PORT]
+				try:
+					gp.netClient.connect(serverInfo)
+				except:
+					print 'Connecting to game host failed'
 
 
 		#设置AI超时开关
@@ -238,12 +247,16 @@ class Sui(threading.Thread):
 				except:
 					connUI.shutdown(socket.SHUT_RDWR)
 					sys.exit(1)
-				connUI.settimeout(None)
+				try:
+					connUI.settimeout(None)
+				except:
+					pass
 
 				if gp.gameMode == sio.TEST_BATTLE:
 					replay_mode = False
 				else:
 					replay_mode = sio._recvs(connUI)
+					replay_mode = True
 
 				gp.gProc.notifyAll()
 				gp.gProc.release()
@@ -266,12 +279,11 @@ class Sui(threading.Thread):
 				i.kill()
 		try:
 			LogicProg.kill()
+			connUI.shutdown(socket.SHUT_RDWR)
 		except:
 			pass
 
 
-		connUI.shutdown(socket.SHUT_RDWR)
-		
 class Slogic(threading.Thread):
 	def __init__(self):
 		threading.Thread.__init__(self)
@@ -598,6 +610,11 @@ class gameParameter():
 if __name__ == "__main__":
 	
 	gp = gameParameter()
+
+	if len(sys.argv) > 1:
+		gp.gameAIPath.append(sys.argv[1])
+		gp.gameAIPath.append(sys.argv[2])
+		gp.gameMapPath = sys.argv[3]
 
 	#运行线程		
 	ui_thread = Sui()
