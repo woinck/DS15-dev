@@ -118,6 +118,12 @@ class Sui(threading.Thread):
 
 		gp.base[0].sort()
 		gp.base[1].sort()
+		'''
+		try:
+			for i in range(2):
+				for soldier in gp.base[i]:
+					soldier.life = 0
+		'''
 		
 
 		#运行AI线程及文件
@@ -161,6 +167,7 @@ class Sui(threading.Thread):
 					connUI.shutdown(socket.SHUT_RDWR)
 					sys.exit(1)
 				gp.replayInfo.append((gp.mapInfo,gp.base,gp.aiInfo))
+				gp.displayInfo += sio._display_begin(gp.mapInfo, gp.base, gp.aiInfo)
 				gp.gProcess = sio.ROUND
 				gp.gProc.notifyAll()
 				gp.gProc.release()
@@ -207,6 +214,7 @@ class Sui(threading.Thread):
 						sys.exit(1)
 					#回合信息存至回放列表中
 					gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
+					gp.displayInfo += sio._display_round(gp.rbInfo, gp.rCommand, gp.reInfo)
 					gp.rProcess = sio.START
 					gp.rProc.notifyAll()
 					#若游戏结束则跳出循环
@@ -251,7 +259,7 @@ class Sui(threading.Thread):
 				pass
 			#写入回放
 			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
-			
+			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
 
 		for i in AIProg:
 			if i != None:
@@ -260,6 +268,7 @@ class Sui(threading.Thread):
 			LogicProg.kill()
 		except:
 			pass
+
 
 		connUI.shutdown(socket.SHUT_RDWR)
 		
@@ -418,6 +427,7 @@ class Sai(threading.Thread):
 							gp.aiInfo.append('Player'+str(i))
 							gp.heroType.append(6)
 						
+
 				#调节游戏进度标记
 				gp.gProcess = sio.HERO_TYPE_SET
 				gp.gProc.notifyAll()
@@ -535,6 +545,7 @@ class gameParameter():
 		self.testBattleStage = 0
 		self.serverInfo = ['127.0.0.1',sio.AI_PORT]
 		self.replayInfo=[] #定义回放列表用于生成回放文件，每个元素储存一个回合的信息
+		self.displayInfo = '' #展示组的回放文件
 		self.timeoutSwitch = [1,1]
 		self.AI_Debug = [False,False]
 

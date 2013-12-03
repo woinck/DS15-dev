@@ -94,7 +94,7 @@ int main()
 	}
 
 	///////////////////////////////////以下为自由选择兵种模式关闭和开启的处理
-
+	
 		memset(recvbuf, 0, sizeof(char)*128);
 		recv(client, recvbuf, 127, 0);
 		sscanf(recvbuf, "%d %d", &info.soldier_number[0], &info.soldier_number[1]);

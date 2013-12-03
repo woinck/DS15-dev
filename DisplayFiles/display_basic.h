@@ -1,6 +1,7 @@
 #ifndef _BASIC_H
 #define _BASIC_H
 
+using namespace std;
 /////////////////////////////////////////////////////////////
 // 游戏基本参数
 /////////////////////////////////////////////////////////////
@@ -111,7 +112,8 @@ typedef struct mirror { // 魔镜结构体
 } Mirror; 
 
 typedef struct game_info { // 游戏信息结构体，每回合选手从中获取必要的信息
-    int team_number;                              // 队伍号(0或1)
+    int team_number;                          // 队伍号(0或1)
+	string team_name[2];
     int map[COORDINATE_X_MAX][COORDINATE_Y_MAX];  // 地图各点类型
 	int map_size[2];                              // 地图行[0]、列[1]
     int mirror_number;                            // 魔镜数量
@@ -125,13 +127,36 @@ typedef struct game_info { // 游戏信息结构体，每回合选手从中获取必要的信息
     Soldier_Basic soldier[SOLDIERS_NUMBER][2];    // 双方单位的信息
 }Game_Info;
 
-typedef enum cmd_order { //command order的枚举类型
-	wait, attack, skill
-}Cmd_Order;
+typedef struct round_Begin_Info
+{
+	int soldier_number[2];
+	Soldier_Basic soldier[SOLDIERS_NUMBER][2];
+	int move_team;
+	int move_id;
+	int range_num;          
+	vector<Position> range;   //移动范围
+	vector<Temple> temple;
+}Round_Begin_Info;
+
+typedef struct round_End_Info
+{
+	int soldier_number[2];
+	Soldier_Basic soldier[SOLDIERS_NUMBER][2];
+	int route_len;
+	vector<Position> route; //移动路线
+	int score[2];            //分数
+	bool trans;	          //是否有传送发生
+	int attack_effect[2]; //二元组表示攻击与反击方是否命中,1表示命中，0表示未命中，-1表示未攻击
+	                     //可能超出攻击范围或已死亡,如(1,-1)表示攻击命中，目标未反击
+	bool over;            //游戏是否结束
+}Round_End_Info;
 
 typedef struct command {  // 选手操作,每回合传给逻辑
     Position destination; // 要移动的目的地
-    Cmd_Order order;            // wait:待机，attack:攻击，skill:技能
+    int order;      // 0:待机，1:攻击，2:技能
+	int target_team;      //被攻击队伍
     int target_id;        // 目标单位
 } Command;
+
+
 #endif
