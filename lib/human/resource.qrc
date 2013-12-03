@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file alias="threeD1.png">image/threeD1.png</file>
+    <file alias="threeD0.png">image/threeD0.png</file>
     <file alias="saber1.png">image/saber1.png</file>
     <file alias="lancer1.png">image/lancer1.png</file>
     <file alias="archer1.png">image/archer1.png</file>
@@ -26,7 +28,7 @@
     <file alias="forest.png">image/forest0.png</file>
     <file alias="barrier.png">image/barrier0.png</file>
     <file alias="temple.png">image/temple0.png</file>
-	<file alias="turret.png">image/turret.png</file>
+    <file alias="turret.png">image/turret.png</file>
     <file alias="attack_cursor.png">image/attack_cursor.png</file>
     <file alias="skill_cursor.png">image/skill_cursor.png</file>
     <file alias="normal_cursor.png">image/normal_cursor.png</file>
@@ -44,7 +46,6 @@
     <file alias="playBackward0.png">image/playBackward0.png</file>
     <file alias="playForward0.png">image/playForward0.png</file>
     <file alias="pause0.png">image/pause0.png</file>
-
     <file alias="rePlay1.png">image/rePlay1.png</file>
     <file alias="endPlay1.png">image/endPlay1.png</file>
     <file alias="preStep1.png">image/preStep1.png</file>
@@ -59,20 +60,20 @@
     <file alias="replay_mapback.png">image/replay_mapback.png</file>
     <file alias="humanai_back.png">image/humanai_back.png</file>
     <file alias="start0.png">image/start0.png</file>
-	<file alias="start1.png">image/start1.png</file>
+    <file alias="start1.png">image/start1.png</file>
     <file alias="return0.png">image/return0.png</file>
     <file alias="openMap0.png">image/openMap0.png</file>
     <file alias="openAI0.png">image/openAI0.png</file>
-	<file alias="return1.png">image/return1.png</file>
+    <file alias="return1.png">image/return1.png</file>
     <file alias="openMap1.png">image/openMap1.png</file>
     <file alias="openAI1.png">image/openAI1.png</file>
     <file alias="help1.png">image/help1.png</file>
     <file alias="help0.png">image/help0.png</file>
-	<file alias="exit0.png">image/exit0.png</file>
-	<file alias="exit1.png">image/exit1.png</file>
-	<file alias="error_label.png">image/error_label.png</file>
-	<file alias="roundLabel.png">image/roundLabel.png</file>
-	<file alias="debug_mode0.png">image/debug_mode0.png</file>
-	<file alias="debug_mode1.png">image/debug_mode1.png</file>
+    <file alias="exit0.png">image/exit0.png</file>
+    <file alias="exit1.png">image/exit1.png</file>
+    <file alias="error_label.png">image/error_label.png</file>
+    <file alias="roundLabel.png">image/roundLabel.png</file>
+    <file alias="debug_mode0.png">image/debug_mode0.png</file>
+    <file alias="debug_mode1.png">image/debug_mode1.png</file>
   </qresource>
 </RCC>

@@ -71,7 +71,7 @@ void relax(Game_Info &gameInfo, int *pathv, int v, int id, int team) {
                     Soldier_Basic 
                         &eneSol = gameInfo.soldier[i][1 - team];
                     if (eneSol.pos.x == endx && 
-                        eneSol.pos.y == endy && eneSol.life) {
+                        eneSol.pos.y == endy && eneSol.life>0) {
                             edgeLen = INFINITE;
                             break;
                     }

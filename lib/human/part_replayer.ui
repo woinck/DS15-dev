@@ -597,20 +597,26 @@
     <rect>
      <x>369</x>
      <y>40</y>
-     <width>131</width>
+     <width>40</width>
      <height>40</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>进入3D回放</string>
+   </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(255, 255, 255, 0);
-color: rgb(255, 255, 0);
-font: 75 20pt &quot;黑体&quot;;</string>
+    <string notr="true">QPushButton{
+border-image: url(:/threeD1.png);}
+QPushButton:hover{
+	border-image: url(:/threeD0.png);}</string>
    </property>
    <property name="text">
-    <string>3D回放-〉</string>
+    <string/>
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

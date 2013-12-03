@@ -76,7 +76,7 @@ while not over and turn < basic.TURN_MAX:
 				over = True
 				if turn == basic.TURN_MAX and j == 1:
 					for k in range(i + 1, len(base[j])):
-						if base[j][i].life > 0:
+						if base[j][k].life > 0:
 							over = False
 					if over:
 						roundEndInfo.over = over
