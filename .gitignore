@@ -7,6 +7,7 @@
 
 #not nessasary
 ReplayFiles/
+DisplayFiles/
 *.map
 log.txt
 log.log
