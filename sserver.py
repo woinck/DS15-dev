@@ -393,7 +393,7 @@ class Sai(threading.Thread):
 		global gp
 
 		#与AI进行socket连接
-		if gp.gameMode == sio.TEST_BATTLE:
+		if gp.gameMode == sio.TEST_BATTLE or gp.gameMode == sio.NET_GAME_CLIENT:
 			(connAI2,address2) = _SocketConnect(sio.HOST,sio.AI_PORT,'AI',1)
 			connAI1 = None
 			address1 = None
@@ -427,6 +427,7 @@ class Sai(threading.Thread):
 								sio._sends(connAI[i],(gp.mapInfo,gp.base))
 						except sio.ConnException:
 							gp.aiConnErr[i] = True
+							print 'ConnErr in sending beginInfo'
 						try:
 							if sio.USE_CPP_AI and (gp.gameAIPath[i] != None):
 								gp.aiInfoTemp,gp.heroTypeTemp = sio._cpp_recvs_begin(connAI[i])
@@ -506,7 +507,7 @@ class Sai(threading.Thread):
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
 								if gp.rCommand.order == 1:
-									gp.rCommand.target = [1-gp.rbInfo.id[0],gp.rCommand.target]
+									gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
 								else:
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							
@@ -538,12 +539,26 @@ class Sai(threading.Thread):
 					break
 				gp.rProc.release()
 			
+		while gp.gProc.acquire():
+			if gp.gProcess < sio.WINNER_SET:
+				gp.gProc.wait()
+			else:
+				gp.gProc.notifyAll()
+				gp.gProc.release()
+				break
+			gp.rProc.release()
+
 		#向AI发送结束标志
 		if gp.reInfo.over == sio.NORMAL_OVER:
 			for i in range(2):
 				if connAI[i] != None:
 					connAI[i].send('|')
+					if gp.gameMode == sio.NET_GAME_SERVER and i == 1:
+						sio._sends(connAI[i],gp.winner)
+						sio._sends(connAI[i],gp.reInfo.score)
 					connAI[i].shutdown(socket.SHUT_RDWR)
+
+
 
 ###########################################################################################################
 
