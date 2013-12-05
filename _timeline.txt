@@ -17,3 +17,5 @@ hidden bugs:
 网络对战：
 	服务端：AIPath[0]为AI地址，AIPath[1]为None
 	客户端：AIPath[1]为AI地址，AIPath[0]为None
+	客户端界面：不会发送回放，在发送完初始信息后等待接收score，然后是winner
+	发送gameMode以及另外几个变量后，再发送serverInfo主题，其格式为['127.0.0.1',8801]
