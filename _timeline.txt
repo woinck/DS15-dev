@@ -2,19 +2,20 @@ Platform:
 
 	AI崩溃情况的处理功能未经过大量测试，可能有问题
 	
-	c++的Sample AI!!
-	
-	测试赛
-	
 	AI崩溃判胜负情况
 	
-	回放文件无法存中文路径
-
-	回放文件要改为边进行游戏边存
-
 	异常情况传输给UI
 		
 	完善给选手的log文件
 	
 	版本号
 
+
+hidden bugs:
+	网络对战时AI端口重复占用？
+
+网络对战：
+	服务端：AIPath[0]为AI地址，AIPath[1]为None
+	客户端：AIPath[1]为AI地址，AIPath[0]为None
+	客户端界面：不会发送回放，在发送完初始信息后等待接收score，然后是winner
+	发送gameMode以及另外几个变量后，再发送serverInfo主题，其格式为['127.0.0.1',8801]

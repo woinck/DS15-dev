@@ -127,12 +127,6 @@ class Sui(threading.Thread):
 
 		gp.base[0].sort()
 		gp.base[1].sort()
-		'''
-		try:
-			for i in range(2):
-				for soldier in gp.base[i]:
-					soldier.life = 0
-		'''
 		
 
 		#运行AI线程及文件
@@ -144,10 +138,14 @@ class Sui(threading.Thread):
 					gp.gProc.wait()
 				else:
 					#运行AI连接线程
-					if not ai_thread.isAlive():
-						ai_thread.start()
+					if gp.gameMode == sio.NET_GAME_CLIENT:
+						if not netai_thread.isAlive():
+							netai_thread.start()
+					else:	
+						if not ai_thread.isAlive():
+							ai_thread.start()
 					#运行AI1
-					#print gp.gameAIPath[i]
+
 					AIProg.append(self.run_AI(connUI,gp.gameAIPath[i],i))
 					gp.gProc.release()
 					break
@@ -188,52 +186,55 @@ class Sui(threading.Thread):
 		#初始化完毕，进入回合==============================================================
 		#print 'ui in game'#for test
 		gp.uiOverFlag = False
-		#等待回合初始信息产生完毕
-		while gp.gProcess < sio.OVER:
-			while gp.rProc.acquire():
-				if gp.rProcess != sio.RBINFO_SET:
-					gp.rProc.wait()
-				else:
-					#发送回合信息
-					try:
-						if gp.gameMode != sio.TEST_BATTLE:
-							sio._sends(connUI,gp.rbInfo)
-					except:
-						connUI.shutdown(socket.SHUT_RDWR)
-						sys.exit(1)
-					gp.rProcess = sio.RBINFO_SENT_TO_UI
-					gp.rProc.notifyAll()
+
+		if gp.gameMode != sio.NET_GAME_CLIENT:
+
+			#等待回合初始信息产生完毕
+			while gp.gProcess < sio.OVER:
+				while gp.rProc.acquire():
+					if gp.rProcess != sio.RBINFO_SET:
+						gp.rProc.wait()
+					else:
+						#发送回合信息
+						try:
+							if gp.gameMode != sio.TEST_BATTLE:
+								sio._sends(connUI,gp.rbInfo)
+						except:
+							connUI.shutdown(socket.SHUT_RDWR)
+							sys.exit(1)
+						gp.rProcess = sio.RBINFO_SENT_TO_UI
+						gp.rProc.notifyAll()
+						gp.rProc.release()
+						break
 					gp.rProc.release()
-					break
-				gp.rProc.release()
-			
-			#等待回合所有信息产生完毕
-			while gp.rProc.acquire():
-				if gp.rProcess != sio.REINFO_SET:
-					gp.rProc.wait()
-				else:
-					gp.reInfo.timeused = (gp.cmdEnd - gp.cmdBegin) * 1000
-					
-					#发送回合信息
-					try:
-						if gp.gameMode != sio.TEST_BATTLE:
-							sio._sends(connUI,(gp.rCommand,gp.reInfo))
-					except:
-						connUI.shutdown(socket.SHUT_RDWR)
-						sys.exit(1)
-					#回合信息存至回放列表中
-					gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
-					gp.displayInfo += sio._display_round(gp.rbInfo, gp.rCommand, gp.reInfo)
-					gp.rProcess = sio.START
-					gp.rProc.notifyAll()
-					#若游戏结束则跳出循环
-					if gp.reInfo.over:
-						gp.uiOverFlag = True
+				
+				#等待回合所有信息产生完毕
+				while gp.rProc.acquire():
+					if gp.rProcess != sio.REINFO_SET:
+						gp.rProc.wait()
+					else:
+						gp.reInfo.timeused = (gp.cmdEnd - gp.cmdBegin) * 1000
+						
+						#发送回合信息
+						try:
+							if gp.gameMode != sio.TEST_BATTLE:
+								sio._sends(connUI,(gp.rCommand,gp.reInfo))
+						except:
+							connUI.shutdown(socket.SHUT_RDWR)
+							sys.exit(1)
+						#回合信息存至回放列表中
+						gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
+						gp.displayInfo += sio._display_round(gp.rbInfo, gp.rCommand, gp.reInfo)
+						gp.rProcess = sio.START
+						gp.rProc.notifyAll()
+						#若游戏结束则跳出循环
+						if gp.reInfo.over:
+							gp.uiOverFlag = True
+						gp.rProc.release()
+						break
 					gp.rProc.release()
+				if gp.uiOverFlag:
 					break
-				gp.rProc.release()
-			if gp.uiOverFlag:
-				break
 		
 		#向UI发送胜利方
 		while gp.gProc.acquire():
@@ -243,7 +244,10 @@ class Sui(threading.Thread):
 				try:
 					if gp.gameMode == sio.TEST_BATTLE:
 						sio._sends(connUI,gp.reInfo.score[1])
+					elif:gp.gameMode == sio.NET_GAME_CLIENT:
+						sio._sends(connUI,gp.reInfo)
 					sio._sends(connUI,gp.winner)
+
 				except:
 					connUI.shutdown(socket.SHUT_RDWR)
 					sys.exit(1)
@@ -252,7 +256,7 @@ class Sui(threading.Thread):
 				except:
 					pass
 
-				if gp.gameMode == sio.TEST_BATTLE:
+				if gp.gameMode == sio.TEST_BATTLE or gp.gameMode == sio.NET_GAME_CLIENT:
 					replay_mode = False
 				else:
 					replay_mode = sio._recvs(connUI)
@@ -396,7 +400,7 @@ class Sai(threading.Thread):
 		global gp
 
 		#与AI进行socket连接
-		if gp.gameMode == sio.TEST_BATTLE:
+		if gp.gameMode == sio.TEST_BATTLE or gp.gameMode == sio.NET_GAME_CLIENT:
 			(connAI2,address2) = _SocketConnect(sio.HOST,sio.AI_PORT,'AI',1)
 			connAI1 = None
 			address1 = None
@@ -430,6 +434,7 @@ class Sai(threading.Thread):
 								sio._sends(connAI[i],(gp.mapInfo,gp.base))
 						except sio.ConnException:
 							gp.aiConnErr[i] = True
+							print 'ConnErr in sending beginInfo'
 						try:
 							if sio.USE_CPP_AI and (gp.gameAIPath[i] != None):
 								gp.aiInfoTemp,gp.heroTypeTemp = sio._cpp_recvs_begin(connAI[i])
@@ -509,7 +514,7 @@ class Sai(threading.Thread):
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
 								if gp.rCommand.order == 1:
-									gp.rCommand.target = [1-gp.rbInfo.id[0],gp.rCommand.target]
+									gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
 								else:
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							
@@ -541,12 +546,139 @@ class Sai(threading.Thread):
 					break
 				gp.rProc.release()
 			
+		while gp.gProc.acquire():
+			if gp.gProcess < sio.WINNER_SET:
+				gp.gProc.wait()
+			else:
+				gp.gProc.notifyAll()
+				gp.gProc.release()
+				break
+			gp.rProc.release()
+
 		#向AI发送结束标志
 		if gp.reInfo.over == sio.NORMAL_OVER:
 			for i in range(2):
 				if connAI[i] != None:
 					connAI[i].send('|')
+					if gp.gameMode == sio.NET_GAME_SERVER and i == 1:
+						sio._sends(connAI[i],gp.reInfo.score)
+						sio._sends(connAI[i],gp.winner)
 					connAI[i].shutdown(socket.SHUT_RDWR)
+
+
+class Netai(threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+		self.name = 'Thread-NetAI'
+		self.connErr = False
+	
+	def run(self):
+		global gp
+
+		#与AI进行socket连接
+		(connAI,address) = _SocketConnect(sio.HOST,sio.AI_PORT,'AI',1)
+
+		#设置命令限时
+		connAI.settimeout(sio.AI_CMD_TIMEOUT)
+
+		#向AI传输游戏初始信息并接收AI的反馈
+		while gp.gProc.acquire():
+			if gp.gProcess != sio.MAP_SET:
+				gp.gProc.wait()
+			else:
+				
+				try:
+					gp.mapInfo,gp.base = sio._recvs(gp.netClient)
+				except:
+					print 'net client recv beginInfo failed'
+
+				try:
+					sio._cpp_sends_begin(connAI,1,gp.mapInfo,(len(gp.base[0]),len(gp.base[1])),gp.base)
+				except sio.ConnException:
+					gp.aiConnErr[i] = True
+					print 'ConnErr in sending beginInfo'
+
+				try:
+					
+					gp.aiInfoTemp,gp.heroTypeTemp = sio._cpp_recvs_begin(connAI[i])	
+					gp.aiInfo.append(gp.aiInfoTemp)
+					gp.heroType.append(gp.heroTypeTemp)
+					
+					#发送AI信息
+					sio._sends(gp.netClient,(gp.aiInfoTemp,gp.heroTypeTemp))
+				except socket.timeout:
+					print 'fail to receive AI',i,'\'s information, default settings will be used...'
+					gp.aiInfo.append('Player'+str(i))
+					gp.heroType.append(6)
+				
+				#调节游戏进度标记
+				gp.gProcess = sio.HERO_TYPE_SET
+				gp.gProc.notifyAll()
+				gp.gProc.release()
+				break
+			gp.gProc.release()
+
+		#初始化完毕，进入回合==============================================================
+
+
+		#游戏回合阶段
+		while True:
+			gp.rbInfo = sio._recvs(netClient)
+			roundNum = sio._recvs(netClient)
+			if gp.rbInfo != '|':
+				#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
+				connAI.settimeout(0)
+				try:
+					connAI.recv(1024)
+				except:
+					pass
+				connAI.settimeout(sio.AI_CMD_TIMEOUT)
+					
+					
+				#发送回合信息
+				
+				try:
+					sio._cpp_sends(connAI[gp.rbInfo.id[0]],gp.rbInfo.id[1],len(gp.rbInfo.temple),gp.rbInfo.temple,(len(gp.rbInfo.base[0]),len(gp.rbInfo.base[1])),gp.rbInfo.base,roundNum,tempScore)
+				except sio.ConnException:
+					#AI连接错误，标记至connErr中
+					gp.aiConnErr[gp.rbInfo.id[0]] = True
+				except:
+					gp.aiConnErr[gp.rbInfo.id[0]] = True
+				
+				if gp.aiConnErr[gp.rbInfo.id[0]] == True:
+					gp.rCommand = basic.Command()
+				else:
+					try:
+						gp.cmdBegin = time.clock()
+						
+						gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
+						if gp.rCommand.order == 1:
+							gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
+						else:
+							gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
+												
+						gp.cmdEnd = time.clock()
+						
+					except socket.timeout:
+						print 'fail to receive cmd, default will be used..',gp.rbInfo.id[0]
+						gp.rCommand = basic.Command()
+					except sio.ConnException:
+						print 'in gp.aiConnErr!!!!!!!!!!!!'
+						gp.aiConnErr[gp.rbInfo.id[0]] = True
+						gp.rCommand = basic.Command()
+
+				sio._sends(gp.netClient,gp.rCommand)
+			else:
+				break
+				
+		gp.reInfo = sio._recvs(netClient)
+		gp.winner = sio._recvs(netClient)
+
+		gp.gProc.acquire():
+		gp.gProcess = sio.WINNER_SET
+		gp.gProc.notifyAll()
+		gp.gProc.release()
+
 
 ###########################################################################################################
 
@@ -622,6 +754,7 @@ if __name__ == "__main__":
 	#运行线程		
 	ui_thread = Sui()
 	ai_thread = Sai()
+	netai_thread = Netai()
 	logic_thread = Slogic()
 
 	ai_thread.daemon = True
