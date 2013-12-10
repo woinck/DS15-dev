@@ -213,7 +213,7 @@ class Round_Begin_Info:
 		self.temple = temple
 #temple列表表示各神庙是否出现神符，如[[(1,1),0],[(2,3),2]]表示(1,1)处神庙无神符,(2,3)处神庙有2类神符		
 class Command:
-	def __init__(self,order = 0, move_position = 0, target_id = 0):
+	def __init__(self,order = 0, move_position = [0, 0], target_id = [0, 0]):
 		self.move = move_position #坐标(x,y)
 		self.order = order #0:待机，1:攻击，2:技能
 		self.target = target_id #同Round_Begin_Info.move_unit

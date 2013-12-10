@@ -24,7 +24,7 @@ def _SocketConnect(host,port,connName,list = 1):
 	else:
 		serv.settimeout(None)
 	serv.listen(list)
-	print 'waiting for %s connection...\n' %(connName),
+	#print 'waiting for %s connection...\n' %(connName),
 	
 	for i in range(list):
 		#进行连接
@@ -147,7 +147,7 @@ class Sui(threading.Thread):
 					if not ai_thread.isAlive():
 						ai_thread.start()
 					#运行AI1
-					print gp.gameAIPath[i]
+					#print gp.gameAIPath[i]
 					AIProg.append(self.run_AI(connUI,gp.gameAIPath[i],i))
 					gp.gProc.release()
 					break
@@ -272,6 +272,9 @@ class Sui(threading.Thread):
 				pass
 			#写入回放
 			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
+			f = file('chusai.txt','a')
+			f.write(sys.argv[1]+' '+sys.argv[2]+' '+str(gp.winner)+'\n')
+			f.close()
 			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
 
 		for i in AIProg:
@@ -293,7 +296,7 @@ class Slogic(threading.Thread):
 		global gp
 		try:
 			connLogic,address = _SocketConnect(sio.HOST,sio.LOGIC_PORT,'Logic')
-			print 'Logic connected'
+			#print 'Logic connected'
 		except:
 			print 'logic connection failed, the program will exit...'
 			time.sleep(2)
@@ -495,7 +498,7 @@ class Sai(threading.Thread):
 						
 
 					if gp.aiConnErr[gp.rbInfo.id[0]] == True:
-						gp.rCommand = basic.Command()
+						gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 					elif gp.gameMode == sio.TEST_BATTLE and gp.rbInfo.id[0] == 0:
 						gp.rCommand = gp.testBattleAI(gp.mapInfo,gp.rbInfo)
@@ -517,11 +520,11 @@ class Sai(threading.Thread):
 							#sio.cmdDisplay(gp.rCommand)
 						except socket.timeout:
 							print 'fail to receive cmd, default will be used..',gp.rbInfo.id[0]
-							gp.rCommand = basic.Command()
+							gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 						except sio.ConnException:
 							print 'in gp.aiConnErr!!!!!!!!!!!!'
 							gp.aiConnErr[gp.rbInfo.id[0]] = True
-							gp.rCommand = basic.Command()
+							gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 					gp.rProcess = sio.RCOMMAND_SET
 					gp.rProc.notifyAll()
