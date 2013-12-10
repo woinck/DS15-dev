@@ -40,7 +40,7 @@ int move_range(Game_Info &gameInfo, int team, int id, Position *tmp) {
                 for (int i = 0; i < gameInfo.soldier_number[teamx]; ++i) {
                     if ((x == gameInfo.soldier[i][teamx].pos.x) && 
                         (y == gameInfo.soldier[i][teamx].pos.y) && 
-                        (gameInfo.soldier[i][teamx].life)) {
+                        (gameInfo.soldier[i][teamx].life>0)) {
                             flag = 1; break;}
                 }
             // 将该点并入结果中

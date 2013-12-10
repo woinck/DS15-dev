@@ -274,11 +274,15 @@ class Sui(threading.Thread):
 				os.mkdir(os.getcwd() + sio.REPLAY_FILE_PATH)
 			except:
 				pass
+			try:
+				os.mkdir(os.getcwd() + sio.DISPLAY_FILE_PATH)
+			except:
+				pass
 			#写入回放
 			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
-			f = file('chusai.txt','a')
-			f.write(sys.argv[1]+' '+sys.argv[2]+' '+str(gp.winner)+'\n')
-			f.close()
+			#f = file('chusai.txt','a')
+			#f.write(sys.argv[1]+' '+sys.argv[2]+' '+str(gp.winner)+'\n')
+			#f.close()
 			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
 
 		for i in AIProg:
@@ -503,7 +507,7 @@ class Sai(threading.Thread):
 						
 
 					if gp.aiConnErr[gp.rbInfo.id[0]] == True:
-						gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
+						gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 					elif gp.gameMode == sio.TEST_BATTLE and gp.rbInfo.id[0] == 0:
 						gp.rCommand = gp.testBattleAI(gp.mapInfo,gp.rbInfo)
@@ -520,16 +524,18 @@ class Sai(threading.Thread):
 							
 							else:
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
+								if gp.rCommand.target == None:
+									gp.rCommand.target = [0,0]
 							gp.cmdEnd = time.clock()
 							#print 'AI',gp.rbInfo.id[0],'\'s command:'
 							#sio.cmdDisplay(gp.rCommand)
 						except socket.timeout:
 							print 'fail to receive cmd, default will be used..',gp.rbInfo.id[0]
-							gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
+							gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 						except sio.ConnException:
 							print 'in gp.aiConnErr!!!!!!!!!!!!'
 							gp.aiConnErr[gp.rbInfo.id[0]] = True
-							gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
+							gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 					gp.rProcess = sio.RCOMMAND_SET
 					gp.rProc.notifyAll()
@@ -553,7 +559,7 @@ class Sai(threading.Thread):
 				gp.gProc.notifyAll()
 				gp.gProc.release()
 				break
-			gp.rProc.release()
+			gp.gProc.release()
 
 		#向AI发送结束标志
 		if gp.reInfo.over == sio.NORMAL_OVER:

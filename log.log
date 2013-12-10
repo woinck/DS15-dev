@@ -1,4 +1,6 @@
-<<<<<<< HEAD
-=======
-port occupied, the program will exit...
->>>>>>> master
+hello!
+<PyQt4.QtCore.QState object at 0x04FD4490> hi
+<PyQt4.QtCore.QState object at 0x04FD4670> hi
+close
+<PyQt4.QtCore.QState object at 0x04FD4760> hi
+close
