@@ -244,7 +244,7 @@ class Sui(threading.Thread):
 				try:
 					if gp.gameMode == sio.TEST_BATTLE:
 						sio._sends(connUI,gp.reInfo.score[1])
-					elif:gp.gameMode == sio.NET_GAME_CLIENT:
+					elif gp.gameMode == sio.NET_GAME_CLIENT:
 						sio._sends(connUI,gp.reInfo)
 					sio._sends(connUI,gp.winner)
 
@@ -674,7 +674,7 @@ class Netai(threading.Thread):
 		gp.reInfo = sio._recvs(netClient)
 		gp.winner = sio._recvs(netClient)
 
-		gp.gProc.acquire():
+		gp.gProc.acquire()
 		gp.gProcess = sio.WINNER_SET
 		gp.gProc.notifyAll()
 		gp.gProc.release()
