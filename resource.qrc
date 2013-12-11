@@ -52,5 +52,13 @@
 	<file alias="debug_mode1.png">image/debug_mode1.png</file>
 <!-- test mode -->
 	<file alias="login_back.png">image/login_back.png</file>
+	
+
+
+	<file alias="mirror.ico">image/mirror.ico</file>
+
+
+
+
   </qresource>
 </RCC>

@@ -3,12 +3,16 @@
 
 from mainWindow import *
 import sys,time
+import ctypes
 
 #def singleShot(main_window):
-	
+myappid = 'ds15.zjm.71828' # arbitrary string
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
 app = QApplication(sys.argv)
 #ScreenHeight = app.desktop().availableGeometry().y()
 app.setApplicationName("Mirror")
+app.setWindowIcon(QIcon(":mirror.ico"))
 
 #设置stylesheet
 #file = QFile("mainStyle.qss")

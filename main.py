@@ -99,35 +99,37 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 	route = [base[j][i].position]
 	#added by ning
 	trans = False
-	if move_position in move_range:
-		sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
-		route += available_spots(whole_map, base, unit_id, move_position)
-		if not sc:
-			whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))		
-			base[j][i].move(move_position)
-		if whole_map[move_position[0]][move_position[1]].kind == basic.MIRROR:
-                        order = 0
-		if not sc:
-			#added by ning
-			if isinstance(whole_map[move_position[0]][move_position[1]], basic.Map_Mirror):
-				trans = whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
-			else:
-				whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
-		for tp in map_temple:
-			if tp[0] == move_position:
-				tp[1] = 0
-		if order != 0 and w[1] >= len(base[w[0]]):
-			order = 0
-		if order == 1 and w[0] == 1 - j and base[w[0]][w[1]].life > 0:
-			if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
-				attack_1 = base[j][i].attack(base, (1 - j, w[1]))
-			if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
-				attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
-			#攻击及反击
-		elif order == 2 and w[0] == j and base[w[0]][w[1]].life > 0:
-			if distance(base[j][i].position, base[j][w[1]].position) == 1:
-				base[j][i].skill(base, (j,w[1]))
-				#使用技能
+	if not move_position in move_range:
+		move_position = basep[j][i].position
+		order = 0
+	sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
+	route += available_spots(whole_map, base, unit_id, move_position)
+	if not sc:
+		whole_map[base[j][i].position[0]][base[j][i].position[1]].leave(base, (j, i))		
+		base[j][i].move(move_position)
+	if whole_map[move_position[0]][move_position[1]].kind == basic.MIRROR:
+                    order = 0
+	if not sc:
+		#added by ning
+		if isinstance(whole_map[move_position[0]][move_position[1]], basic.Map_Mirror):
+			trans = whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
+		else:
+			whole_map[move_position[0]][move_position[1]].effect(base, whole_map, (j, i), score)
+	for tp in map_temple:
+		if tp[0] == move_position:
+			tp[1] = 0
+	if order != 0 and w[1] >= len(base[w[0]]):
+		order = 0
+	if order == 1 and w[0] == 1 - j and base[w[0]][w[1]].life > 0:
+		if base[j][i].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[j][i].attack_range[1] and base[1 - j][w[1]].life > 0:
+			attack_1 = base[j][i].attack(base, (1 - j, w[1]))
+		if attack_1!=-1 and base[1 - j][w[1]].life > 0 and base[1 - j][w[1]].attack_range[0] <= distance(base[j][i].position, base[1 - j][w[1]].position) <= base[1 - j][w[1]].attack_range[1]:
+			attack_2 = base[1 - j][w[1]].attack(base, (j, i), 1)
+		#攻击及反击
+	elif order == 2 and w[0] == j and base[w[0]][w[1]].life > 0:
+		if distance(base[j][i].position, base[j][w[1]].position) == 1:
+			base[j][i].skill(base, (j,w[1]))
+			#使用技能
 
 	for i in [0,1]:
 		over = True
