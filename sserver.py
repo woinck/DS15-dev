@@ -278,6 +278,10 @@ class Sui(threading.Thread):
 				os.mkdir(os.getcwd() + sio.REPLAY_FILE_PATH)
 			except:
 				pass
+			try:
+				os.mkdir(os.getcwd() + sio.DISPLAY_FILE_PATH)
+			except:
+				pass
 			#写入回放
 			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
 			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
@@ -505,6 +509,7 @@ class Sai(threading.Thread):
 
 					if gp.aiConnErr[gp.rbInfo.id[0]] == True:
 						print 'ai connErr!'
+
 						gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 					elif gp.gameMode == sio.TEST_BATTLE and gp.rbInfo.id[0] == 0:
@@ -525,6 +530,8 @@ class Sai(threading.Thread):
 							else:
 								print '!!!!!!!!'
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
+								if gp.rCommand.target == None:
+									gp.rCommand.target = [0,0]
 							gp.cmdEnd = time.clock()
 							#print 'AI',gp.rbInfo.id[0],'\'s command:'
 							#sio.cmdDisplay(gp.rCommand)

@@ -8,6 +8,7 @@
 #not nessasary
 ReplayFiles/
 DisplayFiles/
+ds15gl_1.0beta/
 *.map
 log.txt
 log.log

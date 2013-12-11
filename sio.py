@@ -2,7 +2,7 @@
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 
 
-RELEASE_MODE = 0
+RELEASE_MODE = 1
 
 
 
@@ -209,6 +209,7 @@ def _display_round(rbinfo, comd, reinfo):
 		result += str(tmp[0][0]) + ' ' + str(tmp[0][1]) + ' ' + str(tmp[1]) + ' '
 	result += str(comd.move[0]) + ' ' + str(comd.move[1]) + ' '
 	result += str(comd.order) + ' '
+	print comd.target
 	result += str(comd.target[0]) + ' ' + str(comd.target[1]) + ' '
 	for j in range(2):
 		for soldier in reinfo.base[j]:
@@ -321,6 +322,7 @@ def _WriteFile(fileInfo,filePath):
 		cPickle.dump(fileInfo,save)
 
 def _WriteCppFile(fileInfo, filePath):
+	print filePath
 	display_file = open(filePath, 'w') 
 	display_file.write(fileInfo)
 

@@ -139,9 +139,10 @@ class Replayer(QWidget, Ui_Replayer):
                                                 QString.fromUtf8("加载回放文件"),
                                                 REPLAY_FILE_DIR,
                                                 "3D replay files(*.rep3d)")
-        os.chdir("ds15gl")
+        os.chdir("ds15gl_1.0beta")
         if filename and filename!= self.repFileName:
-            os.system("ds15gl.exe "+str(filename))
+            #os.system("ds15gl.exe "+str(filename))
+            print str(filename)
         os.chdir("..")
 
     @pyqtSlot()
