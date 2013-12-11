@@ -520,7 +520,7 @@ class Sai(threading.Thread):
 							gp.cmdBegin = time.clock()
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
-								if gp.rCommand.move == None:
+								if (gp.rCommand == None) or (gp.rCommand.move == None):
 									print 'None!!!!!!!!!!!!!'
 									gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 								if gp.rCommand.order == 1:
@@ -664,7 +664,7 @@ class Netai(threading.Thread):
 					try:
 						gp.cmdBegin = time.clock()
 						gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
-						print 
+						
 						if gp.rCommand.order == 1:
 							gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
 						else:

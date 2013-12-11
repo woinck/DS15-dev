@@ -161,7 +161,6 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
 						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
 				conn.recv(3)
-		conn.send('ok')
 
 #向展示文件写入初始信息
 def _display_begin(whole_map, soldier, ai):
@@ -251,20 +250,17 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
-	recvbuf = conn.recv(10)
+	recvbuf = conn.recv(9)
+	print '\n', recvbuf, '\n\n'
 	for i in recvbuf:
 		if (i == 'o') or (i == 'k') :
 			recvbuf = recvbuf.replace(i, '')
-	print recvbuf
-	rbuf = recvbuf.split()
-	try:
-		order = int(rbuf[0])
-		target_id = int(rbuf[1])
-		move = (int(rbuf[2]), int(rbuf[3]))
-	except IndexError:
-		order = None
-		target_id = None
-		move = None
+	rbuf = recvbuf.split(' ')
+	if (len(rbuf) < 4):
+		return None
+	order = int(rbuf[0])
+	target_id = int(rbuf[1])
+	move = (int(rbuf[2]), int(rbuf[3]))
 	return basic.Command(order,move,target_id)
 
 
