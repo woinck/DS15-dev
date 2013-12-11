@@ -286,6 +286,10 @@ class Sui(threading.Thread):
 			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
 			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
 
+		if len(sys.argv)>1:
+			with open('score.txt','w') as scoreFile:
+				scoreFile.write(gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.reInfo.score[0] + ' ' + str(gp.reInfo.score[1])))
+
 		for i in AIProg:
 			if i != None:
 				i.kill()

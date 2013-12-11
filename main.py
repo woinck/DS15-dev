@@ -100,7 +100,7 @@ def calculation(command, base, whole_map, move_range, map_temple, score, unit_id
 	#added by ning
 	trans = False
 	if not move_position in move_range:
-		move_position = basep[j][i].position
+		move_position = base[j][i].position
 		order = 0
 	sc = whole_map[base[j][i].position[0]][base[j][i].position[1]].kind == basic.TURRET and base[j][i].position == move_position
 	route += available_spots(whole_map, base, unit_id, move_position)
