@@ -1,6 +1,6 @@
 hello!
-<PyQt4.QtCore.QState object at 0x04FD4490> hi
-<PyQt4.QtCore.QState object at 0x04FD4670> hi
+<PyQt4.QtCore.QState object at 0x02EED350> hi
+<PyQt4.QtCore.QState object at 0x02EED530> hi
 close
-<PyQt4.QtCore.QState object at 0x04FD4760> hi
+<PyQt4.QtCore.QState object at 0x02EED620> hi
 close

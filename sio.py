@@ -2,7 +2,7 @@
 import cPickle, basic, threading, os, time, subprocess, socket, sys
 
 
-RELEASE_MODE = 1
+RELEASE_MODE = 0
 
 
 
@@ -253,8 +253,9 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
 	for i in recvbuf:
-		if not (i in range(10)):
+		if (i == 'o') or (i == 'k') :
 			recvbuf = recvbuf.replace(i, '')
+	print recvbuf
 	rbuf = recvbuf.split()
 	try:
 		order = int(rbuf[0])
