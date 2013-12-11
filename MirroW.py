@@ -11,7 +11,7 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 app = QApplication(sys.argv)
 #ScreenHeight = app.desktop().availableGeometry().y()
 app.setApplicationName("Mirror")
-
+app.setIcon(QIcon(":Mirror.ico"))
 #设置stylesheet
 #file = QFile("mainStyle.qss")
 #file.open(QFile.ReadOnly)
