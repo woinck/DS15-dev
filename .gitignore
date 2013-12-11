@@ -9,6 +9,7 @@
 ReplayFiles/
 DisplayFiles/
 ds15gl_1.0beta/
+PlayerAI/
 *.map
 log.txt
 log.log
