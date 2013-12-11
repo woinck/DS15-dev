@@ -161,6 +161,7 @@ def _cpp_sends(conn, move_id, temple_number, temple, soldier_number, soldier, tu
 						   +str(soldier[1][i].attack_range[1])+' '+str(soldier[1][i].up)+' '
 						   +str(soldier[1][i].position[0])+' '+str(soldier[1][i].position[1]) )
 				conn.recv(3)
+		conn.send('ok')
 
 #向展示文件写入初始信息
 def _display_begin(whole_map, soldier, ai):
@@ -251,6 +252,9 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(10)
+	for i in recvbuf:
+		if not (i in range(10)):
+			recvbuf = recvbuf.replace(i, '')
 	rbuf = recvbuf.split()
 	try:
 		order = int(rbuf[0])
