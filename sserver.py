@@ -224,6 +224,10 @@ class Sui(threading.Thread):
 							sys.exit(1)
 						#回合信息存至回放列表中
 						gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
+						print 'write:'
+						print gp.rCommand.move
+						print gp.rCommand.order
+						print gp.rCommand.target
 						gp.displayInfo += sio._display_round(gp.rbInfo, gp.rCommand, gp.reInfo)
 						gp.rProcess = sio.START
 						gp.rProc.notifyAll()
@@ -244,7 +248,7 @@ class Sui(threading.Thread):
 				try:
 					if gp.gameMode == sio.TEST_BATTLE:
 						sio._sends(connUI,gp.reInfo.score[1])
-					elif:gp.gameMode == sio.NET_GAME_CLIENT:
+					elif gp.gameMode == sio.NET_GAME_CLIENT:
 						sio._sends(connUI,gp.reInfo)
 					sio._sends(connUI,gp.winner)
 
@@ -276,9 +280,6 @@ class Sui(threading.Thread):
 				pass
 			#写入回放
 			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
-			f = file('chusai.txt','a')
-			f.write(sys.argv[1]+' '+sys.argv[2]+' '+str(gp.winner)+'\n')
-			f.close()
 			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
 
 		for i in AIProg:
@@ -503,7 +504,8 @@ class Sai(threading.Thread):
 						
 
 					if gp.aiConnErr[gp.rbInfo.id[0]] == True:
-						gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
+						print 'ai connErr!'
+						gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 					elif gp.gameMode == sio.TEST_BATTLE and gp.rbInfo.id[0] == 0:
 						gp.rCommand = gp.testBattleAI(gp.mapInfo,gp.rbInfo)
@@ -513,23 +515,26 @@ class Sai(threading.Thread):
 							gp.cmdBegin = time.clock()
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
+								if gp.rCommand.move == None:
+									gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 								if gp.rCommand.order == 1:
 									gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
 								else:
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							
 							else:
+								print '!!!!!!!!'
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
 							gp.cmdEnd = time.clock()
 							#print 'AI',gp.rbInfo.id[0],'\'s command:'
 							#sio.cmdDisplay(gp.rCommand)
 						except socket.timeout:
 							print 'fail to receive cmd, default will be used..',gp.rbInfo.id[0]
-							gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
+							gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 						except sio.ConnException:
 							print 'in gp.aiConnErr!!!!!!!!!!!!'
 							gp.aiConnErr[gp.rbInfo.id[0]] = True
-							gp.rCommand = basic.Command(0, gp.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
+							gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 					gp.rProcess = sio.RCOMMAND_SET
 					gp.rProc.notifyAll()
@@ -553,7 +558,7 @@ class Sai(threading.Thread):
 				gp.gProc.notifyAll()
 				gp.gProc.release()
 				break
-			gp.rProc.release()
+			gp.gProc.release()
 
 		#向AI发送结束标志
 		if gp.reInfo.over == sio.NORMAL_OVER:
@@ -646,12 +651,12 @@ class Netai(threading.Thread):
 					gp.aiConnErr[gp.rbInfo.id[0]] = True
 				
 				if gp.aiConnErr[gp.rbInfo.id[0]] == True:
-					gp.rCommand = basic.Command()
+					gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 				else:
 					try:
 						gp.cmdBegin = time.clock()
-						
 						gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
+						print 
 						if gp.rCommand.order == 1:
 							gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
 						else:
@@ -661,11 +666,11 @@ class Netai(threading.Thread):
 						
 					except socket.timeout:
 						print 'fail to receive cmd, default will be used..',gp.rbInfo.id[0]
-						gp.rCommand = basic.Command()
+						gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 					except sio.ConnException:
 						print 'in gp.aiConnErr!!!!!!!!!!!!'
 						gp.aiConnErr[gp.rbInfo.id[0]] = True
-						gp.rCommand = basic.Command()
+						gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 
 				sio._sends(gp.netClient,gp.rCommand)
 			else:
@@ -674,7 +679,7 @@ class Netai(threading.Thread):
 		gp.reInfo = sio._recvs(netClient)
 		gp.winner = sio._recvs(netClient)
 
-		gp.gProc.acquire():
+		gp.gProc.acquire()
 		gp.gProcess = sio.WINNER_SET
 		gp.gProc.notifyAll()
 		gp.gProc.release()
