@@ -224,10 +224,6 @@ class Sui(threading.Thread):
 							sys.exit(1)
 						#回合信息存至回放列表中
 						gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
-						print 'write:'
-						print gp.rCommand.move
-						print gp.rCommand.order
-						print gp.rCommand.target
 						gp.displayInfo += sio._display_round(gp.rbInfo, gp.rCommand, gp.reInfo)
 						gp.rProcess = sio.START
 						gp.rProc.notifyAll()
@@ -525,7 +521,6 @@ class Sai(threading.Thread):
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
 								if (gp.rCommand == None) or (gp.rCommand.move == None):
-									print 'None!!!!!!!!!!!!!'
 									gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 								if gp.rCommand.order == 1:
 									gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
@@ -533,7 +528,6 @@ class Sai(threading.Thread):
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							
 							else:
-								print '!!!!!!!!'
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
 								if gp.rCommand.target == None:
 									gp.rCommand.target = [0,0]
