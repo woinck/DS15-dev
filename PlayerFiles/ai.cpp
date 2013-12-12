@@ -1,4 +1,4 @@
-mai#include "basic.h"
+#include "basic.h"
 #include <stdio.h>
 
 game_info info = {};
