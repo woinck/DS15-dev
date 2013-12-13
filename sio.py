@@ -331,7 +331,7 @@ def _ReplayFileName(aiInfo,isThreeD = 0):
 	result += '.rep'
 	if isThreeD != 0:
 		result += '3d'
-	return result
+	return result.replace(' ','_')
 
 def cmdDisplay(cmd):
 	print 'move:',cmd.move
