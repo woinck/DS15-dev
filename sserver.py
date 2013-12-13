@@ -224,10 +224,6 @@ class Sui(threading.Thread):
 							sys.exit(1)
 						#回合信息存至回放列表中
 						gp.replayInfo.append([gp.rbInfo,gp.rCommand,gp.reInfo])
-						print 'write:'
-						print gp.rCommand.move
-						print gp.rCommand.order
-						print gp.rCommand.target
 						gp.displayInfo += sio._display_round(gp.rbInfo, gp.rCommand, gp.reInfo)
 						gp.rProcess = sio.START
 						gp.rProc.notifyAll()

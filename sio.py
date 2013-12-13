@@ -208,7 +208,6 @@ def _display_round(rbinfo, comd, reinfo):
 		result += str(tmp[0][0]) + ' ' + str(tmp[0][1]) + ' ' + str(tmp[1]) + ' '
 	result += str(comd.move[0]) + ' ' + str(comd.move[1]) + ' '
 	result += str(comd.order) + ' '
-	print comd.target
 	result += str(comd.target[0]) + ' ' + str(comd.target[1]) + ' '
 	for j in range(2):
 		for soldier in reinfo.base[j]:
@@ -251,7 +250,6 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
 	recvbuf = conn.recv(9)
-	print '\n', recvbuf, '\n\n'
 	for i in recvbuf:
 		if (i == 'o') or (i == 'k') :
 			recvbuf = recvbuf.replace(i, '')
