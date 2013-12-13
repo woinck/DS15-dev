@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 import socket, cPickle, sio, time, basic, main, threading, sys
 import TestBattle_main
 
@@ -74,9 +74,12 @@ while not over and turn < basic.TURN_MAX:
 					sys.exit(1)
 				roundEndInfo = TestMain.calculation(roundCommand, base, whole_map, move_range, map_temple, score, (j, i))
 				over = True
-				if turn == basic.TURN_MAX and j == 1:
+				if turn == basic.TURN_MAX:
 					for k in range(i + 1, len(base[j])):
 						if base[j][k].life > 0:
+							over = False
+					for k in range(i + 1, len(base[1 - j])):
+						if base[1 - j][k].life > 0:
 							over = False
 					if over:
 						roundEndInfo.over = over

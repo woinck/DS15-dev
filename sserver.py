@@ -283,10 +283,19 @@ class Sui(threading.Thread):
 			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
 
 		if len(sys.argv)>1:
+			
+			newFileName = os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo)
+			newFileName2 = os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1)
+			sio._WriteFile(gp.replayInfo, newFileName)
+			sio._WriteCppFile(gp.displayInfo, newFileName2)
 			with open('score.txt','w') as scoreFile:
-				scoreFile.write(gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.reInfo.score[0] + ' ' + str(gp.reInfo.score[1])))
-			ff = file.open('final_result.txt','a')
-			ff.write(gp.gameMapPath + '  ' +gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.winner))
+				scoreFile.write(newFileName2)
+				scoreFile.write('\n'+str(gp.reInfo.score[0]))
+				scoreFile.write('\n'+str(gp.reInfo.score[1]))
+			
+			with open('final_result.txt','a') as ff:
+				ff.write(gp.gameMapPath + ' ' +gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.winner) + ' ' + str(gp.reInfo.score[0]) + ' ' + str(gp.reInfo.score[1]) + '\n')
+
 
 		for i in AIProg:
 			if i != None:
@@ -476,19 +485,22 @@ class Sai(threading.Thread):
 					gp.rProc.wait()
 				else:
 					#清空接收区缓存（其中可能有因超时而没收到的上一回合的命令）
-					if connAI[gp.rbInfo.id[0]] != None:
-						connAI[gp.rbInfo.id[0]].settimeout(0)
-					
-						try:
-							connAI[gp.rbInfo.id[0]].recv(1024)
-						except:
-							pass
-							
-						if gp.timeoutSwitch[gp.rbInfo.id[0]]==1:
-							connAI[gp.rbInfo.id[0]].settimeout(sio.AI_CMD_TIMEOUT)
-						else:
-							connAI[gp.rbInfo.id[0]].settimeout(None)
-							
+					try:
+						if connAI[gp.rbInfo.id[0]] != None:
+							connAI[gp.rbInfo.id[0]].settimeout(0)
+						
+							try:
+								connAI[gp.rbInfo.id[0]].recv(1024)
+							except:
+								pass
+								
+							if gp.timeoutSwitch[gp.rbInfo.id[0]]==1:
+								connAI[gp.rbInfo.id[0]].settimeout(sio.AI_CMD_TIMEOUT)
+							else:
+								connAI[gp.rbInfo.id[0]].settimeout(None)
+					except:
+						pass
+
 					#计分，用于传输
 					if roundNum <= 2:
 						tempScore = [0,0]

@@ -249,7 +249,10 @@ def _cpp_recvs_choose(conn, self_inc, soldier, team_number, id):
 
 #从cpp客户端AI接收每回合指令
 def _cpp_recvs(conn):
-	recvbuf = conn.recv(9)
+	try:
+		recvbuf = conn.recv(9)
+	except:
+		raise ConnException()
 	for i in recvbuf:
 		if (i == 'o') or (i == 'k') :
 			recvbuf = recvbuf.replace(i, '')
@@ -287,8 +290,8 @@ def _recvs(conn):
 		c = conn.recv(1)
 	except socket.timeout:
 		raise socket.timeout
-	#except:
-	#	raise ConnException()
+	except:
+		raise ConnException()
 		
 	while c != '|':
 		result = result + c
