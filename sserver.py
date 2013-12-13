@@ -523,7 +523,6 @@ class Sai(threading.Thread):
 							if sio.USE_CPP_AI and gp.gameAIPath[gp.rbInfo.id[0]] != None:
 								gp.rCommand = sio._cpp_recvs(connAI[gp.rbInfo.id[0]])
 								if (gp.rCommand == None) or (gp.rCommand.move == None):
-									print 'None!!!!!!!!!!!!!'
 									gp.rCommand = basic.Command(0, gp.rbInfo.base[gp.rbInfo.id[0]][gp.rbInfo.id[1]].position, [0, 0])
 								if gp.rCommand.order == 1:
 									gp.rCommand.target = [1 - gp.rbInfo.id[0],gp.rCommand.target]
@@ -531,7 +530,6 @@ class Sai(threading.Thread):
 									gp.rCommand.target = [gp.rbInfo.id[0],gp.rCommand.target]
 							
 							else:
-								print '!!!!!!!!'
 								gp.rCommand = sio._recvs(connAI[gp.rbInfo.id[0]])
 								if gp.rCommand.target == None:
 									gp.rCommand.target = [0,0]

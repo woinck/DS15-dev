@@ -8,8 +8,6 @@ Platform:
 		
 	完善给选手的log文件
 	
-	版本号
-
 
 hidden bugs:
 	网络对战时AI端口重复占用？
