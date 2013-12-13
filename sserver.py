@@ -285,6 +285,8 @@ class Sui(threading.Thread):
 		if len(sys.argv)>1:
 			with open('score.txt','w') as scoreFile:
 				scoreFile.write(gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.reInfo.score[0] + ' ' + str(gp.reInfo.score[1])))
+			ff = file.open('final_result.txt','a')
+			ff.write(gp.gameMapPath + '  ' +gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.winner))
 
 		for i in AIProg:
 			if i != None:
