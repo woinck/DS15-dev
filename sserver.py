@@ -241,6 +241,42 @@ class Sui(threading.Thread):
 			if gp.gProcess != sio.WINNER_SET:
 				gp.gProc.wait()
 			else:
+				#存回放文件
+				if gp.gameMode == sio.TEST_BATTLE or gp.gameMode == sio.NET_GAME_CLIENT:
+					replay_mode = False
+				else:
+					replay_mode = True
+
+				if replay_mode == True:	
+					#检验回放文件目录
+					try:
+						os.mkdir(os.getcwd() + sio.REPLAY_FILE_PATH)
+					except:
+						pass
+					try:
+						os.mkdir(os.getcwd() + sio.DISPLAY_FILE_PATH)
+					except:
+						pass
+					#写入回放
+					'''
+					if len(sys.argv) <= 1:
+						sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
+						sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
+					'''
+				if len(sys.argv)>0:
+					
+					newFileName = os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo)
+					newFileName2 = os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1)
+					sio._WriteFile(gp.replayInfo, newFileName)
+					sio._WriteCppFile(gp.displayInfo, newFileName2)
+					with open('score.txt','w') as scoreFile:
+						scoreFile.write(newFileName2)
+						scoreFile.write('\n'+str(gp.reInfo.score[0]))
+						scoreFile.write('\n'+str(gp.reInfo.score[1]))
+					
+					with open('final_result.txt','a') as ff:
+						ff.write(gp.gameMapPath + ' ' +gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.winner) + ' ' + str(gp.reInfo.score[0]) + ' ' + str(gp.reInfo.score[1]) + '\n')
+
 				try:
 					if gp.gameMode == sio.TEST_BATTLE:
 						sio._sends(connUI,gp.reInfo.score[1])
@@ -267,36 +303,7 @@ class Sui(threading.Thread):
 				break
 			gp.gProc.release()
 		
-		#存回放文件
-		if replay_mode == True:	
-			#检验回放文件目录
-			try:
-				os.mkdir(os.getcwd() + sio.REPLAY_FILE_PATH)
-			except:
-				pass
-			try:
-				os.mkdir(os.getcwd() + sio.DISPLAY_FILE_PATH)
-			except:
-				pass
-			#写入回放
-			sio._WriteFile(gp.replayInfo,os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo))
-			sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
-
-		if len(sys.argv)>1:
-			
-			newFileName = os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo)
-			newFileName2 = os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1)
-			sio._WriteFile(gp.replayInfo, newFileName)
-			sio._WriteCppFile(gp.displayInfo, newFileName2)
-			with open('score.txt','w') as scoreFile:
-				scoreFile.write(newFileName2)
-				scoreFile.write('\n'+str(gp.reInfo.score[0]))
-				scoreFile.write('\n'+str(gp.reInfo.score[1]))
-			
-			with open('final_result.txt','a') as ff:
-				ff.write(gp.gameMapPath + ' ' +gp.aiInfo[0] + ' ' + gp.aiInfo[1] + ' ' + str(gp.winner) + ' ' + str(gp.reInfo.score[0]) + ' ' + str(gp.reInfo.score[1]) + '\n')
-
-
+		
 		for i in AIProg:
 			if i != None:
 				i.kill()
