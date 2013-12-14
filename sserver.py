@@ -264,7 +264,6 @@ class Sui(threading.Thread):
 						sio._WriteCppFile(gp.displayInfo, os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1))
 					'''
 				if len(sys.argv)>0:
-					
 					newFileName = os.getcwd() + sio.REPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo)
 					newFileName2 = os.getcwd() + sio.DISPLAY_FILE_PATH + sio._ReplayFileName(gp.aiInfo,1)
 					sio._WriteFile(gp.replayInfo, newFileName)
@@ -463,7 +462,7 @@ class Sai(threading.Thread):
 								gp.aiInfoTemp,gp.heroTypeTemp = sio._cpp_recvs_begin(connAI[i])
 							else:
 								gp.aiInfoTemp,gp.heroTypeTemp = sio._recvs(connAI[i])
-							gp.aiInfo.append(gp.aiInfoTemp)
+							gp.aiInfo.append(gp.aiInfoTemp.replace(' ','_'))
 							gp.heroType.append(gp.heroTypeTemp)
 						except socket.timeout:
 							print 'fail to receive AI',i,'\'s information, default settings will be used...'
